@@ -12,6 +12,21 @@ and most existing apps reduce sustainability to simple green or red labels,
 hiding the real environmental costs of everyday products. 
 As a result, people want to buy more environmentally friendly products but struggle to know which ones truly are.
 
+Key Features:
+
+	1.	Product search/scan → EcoLabel
+	•	Fixed metrics (carbon, water, waste, recyclability)
+	•	Simple visual score + confidence indicator
+	2.	Greenwashing detection
+	•	Flags vague sustainability claims on packaging
+	•	Warns when claims don’t match impact score
+	3.	Greener alternatives
+	•	Suggests lower-impact options in the same category
+	4.	Impact tracking (optional)
+	•	Aggregates user purchases to show overall footprint
+	5.	AI explanations
+	•	Explains scores, trade-offs, and suggestions
+
 
 
 
