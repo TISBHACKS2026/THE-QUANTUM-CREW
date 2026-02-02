@@ -16,13 +16,17 @@ Key Features:
 	1.	Product search
 	•	Fixed metrics (carbon, water, waste, recyclability)
 	•	Simple visual score
+
 	2.	Greenwashing detection
 	•	Flags vague sustainability claims on packaging
 	•	Warns when claims don’t match impact score
+	
 	3.	Greener alternatives
 	•	Suggests lower-impact options in the same category
+	
 	4.	Impact tracking 
 	•	Aggregates user purchases to show overall footprint
+	
 	5.	AI explanations and chatbot
 	•	Explains scores, trade-offs, and suggestions
 
