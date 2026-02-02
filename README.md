@@ -15,7 +15,7 @@ As a result, people want to buy more environmentally friendly products but strug
 Key Features:
 	1.	Product search
 	•	Fixed metrics (carbon, water, waste, recyclability)
-	•	Simple visual score 
+	•	Simple visual score
 	2.	Greenwashing detection
 	•	Flags vague sustainability claims on packaging
 	•	Warns when claims don’t match impact score
