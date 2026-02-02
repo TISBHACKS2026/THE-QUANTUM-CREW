@@ -12,6 +12,9 @@ and most existing apps reduce sustainability to simple green or red labels,
 hiding the real environmental costs of everyday products. 
 As a result, people want to buy more environmentally friendly products but struggle to know which ones truly are.
 
+Our Solution:
+A consumer app that allows users search products and instantly see a standardized environmental label like nutrition labels, but for sustainability.
+
 Key Features:
 	
 	1.	Product search
