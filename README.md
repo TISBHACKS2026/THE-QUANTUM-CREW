@@ -13,7 +13,6 @@ hiding the real environmental costs of everyday products.
 As a result, people want to buy more environmentally friendly products but struggle to know which ones truly are.
 
 Key Features:
-
 	1.	Product search/scan → EcoLabel
 	•	Fixed metrics (carbon, water, waste, recyclability)
 	•	Simple visual score + confidence indicator
