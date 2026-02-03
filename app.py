@@ -10,7 +10,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.sidebar.title("🔍EcoLens")
+st.sidebar.title("🔍EcoLens - UPDATED")
 page = st.sidebar.radio(
     "Navigate",
     ["Home", "Analytics", "About" , "Greenscore counter"]
