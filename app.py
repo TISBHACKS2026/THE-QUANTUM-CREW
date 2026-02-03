@@ -44,17 +44,35 @@ elif page == "Analytics":
 
 elif page == "About":
     st.title("ℹ️ About")
-    st.write("""
-    Built by **The Quantum Crew** for TISB Hacks.
-    Our team consists of 4 members:
-    Pihu Gupta
-    Saanvi Khetan
-    Sinita Ray
-    Nivedha Sundar
 
-    Features:
-    - Greenwashing detecter
-    - Product scanner
-    - Green score
-    - Actionable recommendations 
+    st.write("Built by **The Quantum Crew** for TISB Hacks")
+
+    st.subheader("👥 Team")
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.markdown("### Pihu Gupta")
+        st.caption("Backend & APIs\nBuilt the product database and logic")
+
+    with col2:
+        st.markdown("### Saanvi Khetan")
+        st.caption("ML Engineer\nGreenwashing detection model")
+
+    with col3:
+        st.markdown("### Sinita Ray")
+        st.caption("Frontend & UX\nDesigned app interface and flows")
+
+    with col4:
+        st.markdown("### Nivedha Sundar")
+        st.caption("Product Lead\nStrategy, features, and deployment")
+
+    st.divider()
+
+    st.subheader("✨ Features")
+    st.write("""
+    - Greenwashing detector  
+    - Product scanner  
+    - Green score  
+    - Actionable recommendations  
     """)
