@@ -87,13 +87,13 @@ elif pages == "Greenscore counter":
     # -----------------------------
     # Step 0: Define file paths
     # -----------------------------
-    PRODUCT_CSV = "products.csv"
+    PRODUCT_CSV = "product.csv"
     MATERIAL_CSV = "material.csv"
 
     # -----------------------------
     # Step 1: Read CSV files
     # -----------------------------
-    products_df = pd.read_csv("products.csv")
+    products_df = pd.read_csv("product.csv")
     materials_df = pd.read_csv("material.csv")
 
     # Convert material impact dataframe to dictionary
