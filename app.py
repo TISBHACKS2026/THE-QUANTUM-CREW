@@ -60,7 +60,7 @@ GREENER_ALTERNATIVES = {
             "reason": "Smaller tube uses far less material than large sunscreen bottles."
         }
     ],
-    "L'Oreal Shampoo 300ml": [
+    "Shampoo": [
         {
             "name": "Ethique Shampoo Bar",
             "reason": "Solid shampoo bar completely removes the need for plastic bottles."
