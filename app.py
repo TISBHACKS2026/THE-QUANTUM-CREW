@@ -3,12 +3,12 @@ import pandas as pd
 import numpy as np
 
 st.set_page_config(
-    page_title="Quantum Crew App",
-    page_icon="⚛️",
+    page_title="EcoLens App",
+    page_icon="🌲",
     layout="wide"
 )
 
-st.sidebar.title("⚛️ Quantum Crew")
+st.sidebar.title("🔍EcoLens")
 page = st.sidebar.radio(
     "Navigate",
     ["Home", "Analytics", "About"]
@@ -16,8 +16,8 @@ page = st.sidebar.radio(
 
 
 if page == "Home":
-    st.title("🚀 Welcome to Quantum Crew")
-    st.write("Hackathon demo app built with Streamlit")
+    st.title("🌱 Welcome to EcoLens")
+    st.write("An app that guides users to choose eco-friendly products and make sustainable purchases")
 
     col1, col2, col3 = st.columns(3)
 
@@ -45,7 +45,7 @@ elif page == "Analytics":
 elif page == "About":
     st.title("ℹ️ About")
     st.write("""
-    Built by **The Quantum Crew** for TIS Hacks.
+    Built by **The Quantum Crew** for TISB Hacks.
 
     Features:
     - Interactive UI
