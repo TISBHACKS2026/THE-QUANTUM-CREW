@@ -76,10 +76,7 @@ elif page == "About":
     - Green score  
     - Actionable recommendations  
     """)
-
-elif pages == "Greenscore counter":
-
-    # =============================
+       # =============================
     # CALCULATIONS
     # =============================
  
@@ -173,6 +170,9 @@ elif pages == "Greenscore counter":
     ]].round(2)
 
     print(summary_df)
+
+
+ 
 
 
 
