@@ -423,8 +423,7 @@ elif st.session_state.page == "GreenScore":
 
     # -----------------------------
     # Step 7: USER INPUT + DISPLAY
-    # -----------------------------
-    product_input = st.text_input("🔍 Enter product name")
+    # -----------------------------product_input = st.text_input("🔍 Enter product name", placeholder="e.g., Organic Cotton T-Shirt")
       
     if product_input:
         result = summary_df[
@@ -437,44 +436,160 @@ elif st.session_state.page == "GreenScore":
             r = result.iloc[0]
     
             st.divider()
-            st.subheader("🌍 Environmental Impact Summary")
-    
+            
             # ---------- ECO SCORE ----------
             st.markdown("### 🌿 Eco Score")
-            st.metric(
-                label="Overall Sustainability Score (0–100)",
-                value=f"{r['eco_score']}"
-            )
-            st.progress(r['eco_score'] / 100)
+            
+            # Create a more visually appealing score display
+            score_col1, score_col2 = st.columns([2, 3])
+            
+            with score_col1:
+                # Large score display
+                st.markdown(f"""
+                    <div style="
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        border-radius: 20px;
+                        padding: 30px;
+                        text-align: center;
+                        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                    ">
+                        <h1 style="color: white; margin: 0; font-size: 4em;">{r['eco_score']}</h1>
+                        <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 1.1em;">out of 100</p>
+                    </div>
+                """, unsafe_allow_html=True)
+            
+            with score_col2:
+                # Score interpretation
+                if r['eco_score'] >= 80:
+                    badge_color = "#10b981"
+                    badge_text = "Excellent"
+                    emoji = "🌟"
+                elif r['eco_score'] >= 60:
+                    badge_color = "#3b82f6"
+                    badge_text = "Good"
+                    emoji = "👍"
+                elif r['eco_score'] >= 40:
+                    badge_color = "#f59e0b"
+                    badge_text = "Moderate"
+                    emoji = "⚠️"
+                else:
+                    badge_color = "#ef4444"
+                    badge_text = "Needs Improvement"
+                    emoji = "❗"
+                
+                st.markdown(f"""
+                    <div style="padding: 20px 0;">
+                        <div style="
+                            background-color: {badge_color};
+                            color: white;
+                            padding: 15px 25px;
+                            border-radius: 12px;
+                            display: inline-block;
+                            font-size: 1.3em;
+                            font-weight: bold;
+                            margin-bottom: 15px;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                        ">
+                            {emoji} {badge_text}
+                        </div>
+                        <p style="color: #6b7280; margin-top: 10px; line-height: 1.6;">
+                            This score reflects the overall environmental impact across carbon, water, energy, and waste metrics.
+                        </p>
+                    </div>
+                """, unsafe_allow_html=True)
+            
+            # Progress bar with custom styling
+            st.markdown(f"""
+                <div style="margin: 20px 0;">
+                    <div style="
+                        background-color: #e5e7eb;
+                        border-radius: 10px;
+                        height: 12px;
+                        overflow: hidden;
+                    ">
+                        <div style="
+                            background: linear-gradient(90deg, #10b981 0%, #3b82f6 50%, #f59e0b 100%);
+                            width: {r['eco_score']}%;
+                            height: 100%;
+                            border-radius: 10px;
+                            transition: width 0.5s ease;
+                        "></div>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
     
             st.divider()
     
             # ---------- METRICS ----------
+            st.markdown("### 📊 Environmental Impact Breakdown")
+            
             col1, col2, col3, col4 = st.columns(4)
     
             with col1:
-                st.metric(
-                    "🌫 Carbon Footprint",
-                    f"{r['total_carbon_kg']} kg CO₂e"
-                )
+                st.markdown(f"""
+                    <div style="
+                        background-color: #fef3c7;
+                        border-left: 4px solid #f59e0b;
+                        border-radius: 8px;
+                        padding: 20px 15px;
+                        text-align: center;
+                    ">
+                        <div style="font-size: 2em; margin-bottom: 10px;">🌫</div>
+                        <div style="color: #78716c; font-size: 0.85em; margin-bottom: 5px;">Carbon Footprint</div>
+                        <div style="color: #292524; font-size: 1.5em; font-weight: bold;">{r['total_carbon_kg']}</div>
+                        <div style="color: #78716c; font-size: 0.75em;">kg CO₂e</div>
+                    </div>
+                """, unsafe_allow_html=True)
     
             with col2:
-                st.metric(
-                    "💧 Water Usage",
-                    f"{r['total_water_L']} L"
-                )
+                st.markdown(f"""
+                    <div style="
+                        background-color: #dbeafe;
+                        border-left: 4px solid #3b82f6;
+                        border-radius: 8px;
+                        padding: 20px 15px;
+                        text-align: center;
+                    ">
+                        <div style="font-size: 2em; margin-bottom: 10px;">💧</div>
+                        <div style="color: #475569; font-size: 0.85em; margin-bottom: 5px;">Water Usage</div>
+                        <div style="color: #1e293b; font-size: 1.5em; font-weight: bold;">{r['total_water_L']}</div>
+                        <div style="color: #475569; font-size: 0.75em;">Liters</div>
+                    </div>
+                """, unsafe_allow_html=True)
     
             with col3:
-                st.metric(
-                    "⚡ Energy Use",
-                    f"{r['total_energy_MJ']} MJ"
-                )
+                st.markdown(f"""
+                    <div style="
+                        background-color: #fef9c3;
+                        border-left: 4px solid #eab308;
+                        border-radius: 8px;
+                        padding: 20px 15px;
+                        text-align: center;
+                    ">
+                        <div style="font-size: 2em; margin-bottom: 10px;">⚡</div>
+                        <div style="color: #78716c; font-size: 0.85em; margin-bottom: 5px;">Energy Use</div>
+                        <div style="color: #292524; font-size: 1.5em; font-weight: bold;">{r['total_energy_MJ']}</div>
+                        <div style="color: #78716c; font-size: 0.75em;">MJ</div>
+                    </div>
+                """, unsafe_allow_html=True)
     
             with col4:
-                st.metric(
-                    "🗑 Waste Impact",
-                    f"{r['total_waste_score']}"
-                )
+                st.markdown(f"""
+                    <div style="
+                        background-color: #e0e7ff;
+                        border-left: 4px solid #6366f1;
+                        border-radius: 8px;
+                        padding: 20px 15px;
+                        text-align: center;
+                    ">
+                        <div style="font-size: 2em; margin-bottom: 10px;">🗑</div>
+                        <div style="color: #475569; font-size: 0.85em; margin-bottom: 5px;">Waste Impact</div>
+                        <div style="color: #1e293b; font-size: 1.5em; font-weight: bold;">{r['total_waste_score']}</div>
+                        <div style="color: #475569; font-size: 0.75em;">Score</div>
+                    </div>
+                """, unsafe_allow_html=True)
+    
+            st.markdown("<br>", unsafe_allow_html=True)
     
             # ---------- OPTIONAL DETAILS ----------
             with st.expander("📊 View detailed data"):
