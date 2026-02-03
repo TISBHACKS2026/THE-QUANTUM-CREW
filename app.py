@@ -283,20 +283,60 @@ elif st.session_state.page == "GreenScore":
     # Step 7: USER INPUT + DISPLAY
     # -----------------------------
     product_input = st.text_input("🔍 Enter product name")
-
+      
     if product_input:
         result = summary_df[
             summary_df['name'].str.lower() == product_input.lower()
         ]
-
+    
         if result.empty:
-            st.error("Product not found in database.")
+            st.error("❌ Product not found in database.")
         else:
-            st.subheader("🌱 Environmental Impact Results")
-            st.dataframe(result, use_container_width=True)
-
-            eco = result.iloc[0]['eco_score']
-            st.metric("Eco Score (0–100)", eco)
+            r = result.iloc[0]
+    
+            st.divider()
+            st.subheader("🌍 Environmental Impact Summary")
+    
+            # ---------- ECO SCORE ----------
+            st.markdown("### 🌿 Eco Score")
+            st.metric(
+                label="Overall Sustainability Score (0–100)",
+                value=f"{r['eco_score']}"
+            )
+            st.progress(r['eco_score'] / 100)
+    
+            st.divider()
+    
+            # ---------- METRICS ----------
+            col1, col2, col3, col4 = st.columns(4)
+    
+            with col1:
+                st.metric(
+                    "🌫 Carbon Footprint",
+                    f"{r['total_carbon_kg']} kg CO₂e"
+                )
+    
+            with col2:
+                st.metric(
+                    "💧 Water Usage",
+                    f"{r['total_water_L']} L"
+                )
+    
+            with col3:
+                st.metric(
+                    "⚡ Energy Use",
+                    f"{r['total_energy_MJ']} MJ"
+                )
+    
+            with col4:
+                st.metric(
+                    "🗑 Waste Impact",
+                    f"{r['total_waste_score']}"
+                )
+    
+            # ---------- OPTIONAL DETAILS ----------
+            with st.expander("📊 View detailed data"):
+                st.dataframe(result, use_container_width=True)
 
             # ✅ FIX 1: category must be INSIDE else block
             category = result.iloc[0]['category'].strip()
