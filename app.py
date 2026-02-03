@@ -21,6 +21,62 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+GREENER_ALTERNATIVES = {
+    "Cream": [
+        {
+            "name": "Minimalist Marula Oil Moisturizer",
+            "reason": "Uses an aluminum tube instead of a plastic jar, reducing total plastic waste."
+        },
+        {
+            "name": "Earth Rhythm Phyto Clear Moisturizer",
+            "reason": "Packaged in a reusable glass jar with lower waste impact than PET."
+        },
+        {
+            "name": "Plum Green Tea Moisturizer",
+            "reason": "Smaller packaging size means less total material used."
+        }
+    ],
+    "Body Wash": [
+        {
+            "name": "Ethique Solid Body Wash Bar",
+            "reason": "Eliminates plastic bottles entirely by using a solid bar format."
+        },
+        {
+            "name": "Earth Rhythm Body Wash Bar",
+            "reason": "Zero plastic packaging results in near-zero packaging emissions."
+        }
+    ],
+    "Sunscreen": [
+        {
+            "name": "Raw Beauty Wellness Sunscreen Stick",
+            "reason": "Paper-based packaging avoids high-energy aluminum and plastic bottles."
+        },
+        {
+            "name": "Dot & Key Sunscreen Stick",
+            "reason": "Compact solid format reduces packaging weight significantly."
+        },
+        {
+            "name": "Minimalist SPF 50 (50g)",
+            "reason": "Smaller tube uses far less material than large sunscreen bottles."
+        }
+    ],
+    "Shampoo": [
+        {
+            "name": "Ethique Shampoo Bar",
+            "reason": "Solid shampoo bar completely removes the need for plastic bottles."
+        },
+        {
+            "name": "Earth Rhythm Shampoo Bar",
+            "reason": "Lower water and carbon footprint due to zero liquid packaging."
+        },
+        {
+            "name": "Bare Anatomy Concentrated Shampoo",
+            "reason": "Concentrated formula requires a smaller bottle."
+        }
+    ]
+}
+
+
 # -----------------------------
 # Step 0: Define file paths
 # -----------------------------
@@ -214,6 +270,21 @@ elif st.session_state.page == "GreenScore":
 
             eco = result.iloc[0]['eco_score']
             st.metric("Eco Score (0–100)", eco)
+
+        category = result.iloc[0]['category']
+
+        st.subheader("🌿 Greener Alternatives")
+
+        if category in GREENER_ALTERNATIVES:
+            for alt in GREENER_ALTERNATIVES[category]:
+                st.markdown(
+                    f"""
+                    **{alt['name']}**  
+                    *Why it’s greener:* {alt['reason']}
+                    """
+                )
+        else:
+            st.write("No greener alternatives available for this category.")
 
 # -------------------------
 # CHATBOT PAGE
