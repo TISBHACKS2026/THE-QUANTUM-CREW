@@ -284,20 +284,22 @@ elif st.session_state.page == "GreenScore":
             eco = result.iloc[0]['eco_score']
             st.metric("Eco Score (0–100)", eco)
 
-        category = result.iloc[0]['category']
+            # ✅ FIX 1: category must be INSIDE else block
+            category = result.iloc[0]['category'].strip()
 
-        st.subheader("🌿 Greener Alternatives")
+            st.subheader("🌿 Greener Alternatives")
 
-        if category in GREENER_ALTERNATIVES:
-            for alt in GREENER_ALTERNATIVES[category]:
-                st.markdown(
-                    f"""
-                    **{alt['name']}**  
-                    *Why it’s greener:* {alt['reason']}
-                    """
-                )
-        else:
-            st.write("No greener alternatives available for this category.")
+            if category in GREENER_ALTERNATIVES:
+                for alt in GREENER_ALTERNATIVES[category]:
+                    st.markdown(
+                        f"""
+                        **{alt['name']}**  
+                        *Why it’s greener:* {alt['reason']}
+                        """
+                    )
+            else:
+                st.write("No greener alternatives available for this category.")
+
 
 # -------------------------
 # CHATBOT PAGE
