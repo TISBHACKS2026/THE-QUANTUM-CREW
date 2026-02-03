@@ -219,14 +219,48 @@ elif st.session_state.page == "GreenScore":
 # CHATBOT PAGE
 # -------------------------
 elif st.session_state.page == "Chatbot":
+    import requests
+
     st.button("← Back to Home", on_click=go, args=("Home",))
     st.title("🤖 AI Chatbot")
 
     st.write("Ask a question about sustainability, ingredients, and alternatives.")
+
+    # --- Hugging Face API setup (FREE) ---
+    API_URL = "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct"
+    HF_API_KEY = "hf_...bbaQ"
+    HEADERS = {
+    "Authorization": f"Bearer {st.secrets['HF_API_KEY']}"
+    }
+
+    # Store chat history
+    if "chat_history" not in st.session_state:
+        st.session_state.chat_history = []
+
     user_q = st.text_input("Your question")
 
-    if st.button("Ask"):
-        st.info("Next: connect to your chatbot logic / API.")
+    if st.button("Ask") and user_q.strip() != "":
+        with st.spinner("Thinking..."):
+            payload = {
+                "inputs": f"Answer clearly and simply:\n{user_q}"
+            }
+
+            response = requests.post(API_URL, headers=HEADERS, json=payload)
+
+            if response.status_code == 200:
+                ai_reply = response.json()[0]["generated_text"]
+            else:
+                ai_reply = "⚠️ AI service unavailable. Try again."
+
+        st.session_state.chat_history.append(("You", user_q))
+        st.session_state.chat_history.append(("AI", ai_reply))
+
+    # Display conversation
+    for speaker, msg in st.session_state.chat_history:
+        if speaker == "You":
+            st.markdown(f"**🧑 You:** {msg}")
+        else:
+            st.markdown(f"**🤖 AI:** {msg}")
 
 # -------------------------
 # TOTAL IMPACT PAGE
