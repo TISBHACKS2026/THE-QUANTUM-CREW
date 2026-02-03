@@ -21,6 +21,95 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+    # -----------------------------
+    # Step 0: Define file paths
+    # -----------------------------
+    PRODUCT_CSV = "product.csv"
+    MATERIAL_CSV = "material.csv"
+
+    # -----------------------------
+    # Step 1: Read CSV files
+    # -----------------------------
+    products_df = pd.read_csv(PRODUCT_CSV)
+    materials_df = pd.read_csv(MATERIAL_CSV)
+
+    # Convert material impact dataframe to dictionary
+    material_impact_dict = {}
+    for _, row in materials_df.iterrows():
+        material_impact_dict[row['material']] = {
+            'carbon': row['carbon_kg_per_kg'],
+            'water': row['water_L_per_kg'],
+            'energy': row['energy_MJ_per_kg'],
+            'waste': row['waste_score']
+        }
+
+    # -----------------------------
+    # Step 2: Initialize result columns
+    # -----------------------------
+    products_df['total_carbon_kg'] = 0.0
+    products_df['total_water_L'] = 0.0
+    products_df['total_energy_MJ'] = 0.0
+    products_df['total_waste_score'] = 0.0
+
+    # -----------------------------
+    # Step 3: Compute impacts
+    # -----------------------------
+    for i, product in products_df.iterrows():
+        total_carbon = 0
+        total_water = 0
+        total_energy = 0
+        total_waste = 0
+
+        for j in range(1, 4):
+            material = product.get(f'material_{j}')
+            weight_g = product.get(f'weight_{j}_g')
+
+            if pd.isna(material) or pd.isna(weight_g):
+                continue
+
+            weight_kg = weight_g / 1000
+            impact = material_impact_dict.get(material)
+
+            if impact:
+                total_carbon += weight_kg * impact['carbon']
+                total_water += weight_kg * impact['water']
+                total_energy += weight_kg * impact['energy']
+                total_waste += weight_kg * impact['waste']
+
+        products_df.at[i, 'total_carbon_kg'] = total_carbon
+        products_df.at[i, 'total_water_L'] = total_water
+        products_df.at[i, 'total_energy_MJ'] = total_energy
+        products_df.at[i, 'total_waste_score'] = total_waste
+
+    # -----------------------------
+    # Step 4: Normalize
+    # -----------------------------
+    products_df['carbon_norm'] = products_df['total_carbon_kg'] / products_df['total_carbon_kg'].max()
+    products_df['water_norm'] = products_df['total_water_L'] / products_df['total_water_L'].max()
+    products_df['energy_norm'] = products_df['total_energy_MJ'] / products_df['total_energy_MJ'].max()
+    products_df['waste_norm'] = products_df['total_waste_score'] / products_df['total_waste_score'].max()
+
+    # -----------------------------
+    # Step 5: Eco score (0–100, higher = better)
+    # -----------------------------
+    products_df['eco_score'] = (
+        (1 - products_df['carbon_norm']) * 0.4 +
+        (1 - products_df['water_norm']) * 0.3 +
+        (1 - products_df['energy_norm']) * 0.2 +
+        (1 - products_df['waste_norm']) * 0.1
+    ) * 100
+
+    # -----------------------------
+    # Step 6: Final output table
+    # -----------------------------
+    summary_df = products_df[[
+        'name', 'category',
+        'total_carbon_kg', 'total_water_L',
+        'total_energy_MJ', 'total_waste_score',
+        'eco_score'
+    ]].round(2)
+
+
 # -------------------------
 # Navigation state
 # -------------------------
@@ -175,92 +264,5 @@ elif st.session_state.page == "About":
         st.markdown("### Nivedha Sundar")
         st.caption("Product & Pitch")
 
-    # -----------------------------
-    # Step 0: Define file paths
-    # -----------------------------
-    PRODUCT_CSV = "product.csv"
-    MATERIAL_CSV = "material.csv"
-
-    # -----------------------------
-    # Step 1: Read CSV files
-    # -----------------------------
-    products_df = pd.read_csv(PRODUCT_CSV)
-    materials_df = pd.read_csv(MATERIAL_CSV)
-
-    # Convert material impact dataframe to dictionary
-    material_impact_dict = {}
-    for _, row in materials_df.iterrows():
-        material_impact_dict[row['material']] = {
-            'carbon': row['carbon_kg_per_kg'],
-            'water': row['water_L_per_kg'],
-            'energy': row['energy_MJ_per_kg'],
-            'waste': row['waste_score']
-        }
-
-    # -----------------------------
-    # Step 2: Initialize result columns
-    # -----------------------------
-    products_df['total_carbon_kg'] = 0.0
-    products_df['total_water_L'] = 0.0
-    products_df['total_energy_MJ'] = 0.0
-    products_df['total_waste_score'] = 0.0
-
-    # -----------------------------
-    # Step 3: Compute impacts
-    # -----------------------------
-    for i, product in products_df.iterrows():
-        total_carbon = 0
-        total_water = 0
-        total_energy = 0
-        total_waste = 0
-
-        for j in range(1, 4):
-            material = product.get(f'material_{j}')
-            weight_g = product.get(f'weight_{j}_g')
-
-            if pd.isna(material) or pd.isna(weight_g):
-                continue
-
-            weight_kg = weight_g / 1000
-            impact = material_impact_dict.get(material)
-
-            if impact:
-                total_carbon += weight_kg * impact['carbon']
-                total_water += weight_kg * impact['water']
-                total_energy += weight_kg * impact['energy']
-                total_waste += weight_kg * impact['waste']
-
-        products_df.at[i, 'total_carbon_kg'] = total_carbon
-        products_df.at[i, 'total_water_L'] = total_water
-        products_df.at[i, 'total_energy_MJ'] = total_energy
-        products_df.at[i, 'total_waste_score'] = total_waste
-
-    # -----------------------------
-    # Step 4: Normalize
-    # -----------------------------
-    products_df['carbon_norm'] = products_df['total_carbon_kg'] / products_df['total_carbon_kg'].max()
-    products_df['water_norm'] = products_df['total_water_L'] / products_df['total_water_L'].max()
-    products_df['energy_norm'] = products_df['total_energy_MJ'] / products_df['total_energy_MJ'].max()
-    products_df['waste_norm'] = products_df['total_waste_score'] / products_df['total_waste_score'].max()
-
-    # -----------------------------
-    # Step 5: Eco score (0–100, higher = better)
-    # -----------------------------
-    products_df['eco_score'] = (
-        (1 - products_df['carbon_norm']) * 0.4 +
-        (1 - products_df['water_norm']) * 0.3 +
-        (1 - products_df['energy_norm']) * 0.2 +
-        (1 - products_df['waste_norm']) * 0.1
-    ) * 100
-
-    # -----------------------------
-    # Step 6: Final output table
-    # -----------------------------
-    summary_df = products_df[[
-        'name', 'category',
-        'total_carbon_kg', 'total_water_L',
-        'total_energy_MJ', 'total_waste_score',
-        'eco_score'
-    ]].round(2)
 
     
