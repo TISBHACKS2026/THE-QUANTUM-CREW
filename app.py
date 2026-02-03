@@ -264,13 +264,155 @@ if st.session_state.page == "Home":
     
 
     st.header("✨ Key Features")
-    f1, f2 = st.columns(2)
-    with f1:
-        st.subheader("🌿 GreenScore")
-        st.write("- Barcode scan\n- Score + explanation\n- Better alternatives")
-    with f2:
-        st.subheader("🤖 AI Chatbot")
-        st.write("- Ingredient explanations\n- Claim checks\n- Eco tips")
+
+    components.html("""
+<div style="
+    background:#3f5a4d;
+    border-radius:18px;
+    padding:44px 38px;
+    margin-top:18px;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+">
+  <div style="display:flex; gap:34px; align-items:center;">
+
+    <div style="flex:1.2;">
+      <h2 style="margin:0 0 14px 0; font-size:38px; color:white;">
+        🌿 GreenScore Tracker
+      </h2>
+
+      <p style="margin:0 0 14px 0; font-size:18px; line-height:1.7; color:rgba(255,255,255,0.92);">
+        Scan personal-care products and get a transparent sustainability score with clear reasons.
+      </p>
+
+      <ul style="margin:0; padding-left:20px; font-size:18px; line-height:1.7; color:rgba(255,255,255,0.92);">
+        <li>Barcode scan / product lookup</li>
+        <li>Score breakdown (ingredients, packaging, claims)</li>
+        <li>Greenwashing flags + simple explanations</li>
+        <li>Better alternatives for your purpose</li>
+      </ul>
+    </div>
+
+    <div style="flex:1; display:flex; justify-content:flex-end;">
+      <div style="
+          width:520px;
+          height:320px;
+          border-radius:16px;
+          overflow:hidden;
+          box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+          background: rgba(255,255,255,0.06);
+      ">
+        <img src="https://www.iberdrola.com/documents/20125/40513/huella-de-carbono-746x419.jpg/f61f98a2-7c51-27f9-31d2-41b1dafe6bf7?t=1738248418273"
+             style="width:100%; height:100%; object-fit:cover;">
+      </div>
+    </div>
+
+  </div>
+</div>
+""", height=420)
+
+
+    
+    #-------------------------
+    # AI Chatbot
+    #-------------------------
+
+    components.html("""
+    <div style="
+        background:#15597e;   /* blueish */
+        border-radius:18px;
+        padding:44px 38px;
+        margin-top:22px;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    ">
+      <div style="display:flex; gap:34px; align-items:center;">
+    
+        <!-- LEFT IMAGE -->
+        <div style="flex:1; display:flex; justify-content:flex-start;">
+          <div style="
+              width:520px;
+              height:320px;
+              border-radius:16px;
+              overflow:hidden;
+              box-shadow: 0 10px 30px rgba(0,0,0,0.30);
+              background: rgba(255,255,255,0.06);
+          ">
+            <img src="https://beetroot.co/wp-content/uploads/sites/2/2024/12/Cover_AI-chatbots-in-GreenTech.png"
+                 style="width:100%; height:100%; object-fit:cover;">
+          </div>
+        </div>
+    
+        <!-- RIGHT TEXT -->
+        <div style="flex:1.2;">
+          <h2 style="margin:0 0 14px 0; font-size:38px; color:white;">
+            🤖 AI Chatbot
+          </h2>
+    
+          <p style="margin:0 0 14px 0; font-size:18px; line-height:1.7; color:rgba(255,255,255,0.92);">
+            Ask questions in plain English and get smart, personalized sustainability advice instantly.
+          </p>
+    
+          <ul style="margin:0; padding-left:20px; font-size:18px; line-height:1.7; color:rgba(255,255,255,0.92);">
+            <li>Ask about ingredients and claims</li>
+            <li>Detect greenwashing language</li>
+            <li>Get product recommendations</li>
+            <li>Tips for safer / sustainable swaps</li>
+          </ul>
+        </div>
+    
+      </div>
+    </div>
+    """, height=420)
+
+    #---------------------
+    # Impact Score
+    #---------------------
+  
+    components.html("""
+    <div style="
+        background:#1c3b2b;   /* forest green */
+        border-radius:18px;
+        padding:44px 38px;
+        margin-top:22px;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+    ">
+      <div style="display:flex; gap:34px; align-items:center;">
+    
+        <!-- LEFT TEXT -->
+        <div style="flex:1.2;">
+          <h2 style="margin:0 0 14px 0; font-size:38px; color:white;">
+            🌲 Impact Score
+          </h2>
+    
+          <p style="margin:0 0 14px 0; font-size:18px; line-height:1.7; color:rgba(255,255,255,0.92);">
+            See the real environmental impact of every purchase in clear, easy-to-understand metrics.
+          </p>
+    
+          <ul style="margin:0; padding-left:20px; font-size:18px; line-height:1.7; color:rgba(255,255,255,0.92);">
+            <li>Track carbon footprint savings</li>
+            <li>Water & plastic reduction estimates</li>
+            <li>Compare products side-by-side</li>
+            <li>Visualize your eco progress over time</li>
+          </ul>
+        </div>
+    
+        <!-- RIGHT IMAGE -->
+        <div style="flex:1; display:flex; justify-content:flex-end;">
+          <div style="
+              width:520px;
+              height:320px;
+              border-radius:16px;
+              overflow:hidden;
+              box-shadow: 0 10px 30px rgba(0,0,0,0.30);
+              background: rgba(255,255,255,0.06);
+          ">
+            <img src="https://greenscoreapp.com/wp-content/uploads/2024/09/Empowering-Sustainability-Through-Innovation-image2-Green-Score.webp"
+                 style="width:100%; height:100%; object-fit:cover;">
+          </div>
+        </div>
+    
+      </div>
+    </div>
+    """, height=420)
 
 # -------------------------
 # GREEN SCORE PAGE
