@@ -218,8 +218,9 @@ elif st.session_state.page == "GreenScore":
 # -------------------------
 # CHATBOT PAGE
 # -------------------------
+import requests
 elif st.session_state.page == "Chatbot":
-    import requests
+ 
 
     st.button("← Back to Home", on_click=go, args=("Home",))
     st.title("🤖 AI Chatbot")
@@ -228,7 +229,7 @@ elif st.session_state.page == "Chatbot":
 
     # --- Hugging Face API setup (FREE) ---
     API_URL = "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct"
-    HF_API_KEY = "hf_...bbaQ"
+    HF_API_KEY = "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"
     HEADERS = {
     "Authorization": f"Bearer {st.secrets['HF_API_KEY']}"
     }
