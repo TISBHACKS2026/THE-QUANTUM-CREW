@@ -75,7 +75,7 @@ elif page == "About":
     - Product scanner  
     - Green score  
     - Actionable recommendations  
-    """)            st.metric("Eco Score (0–100)", eco)
+    """)
 
 elif page == "Greenscore counter":
     st.title("🌍 GreenScore Counter")
