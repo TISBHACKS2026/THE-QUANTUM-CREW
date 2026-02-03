@@ -11,7 +11,7 @@ st.set_page_config(
 st.sidebar.title("🔍EcoLens")
 page = st.sidebar.radio(
     "Navigate",
-    ["Home", "Analytics", "About"]
+    ["Home", "Analytics", "About" , "Greenscore counter"]
 )
 
 
