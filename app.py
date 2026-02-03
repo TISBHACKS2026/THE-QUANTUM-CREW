@@ -220,3 +220,16 @@ summary_df.to_csv("cosmetic_products_eco_scores.csv", index=False)
 
 # Print table
 print(summary_df)
+
+# -----------------------------
+# Step 7: Interactive product lookup
+# -----------------------------
+product_name = input("Enter product name: ").strip()
+
+selected_product = summary_df[summary_df['name'].str.lower() == product_name.lower()]
+
+if selected_product.empty:
+    print(f"Product '{product_name}' not found in the database.")
+else:
+    print("\nEnvironmental impact metrics for:", product_name)
+    print(selected_product.to_string(index=False))
