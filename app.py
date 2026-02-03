@@ -179,6 +179,20 @@ products_df['eco_score'] = (
 
 products_df['eco_score'] = products_df['eco_score'].round(1)
 
+# =============================
+# FINAL SUMMARY TABLE (REQUIRED FOR GREEN SCORE PAGE)
+# =============================
+summary_df = products_df[[
+    'name',
+    'category',
+    'total_carbon_kg',
+    'total_water_L',
+    'total_energy_MJ',
+    'total_waste_score',
+    'eco_score'
+]].copy()
+
+
 # -------------------------
 # Navigation state
 # -------------------------
