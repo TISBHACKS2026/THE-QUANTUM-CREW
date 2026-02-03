@@ -46,10 +46,15 @@ elif page == "About":
     st.title("ℹ️ About")
     st.write("""
     Built by **The Quantum Crew** for TISB Hacks.
+    Our team consists of 4 members:
+    Pihu Gupta
+    Saanvi Khetan
+    Sinita Ray
+    Nivedha Sundar
 
     Features:
-    - Interactive UI
-    - Real-time charts
-    - Multi-page layout
-    - Deployable on Streamlit Cloud
+    - Greenwashing detecter
+    - Product scanner
+    - Green score
+    - Actionable recommendations 
     """)
