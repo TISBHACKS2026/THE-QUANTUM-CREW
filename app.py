@@ -424,7 +424,8 @@ elif st.session_state.page == "GreenScore":
 
     # -----------------------------
     # Step 7: USER INPUT + DISPLAY
-    # -----------------------------product_input = st.text_input("🔍 Enter product name", placeholder="e.g., Organic Cotton T-Shirt")
+    # -----------------------------
+    product_input = st.text_input("🔍 Enter product name", placeholder="e.g., Organic Cotton T-Shirt")
       
     if product_input:
         result = summary_df[
