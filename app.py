@@ -107,11 +107,24 @@ elif st.session_state.page == "GreenScore":
     st.button("← Back to Home", on_click=go, args=("Home",))
     st.title("🌿 GreenScore")
 
-    st.write("Scan a product (start with barcode input for hackathon).")
-    barcode = st.text_input("Enter barcode (EAN/UPC)")
+    # -----------------------------
+    # Step 7: USER INPUT + DISPLAY
+    # -----------------------------
+    product_input = st.text_input("🔍 Enter product name")
 
-    if st.button("Scan"):
-        st.info("Next: call Open Food Facts API here and compute score.")
+    if product_input:
+        result = summary_df[
+            summary_df['name'].str.lower() == product_input.lower()
+        ]
+
+        if result.empty:
+            st.error("Product not found in database.")
+        else:
+            st.subheader("🌱 Environmental Impact Results")
+            st.dataframe(result, use_container_width=True)
+
+            eco = result.iloc[0]['eco_score']
+            st.metric("Eco Score (0–100)", eco)
 
 # -------------------------
 # CHATBOT PAGE
@@ -250,21 +263,4 @@ elif st.session_state.page == "About":
         'eco_score'
     ]].round(2)
 
-    # -----------------------------
-    # Step 7: USER INPUT + DISPLAY
-    # -----------------------------
-    product_input = st.text_input("🔍 Enter product name")
-
-    if product_input:
-        result = summary_df[
-            summary_df['name'].str.lower() == product_input.lower()
-        ]
-
-        if result.empty:
-            st.error("Product not found in database.")
-        else:
-            st.subheader("🌱 Environmental Impact Results")
-            st.dataframe(result, use_container_width=True)
-
-            eco = result.iloc[0]['eco_score']
-            st.metric("Eco Score (0–100)", eco)
+    
