@@ -1,4 +1,3 @@
-st.sidebar.warning("RUNNING UPDATED APP.PY")
 
 import streamlit as st
 import pandas as pd
@@ -10,7 +9,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.sidebar.title("🔍EcoLens - UPDATED")
+st.sidebar.title("🔍EcoLens")
 page = st.sidebar.radio(
     "Navigate",
     ["Home", "Analytics", "About" , "Greenscore counter"]
