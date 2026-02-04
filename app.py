@@ -296,7 +296,7 @@ summary_df = products_df[[
     'ingredient_score',
     'bonus_score',
     'eco_score'
-]].copy()copy()
+]].copy()
 
 
 # -------------------------
