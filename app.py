@@ -906,23 +906,26 @@ elif st.session_state.page == "Impact Dashboard":
         markers=True,
         color_discrete_sequence=["#22c55e"]
     )
+
     trend_fig.update_layout(
         xaxis_title="Order of products analysed",
         yaxis_title="Eco Score"
     )
 
     st.plotly_chart(trend_fig, use_container_width=True)
-
     if len(history) >= 2:
-        delta = history["Eco Score"].iloc[-1] - history["Eco Score"].iloc[0]
-        if delta > 5:
-            st.success("📈 Your choices are getting greener 🌿")
-        elif delta < -5:
-            st.warning("📉 Impact increasing — greener swaps help 🔄")
-        else:
-            st.info("➖ Consistency forming 🌱")
+            delta = history["Eco Score"].iloc[-1] - history["Eco Score"].iloc[0]
+
+            if delta > 5:
+                st.success(f"📈 Your EcoScore improved by **{delta:.1f} points** — your choices are getting greener 🌿")
+            elif delta < -5:
+                st.warning(f"📉 Your EcoScore dropped by **{abs(delta):.1f} points** — consider greener swaps 🔄")
+            else:
+                st.info("➖ Your EcoScore has stayed fairly stable — consistency is forming 🌱")
 
     st.divider()
+
+   
 
     # =============================
     # 📊 AVERAGE IMPACT BREAKDOWN
@@ -1006,8 +1009,14 @@ elif st.session_state.page == "Impact Dashboard":
     st.dataframe(history[::-1], use_container_width=True)
 
     if st.button("🗑️ Clear Impact History"):
-        st.session_state.impact_history = history.iloc[0:0]
+        st.session_state.impact_history = st.session_state.impact_history.iloc[0:0]
+
+        # 🔑 also reset logging guards
+        if "logged_keys" in st.session_state:
+            st.session_state.logged_keys.clear()
+
         st.success("Impact history cleared 🌱")
+        st.rerun()
 # -------------------------
 # ABOUT PAGE
 # -------------------------
