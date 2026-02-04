@@ -303,17 +303,26 @@ if st.session_state.page == "Home":
     with right:
         st.markdown(
             """<div style="height:420px; display:flex; flex-direction:column; justify-content:center;">
-    <h2 style="font-size:42px; margin-bottom:18px;">What is EcoLens?</h2>
-    <p style="font-size:20px; line-height:1.7; max-width:680px;">
-    Every year, the world produces over 400 million tonnes of plastic waste, and nearly half of this comes from single-use packaging like bottles, bags, wrappers, and cartons. Only around 9% of all plastic ever produced has been recycled, while the rest ends up in landfills, incinerators, or in the environment. Packaging alone can account for 20–40% of a product’s total environmental footprint, yet this hidden cost is rarely visible when we shop. A single purchase may feel insignificant, but when millions of people repeat small decisions every day, the impact becomes massive. If just 1 million people replaced one single-use plastic bottle per day, over 7,000 tonnes of plastic waste could be prevented each year. EcoLens makes these invisible impacts visible, so your everyday choices can become part of a much bigger change.
+    <h2 style="font-size:35px; margin-bottom:18px;">What is EcoLens?</h2>
+    <p style="font-size:20px; line-height:1.7; max-width:600px;">
+    EcoLens helps people understand the real environmental impact of the products they buy, so they can make more informed and sustainable choices.
     </p>
     </div>""",
             unsafe_allow_html=True
         )
 
-    st.header("🚨 The Problem")
-    st.write("Sustainability labels are vague and poorly regulated, so consumers often rely on marketing language instead of real data. Many of these claims are misleading, allowing greenwashing to go unnoticed. Because people lack the time and expertise to properly assess environmental impact, they make well-intentioned but poor choices. Additionally, there is no standardized way to verify eco-claims, and most existing apps reduce sustainability to simple green or red labels, hiding the real environmental costs of everyday products. As a result, people want to buy more environmentally friendly products but struggle to know which ones truly are.")
-    
+    st.header("The Hidden Cost of Everyday Products")
+    st.write("Every year, the world produces over 400 million tonnes of plastic waste, and nearly half of this comes from single-use packaging like bottles, bags, wrappers, and cartons. Only around 9% of all plastic ever produced has been recycled, while the rest ends up in landfills, incinerators, or in the environment.")
+
+    st.header("The Hidden Cost of Everyday Products")
+    st.write("Every year, the world produces over 400 million tonnes of plastic waste, and nearly half of this comes from single-use packaging like bottles, bags, wrappers, and cartons. Only around 9% of all plastic ever produced has been recycled, while the rest ends up in landfills, incinerators, or in the environment.")
+    st.write("Packaging alone can account for 20–40% of a product’s total environmental footprint, yet this hidden cost is rarely visible when we shop. Most of the time, consumers only see branding and marketing claims, not the true environmental impact behind a product.")
+
+    st.header("The Problem")
+    st.write("Sustainability labels are vague and poorly regulated, so consumers often rely on marketing language instead of real data. Many of these claims are misleading, allowing greenwashing to go unnoticed. Because people lack the time and expertise to properly assess environmental impact, they make well-intentioned but poor choices. Additionally, there is no standardized way to verify eco-claims, and most existing apps reduce sustainability to simple green or red labels, hiding the real environmental costs of everyday products.")
+
+    st.header("Small Choices, Big Impact")
+    st.write("A single purchase may feel insignificant, but when millions of people repeat small decisions every day, the impact becomes massive. If just 1 million people replaced one single-use plastic bottle per day, over 7,000 tonnes of plastic waste could be prevented each year. EcoLens makes these invisible impacts visible, so your everyday choices can become part of a much bigger change.")
 
     st.header("✨ Key Features")
 
