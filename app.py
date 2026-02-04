@@ -325,7 +325,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-c1, c2, c3, c4 = st.columns([1, 1, 1, 1])
+c1, c2, c3, c4, c5 = st.columns([1,1,1,1,1])
 with c1:
     st.button("🌿 GreenScore", use_container_width=True, on_click=go, args=("GreenScore",))
 with c2:
@@ -334,6 +334,9 @@ with c3:
     st.button("🌏Impact Dashboard", use_container_width=True, on_click=go, args=("Impact Dashboard",))
 with c4:
     st.button("ℹ️ About", use_container_width=True, on_click=go, args=("About",))
+with c5:
+    st.button("🧭 Your Next Steps", use_container_width=True, on_click=go, args=("NextSteps",))
+
 
 st.markdown("</div>", unsafe_allow_html=True)
 st.write("")  # spacer
@@ -1017,6 +1020,72 @@ elif st.session_state.page == "Impact Dashboard":
 
         st.success("Impact history cleared 🌱")
         st.rerun()
+
+
+# -------------------------
+# YOUR NEXT STEPS PAGE
+# -------------------------
+elif st.session_state.page == "NextSteps":
+
+    st.button("← Back to Home", on_click=go, args=("Home",))
+    st.title("🧭 Your Next Steps")
+    st.caption("Practical swaps and habits to lower your impact")
+
+    category = st.selectbox(
+        "Choose a product type",
+        ["Shampoo", "Cream", "Sunscreen", "Body Wash"]
+    )
+
+    st.divider()
+
+    # -------------------------
+    # BEST ECO SUBSTITUTES
+    # -------------------------
+    BEST_SUBS = {
+        "Shampoo": [
+            "Ethique Shampoo Bar",
+            "Earth Rhythm Shampoo Bar",
+            "Bare Anatomy Concentrated Shampoo"
+        ],
+        "Cream": [
+            "Minimalist Marula Oil Moisturizer",
+            "Earth Rhythm Phyto Clear Moisturizer",
+            "Plum Green Tea Moisturizer"
+        ],
+        "Sunscreen": [
+            "Raw Beauty Wellness Sunscreen Stick",
+            "Minimalist SPF 50 (50g)",
+            "Dot & Key Sunscreen Stick"
+        ],
+        "Body Wash": [
+            "Ethique Solid Body Wash Bar",
+            "Earth Rhythm Body Wash Bar"
+        ]
+    }
+
+    st.subheader("🌿 Better Alternatives")
+
+    for prod in BEST_SUBS[category]:
+        st.markdown(f"✅ {prod}")
+
+    st.divider()
+
+    # -------------------------
+    # IF YOU ALREADY BOUGHT IT
+    # -------------------------
+    st.subheader("♻️ If You Already Bought a Regular Product")
+
+    tips = [
+        "Use the product fully before replacing it",
+        "Reuse the container for storage or refills",
+        "Recycle packaging properly",
+        "Use smaller amounts per wash",
+        "Avoid double-washing or overuse"
+    ]
+
+    for t in tips:
+        st.markdown(f"- {t}")
+
 # -------------------------
 # ABOUT PAGE
 # -------------------------
