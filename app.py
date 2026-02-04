@@ -251,8 +251,7 @@ if st.session_state.page == "Home":
             """<div style="height:420px; display:flex; flex-direction:column; justify-content:center;">
     <h2 style="font-size:42px; margin-bottom:18px;">What is EcoLens?</h2>
     <p style="font-size:20px; line-height:1.7; max-width:680px;">
-    EcoLens helps eco-conscious shoppers identify truly sustainable products by providing clear insights into a product’s sustainability impact.
-    Scan a product, detect greenwashing, and get a clear <b>Green Score</b> with reasons.
+    Every year, the world produces over 400 million tonnes of plastic waste, and nearly half of this comes from single-use packaging like bottles, bags, wrappers, and cartons. Only around 9% of all plastic ever produced has been recycled, while the rest ends up in landfills, incinerators, or in the environment. Packaging alone can account for 20–40% of a product’s total environmental footprint, yet this hidden cost is rarely visible when we shop. A single purchase may feel insignificant, but when millions of people repeat small decisions every day, the impact becomes massive. If just 1 million people replaced one single-use plastic bottle per day, over 7,000 tonnes of plastic waste could be prevented each year. EcoLens makes these invisible impacts visible, so your everyday choices can become part of a much bigger change.
     </p>
     </div>""",
             unsafe_allow_html=True
