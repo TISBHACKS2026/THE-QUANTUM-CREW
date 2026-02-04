@@ -310,9 +310,7 @@ if st.session_state.page == "Home":
     </div>""",
             unsafe_allow_html=True
         )
-
-    st.header("The Hidden Cost of Everyday Products")
-    st.write("Every year, the world produces over 400 million tonnes of plastic waste, and nearly half of this comes from single-use packaging like bottles, bags, wrappers, and cartons. Only around 9% of all plastic ever produced has been recycled, while the rest ends up in landfills, incinerators, or in the environment.")
+    <br>
 
     st.header("The Hidden Cost of Everyday Products")
     st.write("Every year, the world produces over 400 million tonnes of plastic waste, and nearly half of this comes from single-use packaging like bottles, bags, wrappers, and cartons. Only around 9% of all plastic ever produced has been recycled, while the rest ends up in landfills, incinerators, or in the environment.")
