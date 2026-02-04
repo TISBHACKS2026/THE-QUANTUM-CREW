@@ -1,6 +1,6 @@
 name,brand,category,material_1,weight_1_g,material_2,weight_2_g,microplastics,palm_oil,parabens,sulfates,recyclable_packaging,eco_certified
 Cetaphil Cream 80g,Cetaphil,Cream,PET,17,HDPE,4,,,,,,
-Aveeno Cream 80g,Aveeno,Cream,PET,15,HDPE,3,,,,,,
+Aveeno Cream 80g,Aveeno,Cream,PET,15,HDPE,3,,,,,1,
 Mamaearth Cream 80g,MamaEarth,Cream,LDPE,20,HDPE,3,,,,,,
 Nivea Cream 600ml,Nivea,Cream,PET,100,HDPE,10,,,,,,
 Nivea Cream 75ml,Nivea,Cream,PET,15,HDPE,7,,,,,,
