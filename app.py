@@ -4,6 +4,60 @@ import pandas as pd
 import numpy as np
 import streamlit.components.v1 as components
 import requests
+def get_greener_alternatives(current_product_name, summary_df, max_alternatives=5):
+    """
+    Find greener alternatives from the actual product database.
+    Returns products in the same category with better eco scores.
+    """
+    # Get current product details
+    current = summary_df[summary_df['name'] == current_product_name]
+    if current.empty:
+        return []
+    
+    current_row = current.iloc[0]
+    current_category = current_row['category']
+    current_score = current_row['eco_score']
+    
+    # Find alternatives: same category, better score, exclude current product
+    alternatives = summary_df[
+        (summary_df['category'] == current_category) &
+        (summary_df['eco_score'] > current_score) &
+        (summary_df['name'] != current_product_name)
+    ].copy()
+    
+    # Sort by eco score (best first)
+    alternatives = alternatives.sort_values('eco_score', ascending=False)
+    
+    # Take top N
+    alternatives = alternatives.head(max_alternatives)
+    
+    # Calculate improvement metrics for each alternative
+    results = []
+    for _, alt in alternatives.iterrows():
+        carbon_reduction = ((current_row['total_carbon_kg'] - alt['total_carbon_kg']) / current_row['total_carbon_kg'] * 100) if current_row['total_carbon_kg'] > 0 else 0
+        water_reduction = ((current_row['total_water_L'] - alt['total_water_L']) / current_row['total_water_L'] * 100) if current_row['total_water_L'] > 0 else 0
+        energy_reduction = ((current_row['total_energy_MJ'] - alt['total_energy_MJ']) / current_row['total_energy_MJ'] * 100) if current_row['total_energy_MJ'] > 0 else 0
+        
+        # Find the biggest improvement
+        improvements = []
+        if carbon_reduction > 5:
+            improvements.append(f"{carbon_reduction:.0f}% less carbon")
+        if water_reduction > 5:
+            improvements.append(f"{water_reduction:.0f}% less water")
+        if energy_reduction > 5:
+            improvements.append(f"{energy_reduction:.0f}% less energy")
+        
+        if not improvements:
+            improvements.append("Better overall eco score")
+        
+        results.append({
+            'name': alt['name'],
+            'eco_score': alt['eco_score'],
+            'improvement': improvements[0],  # Show the best improvement
+            'score_diff': alt['eco_score'] - current_score
+        })
+    
+    return results
 st.set_page_config(page_title="EcoLens", page_icon="🌱", layout="wide")
 st.markdown("""
 <style>
@@ -417,18 +471,29 @@ if st.session_state.page == "Home":
 # -------------------------
 elif st.session_state.page == "GreenScore":
     st.button("← Back to Home", on_click=go, args=("Home",))
-    st.title("🌿 GreenScore")
+    st.title("🌿 GreenScore")    
+    # Check if user clicked an alternative product
+    if 'selected_alternative' in st.session_state:
+        product_input = st.session_state['selected_alternative']
+        del st.session_state['selected_alternative']  # Clear it after using
+    else:
+        product_input = None
 
     # -----------------------------
     # Step 7: USER INPUT + DISPLAY
     # -----------------------------
+#If coming from alternative click, pre-select i
+    if product_input:
+        default_index = list(sorted(summary_df['name'].unique())).index(product_input)
+    else:
+        default_index = None
+    
     product_input = st.selectbox(
         "🔍 Search for a product",
         options=sorted(summary_df['name'].unique()),
-        index=None,
+        index=default_index,
         placeholder="Start typing to search..."
-    )     
-    
+    )
     if product_input:
         result = summary_df[summary_df['name'] == product_input]
         st.session_state.selected_product = product_input
@@ -598,22 +663,53 @@ elif st.session_state.page == "GreenScore":
             with st.expander("📊 View detailed data"):
                 st.dataframe(result, use_container_width=True)
 
-            # ✅ FIX 1: category must be INSIDE else block
-            category = result.iloc[0]['category'].strip()
-
+            # ✅ FIX 1: category must be INSIDE else block# =============================
+            # GREENER ALTERNATIVES
+            # =============================
             st.subheader("🌿 Greener Alternatives")
-
-            if category in GREENER_ALTERNATIVES:
-                for alt in GREENER_ALTERNATIVES[category]:
-                    st.markdown(
-                        f"""
-                        **{alt['name']}**  
-                        *Why it’s greener:* {alt['reason']}
-                        """
-                    )
+            st.caption("Click any product to view its full eco score")
+            
+            alternatives = get_greener_alternatives(product_input, summary_df, max_alternatives=5)
+            
+            if alternatives:
+                for alt in alternatives:
+                    col1, col2 = st.columns([4, 1])
+                    
+                    with col1:
+                        st.markdown(
+                            f"""
+                            <div style="
+                                background: linear-gradient(135deg, #E8F5E9 0%, #F5F1E8 100%);
+                                border-left: 4px solid #66BB6A;
+                                border-radius: 12px;
+                                padding: 16px;
+                                margin-bottom: 12px;
+                                cursor: pointer;
+                                transition: all 0.3s ease;
+                                box-shadow: 0 2px 6px rgba(46, 125, 50, 0.1);
+                            ">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <strong style="color:#2E7D32; font-size:17px;">{alt['name']}</strong><br>
+                                        <span style="color:#66BB6A; font-size:14px;">✨ {alt['improvement']}</span>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="color:#2E7D32; font-size:24px; font-weight:700;">{alt['eco_score']}</div>
+                                        <div style="color:#616161; font-size:12px;">+{alt['score_diff']:.1f} points</div>
+                                    </div>
+                                </div>
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+                    
+                    with col2:
+                        if st.button("View →", key=f"view_{alt['name']}", use_container_width=True):
+                            st.session_state['selected_alternative'] = alt['name']
+                            st.rerun()
             else:
-                st.write("No greener alternatives available for this category.")
-
+                st.info("🎉 Great choice! This is already one of the greenest options in its category.")
+            
 
 # -------------------------
 # CHATBOT PAGE
