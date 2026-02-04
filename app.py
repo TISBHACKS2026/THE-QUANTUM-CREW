@@ -143,6 +143,22 @@ MATERIAL_CSV = "material.csv"
 products_df = pd.read_csv(PRODUCT_CSV)
 materials_df = pd.read_csv(MATERIAL_CSV)
 
+NEW_FLAG_COLS = [
+    "microplastics",
+    "palm_oil",
+    "parabens",
+    "sulfates",
+    "recyclable_packaging",
+    "eco_certified",
+]
+
+for c in NEW_FLAG_COLS:
+    if c not in products_df.columns:
+        products_df[c] = 0
+
+# Make sure flags are 0/1 ints (handles blanks/NaN)
+products_df[NEW_FLAG_COLS] = products_df[NEW_FLAG_COLS].fillna(0).astype(int)
+
 # Convert material impact dataframe to dictionary
 material_impact_dict = {}
 for _, row in materials_df.iterrows():
@@ -221,16 +237,50 @@ products_df['energy_norm'] = (products_df['total_energy_MJ'] / ENERGY_CAP).clip(
 products_df['waste_norm'] = (products_df['total_waste_score'] / WASTE_CAP).clip(0, 1)
 
 # =============================
-# FINAL ECOSCORE (0–100)
+# PACKAGING ECOSCORE (0–100)
 # =============================
-products_df['eco_score'] = (
+products_df['packaging_score'] = (
     (1 - products_df['carbon_norm']) * 0.35 +
     (1 - products_df['water_norm']) * 0.25 +
     (1 - products_df['energy_norm']) * 0.25 +
     (1 - products_df['waste_norm']) * 0.15
 ) * 100
 
-products_df['eco_score'] = products_df['eco_score'].round(1)
+products_df['packaging_score'] = products_df['packaging_score'].round(1)
+
+# =============================
+# INGREDIENT SCORE (0–100) using 0/1 flags
+# =============================
+# penalties (tweak anytime; these are hackathon-friendly)
+products_df['ingredient_score'] = 100 - (
+    30 * products_df['microplastics'] +
+    20 * products_df['palm_oil'] +
+    10 * products_df['parabens'] +
+    10 * products_df['sulfates']
+)
+
+products_df['ingredient_score'] = products_df['ingredient_score'].clip(0, 100).round(1)
+
+# =============================
+# BONUS SCORE (0–100)
+# - small trust/circularity boost
+# =============================
+# simple: if recyclable or certified -> better bonus
+products_df['bonus_score'] = 60 + (
+    20 * products_df['recyclable_packaging'] +
+    20 * products_df['eco_certified']
+)
+products_df['bonus_score'] = products_df['bonus_score'].clip(0, 100).round(1)
+
+# =============================
+# FINAL ECOSCORE (0–100)
+# Breakup: 50% packaging, 40% ingredients, 10% bonus
+# =============================
+products_df['eco_score'] = (
+    0.50 * products_df['packaging_score'] +
+    0.40 * products_df['ingredient_score'] +
+    0.10 * products_df['bonus_score']
+).round(1)
 
 # =============================
 # FINAL SUMMARY TABLE (REQUIRED FOR GREEN SCORE PAGE)
@@ -242,8 +292,11 @@ summary_df = products_df[[
     'total_water_L',
     'total_energy_MJ',
     'total_waste_score',
+    'packaging_score',
+    'ingredient_score',
+    'bonus_score',
     'eco_score'
-]].copy()
+]].copy()copy()
 
 
 # -------------------------
