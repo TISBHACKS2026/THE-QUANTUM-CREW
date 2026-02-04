@@ -1021,7 +1021,6 @@ elif st.session_state.page == "Impact Dashboard":
         st.success("Impact history cleared 🌱")
         st.rerun()
 
-
 # -------------------------
 # YOUR NEXT STEPS PAGE
 # -------------------------
@@ -1029,18 +1028,23 @@ elif st.session_state.page == "NextSteps":
 
     st.button("← Back to Home", on_click=go, args=("Home",))
     st.title("🧭 Your Next Steps")
-    st.caption("Practical swaps and habits to lower your impact")
+    st.caption("Simple actions that lower your impact — even if you don’t switch products immediately")
 
+    # =====================
+    # CATEGORY SELECTOR
+    # =====================
     category = st.selectbox(
-        "Choose a product type",
+        "Choose a product category",
         ["Shampoo", "Cream", "Sunscreen", "Body Wash"]
     )
 
-    st.divider()
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    # -------------------------
-    # BEST ECO SUBSTITUTES
-    # -------------------------
+    # =====================
+    # BEST ALTERNATIVES
+    # =====================
+    st.subheader("🌿 Best Eco Alternatives")
+
     BEST_SUBS = {
         "Shampoo": [
             "Ethique Shampoo Bar",
@@ -1063,28 +1067,105 @@ elif st.session_state.page == "NextSteps":
         ]
     }
 
-    st.subheader("🌿 Better Alternatives")
+    cols = st.columns(3)
 
-    for prod in BEST_SUBS[category]:
-        st.markdown(f"✅ {prod}")
+    for i, prod in enumerate(BEST_SUBS[category]):
+        with cols[i % 3]:
+            st.markdown(f"""
+            <div style="
+                background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+                padding:18px;
+                border-radius:14px;
+                text-align:center;
+                box-shadow:0 4px 10px rgba(0,0,0,0.08);
+                margin-bottom:14px;
+            ">
+                <h4 style="margin:0;">{prod}</h4>
+                <p style="font-size:14px; opacity:0.7;">Lower packaging & ingredient impact</p>
+            </div>
+            """, unsafe_allow_html=True)
 
-    st.divider()
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    # -------------------------
+    # =====================
     # IF YOU ALREADY BOUGHT IT
-    # -------------------------
+    # =====================
     st.subheader("♻️ If You Already Bought a Regular Product")
 
-    tips = [
-        "Use the product fully before replacing it",
-        "Reuse the container for storage or refills",
-        "Recycle packaging properly",
-        "Use smaller amounts per wash",
-        "Avoid double-washing or overuse"
+    components.html("""
+    <div style="
+        background:#1f2933;
+        border-radius:18px;
+        padding:36px;
+        margin-top:12px;
+        font-family: system-ui;
+    ">
+      <div style="display:flex; gap:28px; align-items:center;">
+
+        <div style="flex:1.2;">
+          <h2 style="color:white;">Reduce Harm While Using It</h2>
+          <p style="color:rgba(255,255,255,0.9); font-size:17px;">
+            Sustainability isn’t about perfection. These habits cut impact without wasting what you already own.
+          </p>
+
+          <ul style="color:rgba(255,255,255,0.9); font-size:16px; line-height:1.7;">
+            <li>Use the product fully before replacing it</li>
+            <li>Use smaller amounts per wash</li>
+            <li>Avoid double cleansing or overuse</li>
+            <li>Refill or reuse the container</li>
+            <li>Recycle packaging properly</li>
+            <li>Choose cold or short washes when possible</li>
+          </ul>
+        </div>
+
+        <div style="flex:1;">
+          <div style="
+              width:420px;
+              height:260px;
+              border-radius:14px;
+              overflow:hidden;
+              box-shadow:0 8px 20px rgba(0,0,0,0.25);
+          ">
+            <img src="https://www.unep.org/sites/default/files/styles/article_billboard_image/public/2022-10/plastic-recycling.jpg"
+                 style="width:100%; height:100%; object-fit:cover;">
+          </div>
+        </div>
+
+      </div>
+    </div>
+    """, height=360)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # =====================
+    # DAILY MICRO HABITS
+    # =====================
+    st.subheader("🌱 Everyday Micro-Habits")
+
+    habits = [
+        "Buy refills when available",
+        "Avoid impulse purchases",
+        "Choose multi-purpose products",
+        "Carry your own bottle or container",
+        "Prefer bars over liquids"
     ]
 
-    for t in tips:
-        st.markdown(f"- {t}")
+    cols = st.columns(5)
+
+    for i, h in enumerate(habits):
+        with cols[i]:
+            st.markdown(f"""
+            <div style="
+                background:#0f766e;
+                color:white;
+                padding:16px;
+                border-radius:12px;
+                text-align:center;
+                font-size:14px;
+            ">
+                {h}
+            </div>
+            """, unsafe_allow_html=True)
 
 # -------------------------
 # ABOUT PAGE
