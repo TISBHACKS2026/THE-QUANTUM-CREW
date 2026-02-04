@@ -423,12 +423,15 @@ elif st.session_state.page == "GreenScore":
     # -----------------------------
     # Step 7: USER INPUT + DISPLAY
     # -----------------------------
-    product_input = st.text_input("🔍 Enter product name", placeholder="e.g., Organic Cotton T-Shirt")
-      
+    product_input = st.selectbox(
+        "🔍 Search for a product",
+        options=sorted(summary_df['name'].unique()),
+        index=None,
+        placeholder="Start typing to search..."
+    )     
+    
     if product_input:
-        result = summary_df[
-            summary_df['name'].str.lower() == product_input.lower()
-        ]
+        result = summary_df[summary_df['name'] == product_input]
     
         if result.empty:
             st.error("❌ Product not found in database.")
