@@ -737,10 +737,15 @@ elif st.session_state.page == "Impact Dashboard":
     # =============================
     avg_score = history["Eco Score"].mean()
 
-    c1, c2, c3 = st.columns(3)
+    total_eco_score = int(avg_score * len(history))  
+    total_eco_score = min(total_eco_score, 1000)    
+
+    c1, c2, c3, c4 = st.columns(4)
+
     c1.metric("Average Eco Score", f"{avg_score:.1f} / 100")
     c2.metric("Products Logged", len(history))
     c3.metric("High-Eco Choices", (history["Eco Score"] >= 80).sum())
+    c4.metric("Total Eco Score", f"{total_eco_score} pts")
 
     # =============================
     # 🌍 HUMAN IMPACT SUMMARY
