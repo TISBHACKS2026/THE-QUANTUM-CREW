@@ -995,9 +995,9 @@ elif st.session_state.page == "GreenScore":
                             st.session_state['selected_alternative'] = alt['name']
                             st.rerun()
                         else:
-                    st.info(
-                       "🎉 Great choice! This is already one of the greenest options in its category."
-                )
+                            st.info(
+                            "🎉 Great choice! This is already one of the greenest options in its category."
+                            )
 
             # =============================
             # AI DEEP DIVE EXPLANATION
