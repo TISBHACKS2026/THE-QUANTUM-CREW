@@ -1,15 +1,15 @@
 name,brand,category,material_1,weight_1_g,material_2,weight_2_g,microplastics,silicones,petroleum,recyclable_packaging,eco_certified,ultra_processed,high_sugar,palm_oil,animal_based
-Cetaphil Cream 80g,Cetaphil,Cream,PET,17,HDPE,4,0,1,1,0,0,0,0,0,0
-Aveeno Cream 200ml,Aveeno,Cream,PET,15,HDPE,3,0,1,1,1,0,0,0,0,0
-Mamaearth Cream 80g,MamaEarth,Cream,LDPE,20,HDPE,3,0,0,0,0,0,0,0,0,0
-Nivea Body Milk,Nivea,Cream,PET,100,HDPE,10,0,1,1,1,0,0,0,0,0
-Nivea Cream 75ml,Nivea,Cream,PET,15,HDPE,7,0,1,1,1,0,0,0,0,0
-Cetaphil Body Wash 1000ml,Cetaphil,Body Wash,PET,60,HDPE,10,0,0,0,1,0,0,0,0,0
-Soap & Glory Body Wash 300ml,Soap & Glory,Body Wash,PET,25,HDPE,5,1,0,0,0,0,0,0,0,0
-Asaya Sunscreen 150ml,Asaya,Sunscreen,Aluminum,12,HDPE,3,0,0,0,1,0,0,0,0,0
-Dot & Key Sunscreen 50g,Dot & Key,Sunscreen,PET,10,HDPE,2,0,1,0,1,0,0,0,0,0
-Nivea Sun 200ml,Nivea,Sunscreen,PET,20,HDPE,5,1,0,1,1,0,0,0,0,0
-BBlunt Shampoo 300ml,BBlunt,Shampoo,PET,25,HDPE,5,0,1,1,1,0,0,0,0,0
+Cetaphil Cream 80g,Cetaphil,Cream,HDPE,17,PP,4,0,1,1,0,0,0,0,0,0
+Aveeno Cream 200ml,Aveeno,Cream,HDPE,15,PP,3,0,1,1,1,0,0,0,0,0
+Mamaearth Cream 80g,MamaEarth,Cream,LDPE,20,PP,3,0,0,0,0,0,0,0,0,0
+Nivea Body Milk,Nivea,Cream,HDPE,100,PP,10,0,1,1,1,0,0,0,0,0
+Nivea Cream 75ml,Nivea,Cream,LDPE,15,PP,7,0,1,1,1,0,0,0,0,0
+Cetaphil Body Wash 1000ml,Cetaphil,Body Wash,HDPE,60,PP,10,0,0,0,1,0,0,0,0,0
+Soap & Glory Body Wash 300ml,Soap & Glory,Body Wash,PET,25,PP,5,1,0,0,0,0,0,0,0,0
+Asaya Sunscreen 150ml,Asaya,Sunscreen,Aluminum,12,PP,3,0,0,0,1,0,0,0,0,0
+Dot & Key Sunscreen 50g,Dot & Key,Sunscreen,LDPE,10,PP,2,0,1,0,1,0,0,0,0,0
+Nivea Sun 200ml,Nivea,Sunscreen,HDPE,20,PP,5,1,0,1,1,0,0,0,0,0
+BBlunt Shampoo 300ml,BBlunt,Shampoo,PET,25,PP,5,0,1,1,1,0,0,0,0,0
 
 Coca Cola 1L,Coca-Cola,Soft Drink,PET,35,HDPE,3,0,0,0,1,0,1,1,0,0
 Masala Veg Atta Noodles Pack of 4 290g,Maggi,Instant Noodles,Plastic Film,25,Cardboard,20,0,0,0,0,0,1,0,1,0
