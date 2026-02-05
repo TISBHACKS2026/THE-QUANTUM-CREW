@@ -996,6 +996,156 @@ elif st.session_state.page == "GreenScore":
                             st.rerun()
             else:
                 st.info("🎉 Great choice! This is already one of the greenest options in its category.")
+            # =============================
+# AI DEEP DIVE EXPLANATION
+# =============================
+            st.divider()
+
+            # =============================
+            # GREENER ALTERNATIVES
+            # =============================
+            st.subheader("🌿 Greener Alternatives")
+            st.caption("Click any product to view its full eco score")
+
+            alternatives = get_greener_alternatives(
+                product_input,
+                summary_df,
+                max_alternatives=5
+            )
+
+            if alternatives:
+                for alt in alternatives:
+                    col1, col2 = st.columns([4, 1])
+
+                    with col1:
+                        st.markdown(
+                            f"""
+                            <div style="
+                                background: linear-gradient(135deg, #e8f5e9 0%, #f5f1e8 100%);
+                                border-left: 5px solid #2d5016;
+                                border-radius: 14px;
+                                padding: 18px;
+                                margin-bottom: 14px;
+                                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
+                            ">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <div>
+                                        <strong style="color:#1a3d0f; font-size:17px;">
+                                            {alt['name']}
+                                        </strong><br>
+                                        <span style="color:#4d7b2f; font-size:14px;">
+                                            ✨ {alt['improvement']}
+                                        </span>
+                                    </div>
+                                    <div style="text-align:right;">
+                                        <div style="font-size:22px; font-weight:700; color:#2d5016;">
+                                            {alt['eco_score']}
+                                        </div>
+                                        <div style="font-size:12px; color:#5d4e37;">
+                                            +{alt['score_diff']:.1f}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            """,
+                            unsafe_allow_html=True
+                        )
+
+                    with col2:
+                        if st.button(
+                            "View →",
+                            key=f"view_{alt['name']}",
+                            use_container_width=True
+                        ):
+                            st.session_state["selected_alternative"] = alt["name"]
+                            st.rerun()
+
+            else:
+                st.info(
+                    "🎉 Great choice! This is already one of the greenest options in its category."
+                )
+
+            # =============================
+            # 🤖 AI DEEP DIVE EXPLANATION
+            # =============================
+            st.divider()
+            st.subheader("🤖 AI Insight: Understand This Eco Score")
+
+            st.caption(
+                "Get a deeper explanation of *why* this product scored the way it did, "
+                "and what smarter purchase choices you can make next."
+            )
+
+            from openai import OpenAI
+            client = OpenAI(api_key=st.secrets["OpenAIKey"])
+
+            if st.button("🧠 Ask AI to explain this Eco Score", use_container_width=True):
+
+                with st.spinner("Analyzing this product’s environmental impact... 🌍"):
+
+                    ai_prompt = f"""
+You are an environmental impact analyst inside a sustainability app.
+
+Explain the Eco Score for the following product in a clear, structured way.
+
+PRODUCT DETAILS:
+- Name: {product_input}
+- Category: {r['category']}
+- Eco Score: {r['eco_score']} / 100
+- Carbon Footprint: {r['total_carbon_kg']} kg CO₂e
+- Water Usage: {r['total_water_L']} L
+- Energy Use: {r['total_energy_MJ']} MJ
+- Waste Impact Score: {r['total_waste_score']}
+
+INGREDIENT FLAGS:
+- Microplastics present: {bool(int(r['microplastics']))}
+- Silicones present: {bool(int(r['silicones']))}
+- Petroleum-derived ingredients present: {bool(int(r['petroleum']))}
+
+INSTRUCTIONS:
+1. Explain WHY the eco score is at this level.
+2. Identify the biggest negative contributor.
+3. Mention ingredient flags only if present.
+4. Suggest 2–3 BETTER PURCHASE ACTIONS.
+5. Suggest what to look for in greener alternatives.
+6. No lifestyle tips.
+"""
+
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        temperature=0.4,
+                        messages=[
+                            {
+                                "role": "system",
+                                "content": (
+                                    "You explain product environmental impacts clearly "
+                                    "and focus only on purchase-related sustainability decisions."
+                                ),
+                            },
+                            {"role": "user", "content": ai_prompt},
+                        ],
+                    )
+
+                    ai_reply = response.choices[0].message.content
+
+                    st.markdown(
+                        f"""
+                        <div style="
+                            background: linear-gradient(135deg, #f5f1e8 0%, #ffffff 100%);
+                            border-left: 6px solid #2d5016;
+                            border-radius: 16px;
+                            padding: 22px;
+                            margin-top: 18px;
+                            box-shadow: 0 6px 18px rgba(45, 80, 22, 0.15);
+                        ">
+                            <div style="font-size: 1.05em; line-height: 1.65; color: #1a2318;">
+                                {ai_reply}
+                            </div>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+
             
 
 # -------------------------
@@ -1007,7 +1157,27 @@ elif st.session_state.page == "Chatbot":
     st.button("← Back to Home", on_click=go, args=("Home",))
 
     import streamlit as st
+    import pandas as pd
     from openai import OpenAI
+
+    # -----------------------------
+    # LOAD PRODUCT DATABASE (CSV ONLY)
+    # -----------------------------
+    product_df = pd.read_csv("product.csv")
+
+    # Reduce to safe AI context
+    product_context = product_df[[
+        "name",
+        "category",
+        "eco_score",
+        "total_carbon_kg",
+        "total_water_L",
+        "total_energy_MJ",
+        "total_waste_score",
+        "microplastics",
+        "silicones",
+        "petroleum"
+    ]].to_dict(orient="records")
 
     # -----------------------------
     # OPENAI CLIENT
@@ -1019,43 +1189,9 @@ elif st.session_state.page == "Chatbot":
     # -----------------------------
     st.title("🤖 Eco Assistant")
     st.caption(
-        "Ask questions about your eco score, impact graphs, or what you can improve 🌱"
+        "Ask about eco scores, products, greener alternatives, app features, "
+        "or environmental topics 🌱"
     )
-
-    # -----------------------------
-    # BUILD CONTEXT FROM IMPACT DATA
-    # -----------------------------
-    def get_impact_context():
-        if (
-            "impact_history" not in st.session_state
-            or st.session_state.impact_history.empty
-        ):
-            return "No products have been analysed yet."
-
-        df = st.session_state.impact_history
-
-        trend = "stable"
-        if len(df) >= 2:
-            change = df["Eco Score"].iloc[-1] - df["Eco Score"].iloc[0]
-            if change > 5:
-                trend = "improving"
-            elif change < -5:
-                trend = "declining"
-
-        return {
-            "products_logged": len(df),
-            "average_eco_score": round(df["Eco Score"].mean(), 1),
-            "eco_score_trend": trend,
-            "total_carbon_kg": round(df["Carbon (kg)"].sum(), 2),
-            "avg_water_L": round(df["Water (L)"].mean(), 1),
-            "avg_energy_MJ": round(df["Energy (MJ)"].mean(), 1),
-            "best_product": df.loc[df["Eco Score"].idxmax(), "Product"],
-            "worst_product": df.loc[df["Eco Score"].idxmin(), "Product"],
-            "highest_carbon_product": df.loc[df["Carbon (kg)"].idxmax(), "Product"],
-            "category_breakdown": df["Category"].value_counts().to_dict(),
-        }
-
-    impact_context = get_impact_context()
 
     # -----------------------------
     # CHAT MEMORY (SYSTEM PROMPT)
@@ -1065,42 +1201,42 @@ elif st.session_state.page == "Chatbot":
             {
                 "role": "system",
                 "content": (
-                    "You are an eco-focused assistant for a sustainability tracking app.\n\n"
-                    "You may ONLY answer questions related to:\n"
-                    "- sustainability\n"
-                    "- environmental impact\n"
-                    "- eco scores\n"
-                    "- greener alternatives\n"
-                    "- graphs and trends shown in the app\n"
-                    "- the user's logged product data\n\n"
+                    "You are an AI sustainability assistant embedded in an eco-impact app.\n\n"
 
-                    "Your responsibilities:\n"
-                    "- Explain graphs in simple language\n"
-                    "- Identify trends and patterns\n"
-                    "- Suggest realistic, practical actions\n"
-                    "- Highlight high-impact improvements\n\n"
+                    "YOU ONLY KNOW THE PRODUCT DATABASE PROVIDED BELOW.\n"
+                    "You do NOT have access to user purchase logs or personal history.\n\n"
 
-                    "Rules:\n"
-                    "- Do NOT invent data\n"
-                    "- If a product is not logged, say it must be analysed first\n"
-                    "- Keep advice beginner-friendly and achievable\n"
-                    "- If asked something unrelated, politely refuse\n\n"
+                    "You MAY answer questions about:\n"
+                    "- Products in the database\n"
+                    "- Eco Scores and why they are high or low\n"
+                    "- Carbon, water, energy, and waste impacts\n"
+                    "- Ingredient flags (microplastics, silicones, petroleum)\n"
+                    "- Greener alternatives and future purchase decisions\n"
+                    "- How features of this app work (GreenScore, Impact Dashboard, graphs)\n"
+                    "- General environmental and sustainability concepts\n\n"
 
-                    f"USER IMPACT DATA:\n{impact_context}"
+                    "RULES:\n"
+                    "- Do NOT invent products or data\n"
+                    "- If a product is not in the database, say so clearly\n"
+                    "- Keep advice focused on PURCHASE DECISIONS, not lifestyle habits\n"
+                    "- Be specific, concrete, and educational\n"
+                    "- If asked something unrelated, politely redirect\n\n"
+
+                    f"PRODUCT DATABASE:\n{product_context}"
                 ),
             }
         ]
 
     # -----------------------------
-    # HELPER ACTION BUTTON
+    # OPTIONAL QUICK HELP BUTTON
     # -----------------------------
-    if st.button("🌱 Explain my impact & suggest actions"):
+    if st.button("🌱 How should I use this app better?"):
         st.session_state.messages.append(
             {
                 "role": "user",
                 "content": (
-                    "Explain my eco impact trends and suggest 3 actions I can take "
-                    "to reduce my environmental footprint."
+                    "Explain how to use this app to make better purchasing decisions "
+                    "and reduce environmental impact."
                 ),
             }
         )
@@ -1116,7 +1252,9 @@ elif st.session_state.page == "Chatbot":
     # -----------------------------
     # USER INPUT
     # -----------------------------
-    user_input = st.chat_input("Ask about your impact, graphs, or next steps…")
+    user_input = st.chat_input(
+        "Ask about products, eco scores, alternatives, or sustainability…"
+    )
 
     if user_input:
         # Show user message
@@ -1134,7 +1272,7 @@ elif st.session_state.page == "Chatbot":
                 response = client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=st.session_state.messages,
-                    temperature=0.5,
+                    temperature=0.4,
                 )
 
                 assistant_reply = response.choices[0].message.content
