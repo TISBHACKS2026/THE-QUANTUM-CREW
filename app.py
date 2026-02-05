@@ -372,7 +372,12 @@ summary_df = products_df[[
     'packaging_score',
     'ingredient_score',
     'bonus_score',
-    'eco_score'
+    'eco_score',
+    'microplastics',
+    'petroleum',
+    'silicones',
+    'recyclable_packaging',
+    'eco_certified',
 ]].copy()
 
 
@@ -854,6 +859,58 @@ elif st.session_state.page == "GreenScore":
                         <div style="color: #3d4a35; font-size: 0.75em;">Score</div>
                     </div>
                 """, unsafe_allow_html=True)
+
+                        # ---------- INGREDIENT FLAGS (only show present ones) ----------
+            st.markdown("### 🧪 Ingredient Flags")
+            
+            flag_defs = [
+                {
+                    "key": "microplastics",
+                    "title": "Microplastics",
+                    "emoji": "🧬",
+                    "present": int(r["microplastics"]) == 1,
+                    "why": "Microplastics can persist in waterways and harm aquatic life when washed down drains."
+                },
+                {
+                    "key": "silicones",
+                    "title": "Silicones",
+                    "emoji": "🧴",
+                    "present": int(r["silicones"]) == 1,
+                    "why": "Some silicones are persistent and can contribute to long-lasting pollution in the environment."
+                },
+                {
+                    "key": "petroleum",
+                    "title": "Petroleum-derived",
+                    "emoji": "🛢️",
+                    "present": int(r["petroleum"]) == 1,
+                    "why": "Petroleum-based ingredients come from fossil fuels, increasing reliance on non-renewable resources."
+                },
+            ]
+            
+            present_flags = [f for f in flag_defs if f["present"]]
+            
+            if present_flags:
+                cols = st.columns(len(present_flags))
+                for col, flag in zip(cols, present_flags):
+                    with col:
+                        st.markdown(f"""
+                            <div style="
+                                background: linear-gradient(135deg, #fff4e6 0%, #f5f1e8 100%);
+                                border-left: 4px solid #d4a373;
+                                border-radius: 12px;
+                                padding: 18px 14px;
+                                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.10);
+                                min-height: 155px;
+                            ">
+                                <div style="font-size: 1.8em; margin-bottom: 6px;">{flag["emoji"]}</div>
+                                <div style="font-weight: 700; font-size: 1.05em; color: #1a2318;">{flag["title"]} — Present</div>
+                                <div style="margin-top: 10px; font-size: 0.9em; line-height: 1.45; color: #3d4a35;">
+                                    {flag["why"]}
+                                </div>
+                            </div>
+                        """, unsafe_allow_html=True)
+            else:
+                st.success("✅ No ingredient red flags detected for this product (based on our database).")
     
             st.markdown("<br>", unsafe_allow_html=True)
     
