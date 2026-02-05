@@ -995,8 +995,8 @@ elif st.session_state.page == "GreenScore":
                             st.session_state['selected_alternative'] = alt['name']
                             st.rerun()
                         else:
-                st.info(
-                    "🎉 Great choice! This is already one of the greenest options in its category."
+                    st.info(
+                       "🎉 Great choice! This is already one of the greenest options in its category."
                 )
 
             # =============================
@@ -1068,6 +1068,26 @@ elif st.session_state.page == "GreenScore":
                     {"role": "user", "content": product_question}
                 )
 
+                with st.chat_message("user"):
+                    st.markdown(product_question)
+
+                # -----------------------------
+                # AI RESPONSE
+                # -----------------------------
+                with st.chat_message("assistant"):
+                    with st.spinner("Thinking about this product… 🌍"):
+                        response = client.chat.completions.create(
+                            model="gpt-4o-mini",
+                            temperature=0.4,
+                            messages=st.session_state.product_ai_messages,
+                        )
+
+                        ai_reply = response.choices[0].message.content
+                        st.markdown(ai_reply)
+
+                st.session_state.product_ai_messages.append(
+                    {"role": "assistant", "content": ai_reply}
+                )
                 with st.chat_message("user"):
                     st.markdown(product_question)
 
