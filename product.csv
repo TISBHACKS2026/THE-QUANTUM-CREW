@@ -1,13 +1,13 @@
-name,brand,category,material_1,weight_1_g,material_2,weight_2_g,microplastics,palm_oil,silicones,petroleum,recyclable_packaging,eco_certified
-Cetaphil Cream 80g,Cetaphil,Cream,PET,17,HDPE,4,,,,,,
-Aveeno Cream 200ml,Aveeno,Cream,PET,15,HDPE,3,0,1,0,0,1,0
-Mamaearth Cream 80g,MamaEarth,Cream,LDPE,20,HDPE,3,,,,,,
-Nivea Cream 600ml,Nivea,Cream,PET,100,HDPE,10,,,,,,
-Nivea Cream 75ml,Nivea,Cream,PET,15,HDPE,7,,,,,,
-Cetaphil Body Wash 1000ml,Cetaphil,Body Wash,PET,60,HDPE,10,0,1,0,0,1,0
-Soap & Glory Body Wash 300ml,Soap & Glory,Body Wash,PET,25,HDPE,5,,,,,,
-Asaya Sunscreen 150ml,Asaya,Sunscreen,Aluminum,12,HDPE,3,0,1,0,0,1,0
-Dot & Key Sunscreen 50g,Dot & Key,Sunscreen,PET,10,HDPE,2,,,,,,
-Nivea Sun 200ml,Nivea,Sunscreen,PET,20,HDPE,5,,,,,,
-BBlunt Shampoo 300ml,BBlunt,Shampoo,PET,25,HDPE,5,,,,,,
-L'Oreal Shampoo 300ml,L'Oreal,Shampoo,PET,25,HDPE,5,,,,,,
+name,brand,category,material_1,weight_1_g,material_2,weight_2_g,microplastics,,silicones,petroleum,recyclable_packaging,eco_certified
+Cetaphil Cream 80g,Cetaphil,Cream,PET,17,HDPE,4,,,,,
+Aveeno Cream 200ml,Aveeno,Cream,PET,15,HDPE,3,0,0,0,1,0
+Mamaearth Cream 80g,MamaEarth,Cream,LDPE,20,HDPE,3,,,,,
+Nivea Cream 600ml,Nivea,Cream,PET,100,HDPE,10,,,,,
+Nivea Cream 75ml,Nivea,Cream,PET,15,HDPE,7,,,,,
+Cetaphil Body Wash 1000ml,Cetaphil,Body Wash,PET,60,HDPE,10,0,0,0,1,0
+Soap & Glory Body Wash 300ml,Soap & Glory,Body Wash,PET,25,HDPE,5,,,,,
+Asaya Sunscreen 150ml,Asaya,Sunscreen,Aluminum,12,HDPE,3,0,0,0,1,0
+Dot & Key Sunscreen 50g,Dot & Key,Sunscreen,PET,10,HDPE,2,,,,,
+Nivea Sun 200ml,Nivea,Sunscreen,PET,20,HDPE,5,,,,,
+BBlunt Shampoo 300ml,BBlunt,Shampoo,PET,25,HDPE,5,,,,,
+L'Oreal Shampoo 300ml,L'Oreal,Shampoo,PET,25,HDPE,5,,,,,
