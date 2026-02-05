@@ -838,8 +838,7 @@ elif st.session_state.page == "Chatbot":
   
 
     st.button("← Back to Home", on_click=go, args=("Home",))
-    st.title("🤖 AI Chatbot")
-    st.write("Ask a question about sustainability, ingredients, and alternatives.")
+    
 
    
 
