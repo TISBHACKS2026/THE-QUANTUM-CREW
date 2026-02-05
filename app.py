@@ -1156,32 +1156,51 @@ elif st.session_state.page == "Impact Dashboard":
     # -----------------------------
     client = OpenAI(api_key=st.secrets["OpenAIKey"])
 
-    def explain_with_ai(title, data):
-        prompt = f"""
-You are an eco-impact assistant inside a sustainability dashboard.
+    def explain_with_ai(title, data, products):
+       prompt = f"""
+You are an AI sustainability analyst embedded inside a purchase-impact dashboard.
 
-Graph title: {title}
+Context:
+- The user logs products they buy
+- Each product has an Eco Score, carbon, water, energy, and waste impact
+- The dashboard only tracks PURCHASES (not lifestyle habits)
 
-User data:
+Graph title:
+{title}
+
+Products involved:
+{products}
+
+User data (aggregated from logged products):
 {data}
 
-Tasks:
-1. Explain clearly what this graph shows (max 4 lines).
-2. Suggest 3 realistic actions the user can take next.
+Your tasks:
+
+1. Explain what this graph reveals about the USER'S PURCHASE PATTERNS.
+   - Mention specific impact categories (carbon, water, energy, waste)
+   - Point out what is unusually high or low
+   - Be concrete and data-driven (not generic)
+
+2. Suggest 3 IMPROVEMENTS RELATED ONLY TO FUTURE PURCHASES.
+   - Suggest product alternatives, material swaps, or category changes
+   - Example: “Switch from X-type products to Y-type products”
+   - You MAY suggest searching for lower-impact alternatives
+   - DO NOT suggest lifestyle actions (no showers, lights, transport, etc.)
 
 Rules:
-- Be encouraging
-- No guilt, no judgement
-- Do NOT invent numbers
+- No generic eco tips
+- No guilt or moralising
+- Friendly, insightful, specific
+- Assume a curious student user
 """
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.4
-        )
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.35
+    )
 
-        return response.choices[0].message.content
+    return response.choices[0].message.content
 
     # -----------------------------
     # REQUIRE HISTORY
@@ -1233,7 +1252,12 @@ Rules:
                 "trend": "improving" if delta > 5 else "declining" if delta < -5 else "stable"
             }
 
-            ai_text = explain_with_ai("EcoScore trend over time", summary)
+            products = history["Product"].tolist()
+            ai_text = explain_with_ai(
+                 "EcoScore trend over time",
+                 summary,
+                 products
+            )
             explanation, actions = ai_text.split("2.", 1)
 
             st.info(explanation.strip())
@@ -1268,10 +1292,13 @@ Rules:
                 zip(impact_avg["Impact Type"], impact_avg["Average Value"])
             )
 
+            products = history["Product"].unique().tolist()
+
             ai_text = explain_with_ai(
-                "Average environmental impact breakdown",
-                impact_dict
-            )
+             "Average environmental impact by purchase",
+             impact_dict,
+             products
+           )
 
             explanation, actions = ai_text.split("2.", 1)
 
@@ -1319,10 +1346,13 @@ Rules:
                     .to_dict()
                 )
 
-                ai_text = explain_with_ai(
-                    "Product impact comparison",
-                    comparison_summary
-                )
+            products = compare_df["Product"].tolist()
+
+            ai_text = explain_with_ai(
+              "Product impact comparison",
+              comparison_summary,
+              products
+              )
 
                 explanation, actions = ai_text.split("2.", 1)
 
