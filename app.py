@@ -8,6 +8,11 @@ import base64
 import io
 from rapidfuzz import process, fuzz
 from openai import OpenAI
+# -----------------------------
+# OPENAI SETUP (GLOBAL)
+# -----------------------------
+OpenAIKey = st.secrets["OpenAIKey"]
+client = OpenAI(api_key=OpenAIKey)
 def get_greener_alternatives(current_product_name, summary_df, max_alternatives=5):
     """
     Find greener alternatives from the actual product database.
