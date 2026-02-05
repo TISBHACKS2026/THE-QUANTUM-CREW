@@ -637,11 +637,7 @@ elif st.session_state.page == "GreenScore":
 
     if "logged_keys" not in st.session_state:
         st.session_state.logged_keys = set()
-    if 'selected_alternative' in st.session_state:
-        product_input = st.session_state['selected_alternative']
-        del st.session_state['selected_alternative']  # Clear it after using
-    else:
-        product_input = None
+
 
     # -----------------------------
     # Step 7: USER INPUT + DISPLAY
@@ -672,18 +668,27 @@ elif st.session_state.page == "GreenScore":
     # -----------------------------
     # PRODUCT SEARCH (ALWAYS VISIBLE)
     # -----------------------------
+# -----------------------------
+# PRODUCT SEARCH (ALWAYS VISIBLE)
+# -----------------------------
     product_options = sorted(summary_df['name'].unique())
+    
+    # Priority:
+    # 1. Clicked alternative
+    # 2. Scanned product
+    # 3. Previous selection
     
     preselected_product = None
     
-    # Priority: scan > alternative > previous selection
-    if "selected_product" in st.session_state:
+    if "selected_alternative" in st.session_state:
+        preselected_product = st.session_state.selected_alternative
+    elif "selected_product" in st.session_state:
         preselected_product = st.session_state.selected_product
     
     if preselected_product in product_options:
         default_index = product_options.index(preselected_product)
     else:
-        default_index = None
+        default_index = 0
     
     product_input = st.selectbox(
         "🔍 Search for a product",
@@ -691,6 +696,10 @@ elif st.session_state.page == "GreenScore":
         index=default_index,
         placeholder="Start typing to search..."
     )
+    
+    # Clear after applying
+    if "selected_alternative" in st.session_state:
+        del st.session_state["selected_alternative"]
 
     if product_input:
         result = summary_df[summary_df['name'] == product_input]
