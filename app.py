@@ -841,57 +841,75 @@ elif st.session_state.page == "Chatbot":
     st.title("🤖 AI Chatbot")
     st.write("Ask a question about sustainability, ingredients, and alternatives.")
 
-    API_URL = "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2"
-    HEADERS = {
-        "Authorization": f"Bearer {st.secrets['HF_API_KEY']}"
-    }
+   
 
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
+    import streamlit as st
+    from openai import OpenAI
 
-    user_q = st.text_input("Your question")
+    # -----------------------------
+    # INIT OPENAI CLIENT
+    # -----------------------------
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
-    if st.button("Ask") and user_q.strip():
-        with st.spinner("Thinking..."):
-            response = requests.post(
-                API_URL,
-                headers=HEADERS,
-                json={"inputs": f"Answer clearly:\n{user_q}"}
-            )
+    # -----------------------------
+    # PAGE SETUP
+    # -----------------------------
+    st.title("🤖 Eco Assistant")
+    st.caption("Ask me about sustainability, eco scores, or greener choices 🌱")
 
-            if response.status_code == 200:
-                ai_reply = response.json()[0]["generated_text"]
-            else:
-                ai_reply = "⚠️ AI service unavailable. Try again."
+    # -----------------------------
+    # CHAT MEMORY
+    # -----------------------------
+    if "messages" not in st.session_state:
+        st.session_state.messages = [
+            {
+                "role": "system",
+                "content": (
+                    "You are a helpful sustainability assistant. "
+                    "Give clear, practical, beginner-friendly answers. "
+                    "Be concise and encouraging."
+                )
+            }
+        ]
 
-        st.session_state.chat_history.append(("You", user_q))
-        st.session_state.chat_history.append(("AI", ai_reply))
+    # -----------------------------
+    # DISPLAY CHAT
+    # -----------------------------
+    for msg in st.session_state.messages[1:]:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
 
-    for speaker, msg in st.session_state.chat_history:
-        if speaker == "You":
-            st.markdown(f"""
-                <div style="
-                    background: linear-gradient(135deg, #f5f1e8 0%, #faf8f3 100%);
-                    border-left: 4px solid #7c9070;
-                    border-radius: 12px;
-                    padding: 14px 18px;
-                    margin-bottom: 12px;
-                ">
-                    <strong style="color:#2d5016;">You:</strong> <span style="color:#3d4a35;">{msg}</span>
-                </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown(f"""
-                <div style="
-                    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f3 100%);
-                    border-left: 4px solid #2d5016;
-                    border-radius: 12px;
-                    padding: 14px 18px;
-                    margin-bottom: 12px;
-                ">
-                    <strong style="color:#1a3d0f;">AI:</strong> <span style="color:#2d5016;">{msg}</span>
-                </div>
-            """, unsafe_allow_html=True)
+    # -----------------------------
+    # USER INPUT
+    # -----------------------------
+    user_input = st.chat_input("Ask something eco-related...")
+
+    if user_input:
+        # show user message
+        st.session_state.messages.append(
+            {"role": "user", "content": user_input}
+        )
+        with st.chat_message("user"):
+            st.markdown(user_input)
+
+        # -----------------------------
+        # OPENAI RESPONSE
+        # -----------------------------
+        with st.chat_message("assistant"):
+            with st.spinner("Thinking 🌍"):
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=st.session_state.messages,
+                    temperature=0.6
+                )
+
+                assistant_reply = response.choices[0].message.content
+                st.markdown(assistant_reply)
+
+        st.session_state.messages.append(
+            {"role": "assistant", "content": assistant_reply}
+        )
+
 
 
 # -------------------------
