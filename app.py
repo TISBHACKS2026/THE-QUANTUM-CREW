@@ -669,24 +669,28 @@ elif st.session_state.page == "GreenScore":
         # Decide preselected product
         # Priority: scanned > alternative > previous selection
         # -----------------------------
-        product_options = sorted(summary_df['name'].unique())
-        
-        preselected_product = None
-        
-        if "selected_product" in st.session_state:
-            preselected_product = st.session_state.selected_product
-        
-        if preselected_product in product_options:
-            default_index = product_options.index(preselected_product)
-        else:
-            default_index = None
-        
-        product_input = st.selectbox(
-            "🔍 Search for a product",
-            options=product_options,
-            index=default_index,
-            placeholder="Start typing to search..."
-        )
+    # -----------------------------
+    # PRODUCT SEARCH (ALWAYS VISIBLE)
+    # -----------------------------
+    product_options = sorted(summary_df['name'].unique())
+    
+    preselected_product = None
+    
+    # Priority: scan > alternative > previous selection
+    if "selected_product" in st.session_state:
+        preselected_product = st.session_state.selected_product
+    
+    if preselected_product in product_options:
+        default_index = product_options.index(preselected_product)
+    else:
+        default_index = None
+    
+    product_input = st.selectbox(
+        "🔍 Search for a product",
+        options=product_options,
+        index=default_index,
+        placeholder="Start typing to search..."
+    )
 
     if product_input:
         result = summary_df[summary_df['name'] == product_input]
