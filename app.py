@@ -1176,26 +1176,38 @@ elif st.session_state.page == "Chatbot":
     # -----------------------------
     st.title("🤖 Eco Assistant")
     st.caption(
-        "Ask about products, eco scores, how they’re calculated, or greener buying choices 🌱"
+        "Ask about products, eco scores, materials, or greener buying choices 🌱"
     )
 
     # -----------------------------
-    # BUILD CSV CONTEXT
+    # BUILD CSV CONTEXT (FIXED)
     # -----------------------------
     def get_csv_context():
+
+        eco_col = "Eco Score" if "Eco Score" in product_df.columns else None
+
         return {
             "total_products": len(product_df),
-            "categories": product_df["category"].unique().tolist(),
-            "eco_score_range": [
-                int(product_df["eco_score"].min()),
-                int(product_df["eco_score"].max())
-            ],
-            "materials_tracked": material_df["material"].unique().tolist(),
+            "categories": product_df["category"].unique().tolist()
+            if "category" in product_df.columns else [],
+            "eco_score_range": (
+                [
+                    int(product_df[eco_col].min()),
+                    int(product_df[eco_col].max()),
+                ]
+                if eco_col
+                else "Eco score column not found"
+            ),
+            "materials_tracked": material_df["material"].unique().tolist()
+            if "material" in material_df.columns else [],
             "impact_metrics": [
-                "carbon_kg",
-                "water_L",
-                "energy_MJ",
-                "waste_score"
+                col for col in [
+                    "Carbon (kg)",
+                    "Water (L)",
+                    "Energy (MJ)",
+                    "Waste Score"
+                ]
+                if col in product_df.columns
             ],
         }
 
@@ -1212,27 +1224,26 @@ elif st.session_state.page == "Chatbot":
                     "You are an eco-focused assistant inside a sustainability app.\n\n"
 
                     "You may ONLY answer questions related to:\n"
-                    "- names listed in product.csv\n"
-                    "- material listed in material.csv\n"
+                    "- products listed in product.csv\n"
+                    "- materials listed in material.csv\n"
                     "- how the GreenScore is calculated\n"
                     "- environmental impact of purchases\n"
                     "- greener product alternatives\n"
                     "- general environmental sustainability\n"
                     "- basic greetings\n\n"
 
-                    "GreenScore logic overview (high level):\n"
-                    "- Based on summed material impacts\n"
+                    "GreenScore explanation:\n"
+                    "- Calculated from material impacts\n"
                     "- Includes carbon, water, energy, and waste\n"
-                    "- Scores are normalized and weighted\n"
+                    "- Values are normalized and weighted\n"
                     "- Higher score = lower environmental impact\n\n"
 
                     "Rules:\n"
                     "- Do NOT invent products or materials\n"
-                    "- If a product is not in product.csv, say it is unavailable\n"
-                    "- Focus on PURCHASE decisions, not lifestyle habits\n"
-                    "- Avoid generic advice like 'save water' or 'turn off lights'\n"
-                    "- If asked something unrelated, politely refuse\n"
-                    "- Keep answers specific and practical\n\n"
+                    "- If a product is not in product.csv, say so\n"
+                    "- Focus on purchase decisions, not lifestyle habits\n"
+                    "- Avoid generic advice\n"
+                    "- Politely refuse unrelated questions\n\n"
 
                     f"AVAILABLE DATA CONTEXT:\n{csv_context}"
                 ),
@@ -1240,7 +1251,7 @@ elif st.session_state.page == "Chatbot":
         ]
 
     # -----------------------------
-    # DISPLAY CHAT HISTORY
+    # DISPLAY CHAT
     # -----------------------------
     for msg in st.session_state.messages[1:]:
         with st.chat_message(msg["role"]):
@@ -1250,11 +1261,10 @@ elif st.session_state.page == "Chatbot":
     # USER INPUT
     # -----------------------------
     user_input = st.chat_input(
-        "Ask about a product, eco score, materials, or greener alternatives…"
+        "Ask about products, eco scores, materials, or greener alternatives…"
     )
 
     if user_input:
-        # Store user message
         st.session_state.messages.append(
             {"role": "user", "content": user_input}
         )
@@ -1279,6 +1289,7 @@ elif st.session_state.page == "Chatbot":
         st.session_state.messages.append(
             {"role": "assistant", "content": assistant_reply}
         )
+
 
 
 
