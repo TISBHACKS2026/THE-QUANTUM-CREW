@@ -1173,22 +1173,20 @@ elif st.session_state.page == "NextSteps":
 
     st.button("← Back to Home", on_click=go, args=("Home",))
     st.title("🧭 Your Next Steps")
-    st.caption("Simple actions that lower your impact — even if you don't switch products immediately")
-
-    # =====================
-    # CATEGORY SELECTOR
-    # =====================
-    category = st.selectbox(
-        "Choose a product category",
-        ["Shampoo", "Cream", "Sunscreen", "Body Wash"]
-    )
+    st.caption("Clear, practical actions to reduce your impact")
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # =====================
-    # BEST ALTERNATIVES
-    # =====================
-    st.subheader("🌿 Best Eco Alternatives")
+    # ============================
+    # SECTION 1 — ECO ALTERNATIVES
+    # ============================
+
+    st.subheader("🌿 Switch to Better Alternatives")
+
+    category = st.selectbox(
+        "Select a product category",
+        ["", "Shampoo", "Cream", "Sunscreen", "Body Wash"]
+    )
 
     BEST_SUBS = {
         "Shampoo": [
@@ -1208,110 +1206,132 @@ elif st.session_state.page == "NextSteps":
         ],
         "Body Wash": [
             "Ethique Solid Body Wash Bar",
-            "Earth Rhythm Body Wash Bar"
+            "Earth Rhythm Body Wash Bar",
+            "Plum BodyLovin Body Wash Bar"
         ]
     }
 
-    cols = st.columns(3)
+    if category != "":
+        c1, c2, c3 = st.columns(3)
 
-    for i, prod in enumerate(BEST_SUBS[category]):
-        with cols[i % 3]:
-            st.markdown(f"""
-            <div style="
-                background: linear-gradient(135deg, #e8f5e9 0%, #f5f1e8 100%);
-                padding:20px;
-                border-radius:14px;
-                text-align:center;
-                box-shadow:0 4px 12px rgba(45, 80, 22, 0.15);
-                margin-bottom:16px;
-                border: 2px solid #9cb380;
-            ">
-                <h4 style="margin:0; color:#2d5016;">{prod}</h4>
-                <p style="font-size:14px; color:#5d4e37; margin-top:8px;">Lower packaging & ingredient impact</p>
-            </div>
-            """, unsafe_allow_html=True)
+        for i, prod in enumerate(BEST_SUBS[category]):
+            with [c1, c2, c3][i]:
+                st.markdown(f"""
+                <div style="
+                    background:#102a13;
+                    border-radius:16px;
+                    padding:24px;
+                    text-align:center;
+                    box-shadow:0 6px 16px rgba(0,0,0,0.25);
+                    height:170px;
+                    display:flex;
+                    flex-direction:column;
+                    justify-content:center;
+                ">
+                    <h4 style="color:white;margin-bottom:10px;">{prod}</h4>
+                    <p style="color:rgba(255,255,255,0.7);font-size:14px;">
+                    Lower packaging & ingredient impact
+                    </p>
+                </div>
+                """, unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
 
-    # =====================
-    # IF YOU ALREADY BOUGHT IT
-    # =====================
+    # =================================
+    # SECTION 2 — IF YOU ALREADY BOUGHT
+    # =================================
+
     st.subheader("♻️ If You Already Bought a Regular Product")
 
-    components.html("""
-    <div style="
-        background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
-        border-radius:18px;
-        padding:36px;
-        margin-top:12px;
-        font-family: system-ui;
-        box-shadow: 0 8px 24px rgba(45, 80, 22, 0.3);
-    ">
-      <div style="display:flex; gap:28px; align-items:center;">
+    c1, c2, c3 = st.columns(3)
 
-        <div style="flex:1.2;">
-          <h2 style="color:#f5f1e8;">Reduce Harm While Using It</h2>
-          <p style="color:#e8f5e9; font-size:17px;">
-            Sustainability isn't about perfection. These habits cut impact without wasting what you already own.
-          </p>
-
-          <ul style="color:#e8f5e9; font-size:16px; line-height:1.7;">
-            <li>Use the product fully before replacing it</li>
-            <li>Use smaller amounts per wash</li>
-            <li>Avoid double cleansing or overuse</li>
-            <li>Refill or reuse the container</li>
-            <li>Recycle packaging properly</li>
-            <li>Choose cold or short washes when possible</li>
-          </ul>
+    # BOX 1 — USE LESS
+    with c1:
+        st.markdown("""
+        <div style="
+            background:#1b2f1f;
+            border-radius:16px;
+            padding:26px;
+            height:260px;
+            box-shadow:0 6px 16px rgba(0,0,0,0.25);
+        ">
+            <h4 style="color:white;">Use Less</h4>
+            <ul style="color:rgba(255,255,255,0.85); line-height:1.7;">
+                <li>Use smaller amounts</li>
+                <li>Avoid double cleansing</li>
+                <li>Don’t overapply</li>
+            </ul>
         </div>
+        """, unsafe_allow_html=True)
 
-        <div style="flex:1;">
-          <div style="
-              width:420px;
-              height:260px;
-              border-radius:14px;
-              overflow:hidden;
-              box-shadow:0 8px 20px rgba(0,0,0,0.35);
-              border: 2px solid rgba(156,179,128,0.3);
-          ">
-            <img src="https://www.unep.org/sites/default/files/styles/article_billboard_image/public/2022-10/plastic-recycling.jpg"
-                 style="width:100%; height:100%; object-fit:cover;">
-          </div>
+    # BOX 2 — EXTEND LIFE
+    with c2:
+        st.markdown("""
+        <div style="
+            background:#1b2f1f;
+            border-radius:16px;
+            padding:26px;
+            height:260px;
+            box-shadow:0 6px 16px rgba(0,0,0,0.25);
+        ">
+            <h4 style="color:white;">Extend Product Life</h4>
+            <ul style="color:rgba(255,255,255,0.85); line-height:1.7;">
+                <li>Finish the product fully</li>
+                <li>Use refills when possible</li>
+                <li>Store properly</li>
+            </ul>
         </div>
+        """, unsafe_allow_html=True)
 
-      </div>
-    </div>
-    """, height=360)
+    # BOX 3 — DISPOSE SMARTLY
+    with c3:
+        st.markdown("""
+        <div style="
+            background:#1b2f1f;
+            border-radius:16px;
+            padding:26px;
+            height:260px;
+            box-shadow:0 6px 16px rgba(0,0,0,0.25);
+        ">
+            <h4 style="color:white;">Dispose Smartly</h4>
+            <ul style="color:rgba(255,255,255,0.85); line-height:1.7;">
+                <li>Rinse container</li>
+                <li>Recycle correctly</li>
+                <li>Reuse for storage</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
 
-    # =====================
-    # DAILY MICRO HABITS
-    # =====================
+    # ============================
+    # SECTION 3 — DAILY MICRO HABITS
+    # ============================
+
     st.subheader("🌱 Everyday Micro-Habits")
 
+    c1, c2, c3 = st.columns(3)
+
     habits = [
-        "Buy refills when available",
+        "Buy refills",
+        "Prefer bars over liquids",
         "Avoid impulse purchases",
-        "Choose multi-purpose products",
-        "Carry your own bottle or container",
-        "Prefer bars over liquids"
+        "Choose multipurpose products",
+        "Carry your own bottle",
+        "Cold or short washes"
     ]
 
-    cols = st.columns(5)
-
     for i, h in enumerate(habits):
-        with cols[i]:
+        with [c1, c2, c3][i % 3]:
             st.markdown(f"""
             <div style="
-                background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
-                color:#f5f1e8;
+                background:#0f766e;
+                color:white;
+                border-radius:14px;
                 padding:18px;
-                border-radius:12px;
                 text-align:center;
-                font-size:14px;
-                font-weight:500;
-                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.2);
+                margin-bottom:14px;
+                box-shadow:0 4px 10px rgba(0,0,0,0.25);
             ">
                 {h}
             </div>
