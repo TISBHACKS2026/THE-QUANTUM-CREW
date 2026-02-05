@@ -655,17 +655,14 @@ elif st.session_state.page == "GreenScore":
     
         with st.spinner("Reading packaging text..."):
             all_text = ocr_image(image)
-    
+        
         with st.spinner("Identifying product..."):
             detected_name = extract_product_name(all_text)
             matched_name, confidence = fuzzy_match_product(detected_name, summary_df)
-    
-        if confidence > 60:
-            st.success(f"Detected: {matched_name} ({confidence:.0f}% match)")
-            st.session_state.selected_product = matched_name
-        else:
-            st.warning("Could not confidently identify product. Please select manually.")
-#If coming from alternative click, pre-select i
+        
+        st.success(f"Detected: {matched_name}")
+        st.session_state.selected_product = matched_name
+            
         # Decide preselected product (scan > alternative > none)
     preselected_product = None
     
