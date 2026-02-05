@@ -658,7 +658,7 @@ elif st.session_state.page == "GreenScore":
     elif product_input:
         preselected_product = product_input
         product_options = sorted(summary_df['name'].unique())
-    
+    product_options = sorted(summary_df['name'].unique())
     if preselected_product and preselected_product in product_options:
         default_index = product_options.index(preselected_product)
     else:
