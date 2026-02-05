@@ -183,9 +183,8 @@ materials_df = pd.read_csv(MATERIAL_CSV)
 
 NEW_FLAG_COLS = [
     "microplastics",
-    "palm_oil",
-    "parabens",
-    "sulfates",
+    "petroleum",
+    "silicones",
     "recyclable_packaging",
     "eco_certified",
 ]
@@ -196,16 +195,6 @@ for c in NEW_FLAG_COLS:
 
 # Make sure flags are 0/1 ints (handles blanks/NaN)
 products_df[NEW_FLAG_COLS] = products_df[NEW_FLAG_COLS].fillna(0).astype(int)
-
-# Convert material impact dataframe to dictionary
-material_impact_dict = {}
-for _, row in materials_df.iterrows():
-    material_impact_dict[row['material']] = {
-        'carbon': row['carbon_kg_per_kg'],
-        'water': row['water_L_per_kg'],
-        'energy': row['energy_MJ_per_kg'],
-        'waste': row['waste_score']
-    }
 
 # =============================
 # MATERIAL IMPACT DICTIONARY
@@ -291,10 +280,9 @@ products_df['packaging_score'] = products_df['packaging_score'].round(1)
 # =============================
 # penalties (tweak anytime; these are hackathon-friendly)
 products_df['ingredient_score'] = 100 - (
-    30 * products_df['microplastics'] +
-    20 * products_df['palm_oil'] +
-    10 * products_df['parabens'] +
-    10 * products_df['sulfates']
+    40 * products_df['microplastics'] +
+    35 * products_df['petroleum'] +
+    25 * products_df['silicones']
 )
 
 products_df['ingredient_score'] = products_df['ingredient_score'].clip(0, 100).round(1)
