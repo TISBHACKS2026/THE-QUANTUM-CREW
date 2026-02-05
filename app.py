@@ -80,8 +80,14 @@ def ocr_image(image):
         input=[{
             "role": "user",
             "content": [
-                {"type": "input_text", "text": "Extract ALL visible text from this product packaging."},
-                {"type": "input_image", "image_base64": img_b64}
+                {
+                    "type": "input_text",
+                    "text": "Extract ALL visible text from this product packaging."
+                },
+                {
+                    "type": "input_image",
+                    "image_url": f"data:image/png;base64,{img_b64}"
+                }
             ]
         }]
     )
