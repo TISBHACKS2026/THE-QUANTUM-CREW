@@ -992,41 +992,108 @@ elif st.session_state.page == "GreenScore":
 # -------------------------
 
 elif st.session_state.page == "Chatbot":
-  
 
     st.button("← Back to Home", on_click=go, args=("Home",))
-    
-
-   
 
     import streamlit as st
     from openai import OpenAI
 
     # -----------------------------
-    # INIT OPENAI CLIENT
+    # OPENAI CLIENT
     # -----------------------------
     client = OpenAI(api_key=st.secrets["OpenAIKey"])
 
     # -----------------------------
-    # PAGE SETUP
+    # PAGE HEADER
     # -----------------------------
     st.title("🤖 Eco Assistant")
-    st.caption("Ask me about sustainability, eco scores, or greener choices 🌱")
+    st.caption(
+        "Ask questions about your eco score, impact graphs, or what you can improve 🌱"
+    )
 
     # -----------------------------
-    # CHAT MEMORY
+    # BUILD CONTEXT FROM IMPACT DATA
+    # -----------------------------
+    def get_impact_context():
+        if (
+            "impact_history" not in st.session_state
+            or st.session_state.impact_history.empty
+        ):
+            return "No products have been analysed yet."
+
+        df = st.session_state.impact_history
+
+        trend = "stable"
+        if len(df) >= 2:
+            change = df["Eco Score"].iloc[-1] - df["Eco Score"].iloc[0]
+            if change > 5:
+                trend = "improving"
+            elif change < -5:
+                trend = "declining"
+
+        return {
+            "products_logged": len(df),
+            "average_eco_score": round(df["Eco Score"].mean(), 1),
+            "eco_score_trend": trend,
+            "total_carbon_kg": round(df["Carbon (kg)"].sum(), 2),
+            "avg_water_L": round(df["Water (L)"].mean(), 1),
+            "avg_energy_MJ": round(df["Energy (MJ)"].mean(), 1),
+            "best_product": df.loc[df["Eco Score"].idxmax(), "Product"],
+            "worst_product": df.loc[df["Eco Score"].idxmin(), "Product"],
+            "highest_carbon_product": df.loc[df["Carbon (kg)"].idxmax(), "Product"],
+            "category_breakdown": df["Category"].value_counts().to_dict(),
+        }
+
+    impact_context = get_impact_context()
+
+    # -----------------------------
+    # CHAT MEMORY (SYSTEM PROMPT)
     # -----------------------------
     if "messages" not in st.session_state:
         st.session_state.messages = [
             {
                 "role": "system",
                 "content": (
-                    "You are a helpful sustainability assistant. "
-                    "Give clear, practical, beginner-friendly answers. "
-                    "Be concise and encouraging."
-                )
+                    "You are an eco-focused assistant for a sustainability tracking app.\n\n"
+                    "You may ONLY answer questions related to:\n"
+                    "- sustainability\n"
+                    "- environmental impact\n"
+                    "- eco scores\n"
+                    "- greener alternatives\n"
+                    "- graphs and trends shown in the app\n"
+                    "- the user's logged product data\n\n"
+
+                    "Your responsibilities:\n"
+                    "- Explain graphs in simple language\n"
+                    "- Identify trends and patterns\n"
+                    "- Suggest realistic, practical actions\n"
+                    "- Highlight high-impact improvements\n\n"
+
+                    "Rules:\n"
+                    "- Do NOT invent data\n"
+                    "- If a product is not logged, say it must be analysed first\n"
+                    "- Keep advice beginner-friendly and achievable\n"
+                    "- If asked something unrelated, politely refuse\n\n"
+
+                    f"USER IMPACT DATA:\n{impact_context}"
+                ),
             }
         ]
+
+    # -----------------------------
+    # HELPER ACTION BUTTON
+    # -----------------------------
+    if st.button("🌱 Explain my impact & suggest actions"):
+        st.session_state.messages.append(
+            {
+                "role": "user",
+                "content": (
+                    "Explain my eco impact trends and suggest 3 actions I can take "
+                    "to reduce my environmental footprint."
+                ),
+            }
+        )
+        st.rerun()
 
     # -----------------------------
     # DISPLAY CHAT
@@ -1038,10 +1105,10 @@ elif st.session_state.page == "Chatbot":
     # -----------------------------
     # USER INPUT
     # -----------------------------
-    user_input = st.chat_input("Ask something eco-related...")
+    user_input = st.chat_input("Ask about your impact, graphs, or next steps…")
 
     if user_input:
-        # show user message
+        # Show user message
         st.session_state.messages.append(
             {"role": "user", "content": user_input}
         )
@@ -1049,14 +1116,14 @@ elif st.session_state.page == "Chatbot":
             st.markdown(user_input)
 
         # -----------------------------
-        # OPENAI RESPONSE
+        # AI RESPONSE
         # -----------------------------
         with st.chat_message("assistant"):
             with st.spinner("Thinking 🌍"):
                 response = client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=st.session_state.messages,
-                    temperature=0.6
+                    temperature=0.5,
                 )
 
                 assistant_reply = response.choices[0].message.content
@@ -1067,119 +1134,76 @@ elif st.session_state.page == "Chatbot":
         )
 
 
-
 # -------------------------
 # TOTAL IMPACT PAGE
 # -------------------------
 elif st.session_state.page == "Impact Dashboard":
+
     import pandas as pd
     import plotly.express as px
+    from openai import OpenAI
+    import streamlit as st
 
+    # -----------------------------
+    # NAV
+    # -----------------------------
     st.button("← Back to Home", on_click=go, args=("Home",))
     st.title("🌍 Your Sustainability Impact")
     st.caption("A living story of how your choices shape the planet 🌱")
 
-    # =============================
+    # -----------------------------
+    # OPENAI CLIENT
+    # -----------------------------
+    client = OpenAI(api_key=st.secrets["OpenAIKey"])
+
+    def explain_with_ai(title, data):
+        prompt = f"""
+You are an eco-impact assistant inside a sustainability dashboard.
+
+Graph title: {title}
+
+User data:
+{data}
+
+Tasks:
+1. Explain clearly what this graph shows (max 4 lines).
+2. Suggest 3 realistic actions the user can take next.
+
+Rules:
+- Be encouraging
+- No guilt, no judgement
+- Do NOT invent numbers
+"""
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.4
+        )
+
+        return response.choices[0].message.content
+
+    # -----------------------------
     # REQUIRE HISTORY
-    # =============================
+    # -----------------------------
     if "impact_history" not in st.session_state or st.session_state.impact_history.empty:
         st.info("Analyse products to start building your impact story 🌱")
         st.stop()
 
     history = st.session_state.impact_history.copy()
-
     st.divider()
 
     # =============================
-    # 🌱 BIG SUMMARY METRICS
+    # 🌱 SUMMARY METRICS
     # =============================
     avg_score = history["Eco Score"].mean()
     total_score = history["Eco Score"].sum()
 
     c1, c2, c3, c4 = st.columns(4)
-    
-    with c1:
-        st.markdown(f"""
-            <div style="
-                background: linear-gradient(135deg, #e8f5e9 0%, #f5f1e8 100%);
-                border-radius: 14px;
-                padding: 20px;
-                text-align: center;
-                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
-            ">
-                <div style="color: #5d4e37; font-size: 0.9em; margin-bottom: 8px;">Average Eco Score</div>
-                <div style="color: #2d5016; font-size: 2em; font-weight: bold;">{avg_score:.1f}</div>
-                <div style="color: #5d4e37; font-size: 0.8em;">/ 100</div>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    with c2:
-        st.markdown(f"""
-            <div style="
-                background: linear-gradient(135deg, #f5f1e8 0%, #faf8f3 100%);
-                border-radius: 14px;
-                padding: 20px;
-                text-align: center;
-                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
-            ">
-                <div style="color: #5d4e37; font-size: 0.9em; margin-bottom: 8px;">Products Logged</div>
-                <div style="color: #2d5016; font-size: 2em; font-weight: bold;">{len(history)}</div>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    with c3:
-        st.markdown(f"""
-            <div style="
-                background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f3 100%);
-                border-radius: 14px;
-                padding: 20px;
-                text-align: center;
-                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
-            ">
-                <div style="color: #5d4e37; font-size: 0.9em; margin-bottom: 8px;">High-Eco Choices</div>
-                <div style="color: #2d5016; font-size: 2em; font-weight: bold;">{(history["Eco Score"] >= 80).sum()}</div>
-            </div>
-        """, unsafe_allow_html=True)
-    
-    with c4:
-        st.markdown(f"""
-            <div style="
-                background: linear-gradient(135deg, #f5f1e8 0%, #faf8f3 100%);
-                border-radius: 14px;
-                padding: 20px;
-                text-align: center;
-                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
-            ">
-                <div style="color: #5d4e37; font-size: 0.9em; margin-bottom: 8px;">Total Eco Score</div>
-                <div style="color: #2d5016; font-size: 2em; font-weight: bold;">{int(total_score)}</div>
-            </div>
-        """, unsafe_allow_html=True)
-
-    st.divider()
-
-    # =============================
-    # 🌍 HUMAN IMPACT TRANSLATION
-    # =============================
-    avg_carbon = history["Carbon (kg)"].mean()
-    avg_water = history["Water (L)"].mean()
-    avg_energy = history["Energy (MJ)"].mean()
-
-    st.markdown("## 🌍 What This Means for the Planet")
-
-    st.markdown(f"""
-🌱 **On average, your purchases cause:**
-
-- 💨 **{avg_carbon:.2f} kg CO₂**  
-  *(≈ charging a phone {int(avg_carbon*120)} times 📱)*
-
-- 💧 **{avg_water:.1f} L water use**  
-  *(≈ {int(avg_water/50)} quick showers 🚿)*
-
-- ⚡ **{avg_energy:.1f} MJ energy demand**  
-  *(≈ powering a home for hours 🔌)*
-
-✨ *Small choices. Real consequences. Growing awareness.*
-""")
+    c1.metric("Average Eco Score", f"{avg_score:.1f} / 100")
+    c2.metric("Products Logged", len(history))
+    c3.metric("High-Eco Choices", (history["Eco Score"] >= 80).sum())
+    c4.metric("Total Eco Score", int(total_score))
 
     st.divider()
 
@@ -1196,31 +1220,29 @@ elif st.session_state.page == "Impact Dashboard":
         color_discrete_sequence=["#2d5016"]
     )
 
-    trend_fig.update_layout(
-        xaxis_title="Order of products analysed",
-        yaxis_title="Eco Score",
-        plot_bgcolor='rgba(245,241,232,0.3)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#9cb380')
-    )
-
     st.plotly_chart(trend_fig, use_container_width=True)
-    if len(history) >= 2:
+
+    if st.button("🤖 Let AI explain this EcoScore trend"):
+        with st.spinner("AI analysing your progress 🌱"):
             delta = history["Eco Score"].iloc[-1] - history["Eco Score"].iloc[0]
 
-            if delta > 5:
-                st.success(f"📈 Your EcoScore improved by **{delta:.1f} points** — your choices are getting greener 🌿")
-            elif delta < -5:
-                st.warning(f"📉 Your EcoScore dropped by **{abs(delta):.1f} points** — consider greener swaps 🔄")
-            else:
-                st.info("➖ Your EcoScore has stayed fairly stable — consistency is forming 🌱")
+            summary = {
+                "starting_score": float(history["Eco Score"].iloc[0]),
+                "latest_score": float(history["Eco Score"].iloc[-1]),
+                "average_score": round(avg_score, 1),
+                "trend": "improving" if delta > 5 else "declining" if delta < -5 else "stable"
+            }
+
+            ai_text = explain_with_ai("EcoScore trend over time", summary)
+            explanation, actions = ai_text.split("2.", 1)
+
+            st.info(explanation.strip())
+            st.success("2." + actions.strip())
 
     st.divider()
 
-   
-
     # =============================
-    # 📊 AVERAGE IMPACT BREAKDOWN
+    # 📊 IMPACT BREAKDOWN
     # =============================
     st.markdown("## 📊 What Impacts You the Most")
 
@@ -1237,23 +1259,31 @@ elif st.session_state.page == "Impact Dashboard":
         color="Impact Type",
         color_discrete_sequence=["#2d5016", "#3d6b1f", "#4d7b2f", "#7c9070"]
     )
-    
-    impact_fig.update_layout(
-        plot_bgcolor='rgba(245,241,232,0.3)',
-        paper_bgcolor='rgba(0,0,0,0)',
-        font=dict(color='#9cb380'),
-        showlegend=False
-    )
 
     st.plotly_chart(impact_fig, use_container_width=True)
+
+    if st.button("🤖 Let AI explain this impact breakdown"):
+        with st.spinner("Understanding your impact 🌍"):
+            impact_dict = dict(
+                zip(impact_avg["Impact Type"], impact_avg["Average Value"])
+            )
+
+            ai_text = explain_with_ai(
+                "Average environmental impact breakdown",
+                impact_dict
+            )
+
+            explanation, actions = ai_text.split("2.", 1)
+
+            st.info(explanation.strip())
+            st.success("2." + actions.strip())
 
     st.divider()
 
     # =============================
-    # 🔄 STACKED PRODUCT COMPARISON
+    # 🔄 PRODUCT COMPARISON
     # =============================
     st.markdown("## 🔄 Compare Products by Impact")
-    st.caption("See *why* a product scores better — not just the number 🌿")
 
     compare_products = st.multiselect(
         "Select products",
@@ -1278,32 +1308,28 @@ elif st.session_state.page == "Impact Dashboard":
             barmode="stack",
             color_discrete_sequence=["#2d5016", "#3d6b1f", "#4d7b2f", "#7c9070"]
         )
-        
-        stacked_fig.update_layout(
-            plot_bgcolor='rgba(245,241,232,0.3)',
-            paper_bgcolor='rgba(0,0,0,0)',
-            font=dict(color='#9cb380')
-        )
 
         st.plotly_chart(stacked_fig, use_container_width=True)
+
+        if st.button("🤖 Let AI explain this product comparison"):
+            with st.spinner("Comparing smarter choices 🌱"):
+                comparison_summary = (
+                    compare_df.groupby("Product")[impact_cols]
+                    .mean()
+                    .to_dict()
+                )
+
+                ai_text = explain_with_ai(
+                    "Product impact comparison",
+                    comparison_summary
+                )
+
+                explanation, actions = ai_text.split("2.", 1)
+
+                st.info(explanation.strip())
+                st.success("2." + actions.strip())
     else:
         st.info("Select at least two products 🌱")
-
-    st.divider()
-
-    # =============================
-    # 🏆 ECO STATUS
-    # =============================
-    st.markdown("## 🏆 Your Sustainability Status")
-
-    if avg_score >= 80:
-        st.success("🌟 Eco Hero — nature approves")
-    elif avg_score >= 65:
-        st.info("👍 Conscious Consumer")
-    elif avg_score >= 50:
-        st.warning("⚠️ Improving — momentum building")
-    else:
-        st.error("❗ High Impact — greener swaps needed")
 
     st.divider()
 
@@ -1316,12 +1342,12 @@ elif st.session_state.page == "Impact Dashboard":
     if st.button("🗑️ Clear Impact History"):
         st.session_state.impact_history = st.session_state.impact_history.iloc[0:0]
 
-        # 🔑 also reset logging guards
         if "logged_keys" in st.session_state:
             st.session_state.logged_keys.clear()
 
         st.success("Impact history cleared 🌱")
         st.rerun()
+
 
 # -------------------------
 # YOUR NEXT STEPS PAGE
