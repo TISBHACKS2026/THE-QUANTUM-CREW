@@ -1157,7 +1157,7 @@ elif st.session_state.page == "Impact Dashboard":
     client = OpenAI(api_key=st.secrets["OpenAIKey"])
 
     def explain_with_ai(title, data, products):
-       prompt = f"""
+        prompt = f"""
 You are an AI sustainability analyst embedded inside a purchase-impact dashboard.
 
 Context:
@@ -1194,13 +1194,13 @@ Rules:
 - Assume a curious student user
 """
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.35
-    )
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.35
+        )
 
-    return response.choices[0].message.content
+        return response.choices[0].message.content
 
     # -----------------------------
     # REQUIRE HISTORY
@@ -1253,13 +1253,14 @@ Rules:
             }
 
             products = history["Product"].tolist()
-            ai_text = explain_with_ai(
-                 "EcoScore trend over time",
-                 summary,
-                 products
-            )
-            explanation, actions = ai_text.split("2.", 1)
 
+            ai_text = explain_with_ai(
+                "EcoScore trend over time",
+                summary,
+                products
+            )
+
+            explanation, actions = ai_text.split("2.", 1)
             st.info(explanation.strip())
             st.success("2." + actions.strip())
 
@@ -1295,13 +1296,12 @@ Rules:
             products = history["Product"].unique().tolist()
 
             ai_text = explain_with_ai(
-             "Average environmental impact by purchase",
-             impact_dict,
-             products
-           )
+                "Average environmental impact by purchase",
+                impact_dict,
+                products
+            )
 
             explanation, actions = ai_text.split("2.", 1)
-
             st.info(explanation.strip())
             st.success("2." + actions.strip())
 
@@ -1346,22 +1346,22 @@ Rules:
                     .to_dict()
                 )
 
-            products = compare_df["Product"].tolist()
+                products = compare_df["Product"].tolist()
 
-            ai_text = explain_with_ai(
-              "Product impact comparison",
-              comparison_summary,
-              products
-              )
+                ai_text = explain_with_ai(
+                    "Product impact comparison",
+                    comparison_summary,
+                    products
+                )
 
                 explanation, actions = ai_text.split("2.", 1)
-
                 st.info(explanation.strip())
                 st.success("2." + actions.strip())
     else:
         st.info("Select at least two products 🌱")
 
     st.divider()
+
 
     # =============================
     # 📜 HISTORY TABLE
