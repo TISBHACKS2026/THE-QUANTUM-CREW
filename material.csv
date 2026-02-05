@@ -1,14 +1,7 @@
 material,carbon_kg_per_kg,water_L_per_kg,energy_MJ_per_kg,waste_score
 PET,4.9,60,50,4
 HDPE,5.4,50,40,4
-Glass,1.2,10,10,2
 Aluminum,9.0,20,200,5
 Cardboard,1.0,40,15,1
 LDPE,1.8,45,35,3
-Multilayer Plastic,6.0,80,90,5
-Tetra Pak (Composite),5.5,70,85,5
-Polystyrene (Styrofoam),7.0,90,100,5
-PVC,6.5,85,95,5
-Steel (Tinplate),2.5,25,30,3
-Paper (Food-grade),1.3,35,18,2
 
