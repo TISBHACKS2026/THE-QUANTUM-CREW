@@ -3,6 +3,11 @@ import pandas as pd
 import numpy as np
 import streamlit.components.v1 as components
 import requests
+from PIL import Image
+import base64
+import io
+from rapidfuzz import process, fuzz
+from openai import OpenAI
 def get_greener_alternatives(current_product_name, summary_df, max_alternatives=5):
     """
     Find greener alternatives from the actual product database.
@@ -57,7 +62,48 @@ def get_greener_alternatives(current_product_name, summary_df, max_alternatives=
         })
     
     return results
+def image_to_base64(image):
+    buffer = io.BytesIO()
+    image.save(buffer, format="PNG")
+    return base64.b64encode(buffer.getvalue()).decode()
 
+def ocr_image(image):
+    img_b64 = image_to_base64(image)
+
+    response = client.responses.create(
+        model="gpt-4.1-mini",
+        input=[{
+            "role": "user",
+            "content": [
+                {"type": "input_text", "text": "Extract ALL visible text from this product packaging."},
+                {"type": "input_image", "image_base64": img_b64}
+            ]
+        }]
+    )
+
+    return response.output_text
+
+def extract_product_name(all_text):
+    response = client.responses.create(
+        model="gpt-4.1-mini",
+        input=f"""
+        From the following packaging text, extract the MOST LIKELY product name.
+        Respond ONLY with the product name.
+
+        TEXT:
+        {all_text}
+        """
+    )
+
+    return response.output_text.strip()
+
+def fuzzy_match_product(name, summary_df):
+    match, score, _ = process.extractOne(
+        name,
+        summary_df['name'].tolist(),
+        scorer=fuzz.token_sort_ratio
+    )
+    return match, score
 st.set_page_config(page_title="EcoLens", page_icon="🌱", layout="wide")
 st.markdown("""
 <style>
@@ -584,15 +630,43 @@ elif st.session_state.page == "GreenScore":
     # -----------------------------
     # Step 7: USER INPUT + DISPLAY
     # -----------------------------
+    st.subheader("📸 Scan Product (optional)")
+    
+    image_file = st.camera_input("Take a photo of the product")
+    
+    if image_file:
+        image = Image.open(image_file)
+    
+        with st.spinner("Reading packaging text..."):
+            all_text = ocr_image(image)
+    
+        with st.spinner("Identifying product..."):
+            detected_name = extract_product_name(all_text)
+            matched_name, confidence = fuzzy_match_product(detected_name, summary_df)
+    
+        if confidence > 60:
+            st.success(f"Detected: {matched_name} ({confidence:.0f}% match)")
+            st.session_state.selected_product = matched_name
+        else:
+            st.warning("Could not confidently identify product. Please select manually.")
 #If coming from alternative click, pre-select i
-    if product_input:
-        default_index = list(sorted(summary_df['name'].unique())).index(product_input)
+        # Decide preselected product (scan > alternative > none)
+    preselected_product = None
+    
+    if "selected_product" in st.session_state:
+        preselected_product = st.session_state.selected_product
+    elif product_input:
+        preselected_product = product_input
+        product_options = sorted(summary_df['name'].unique())
+    
+    if preselected_product and preselected_product in product_options:
+        default_index = product_options.index(preselected_product)
     else:
         default_index = None
-    
+        
     product_input = st.selectbox(
         "🔍 Search for a product",
-        options=sorted(summary_df['name'].unique()),
+        options=product_options,
         index=default_index,
         placeholder="Start typing to search..."
     )
