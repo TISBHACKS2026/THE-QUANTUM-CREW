@@ -994,157 +994,101 @@ elif st.session_state.page == "GreenScore":
                         if st.button("View →", key=f"view_{alt['name']}", use_container_width=True):
                             st.session_state['selected_alternative'] = alt['name']
                             st.rerun()
-            else:
-                st.info("🎉 Great choice! This is already one of the greenest options in its category.")
-            # =============================
-# AI DEEP DIVE EXPLANATION
-# =============================
-            st.divider()
-
-            # =============================
-            # GREENER ALTERNATIVES
-            # =============================
-            st.subheader("🌿 Greener Alternatives")
-            st.caption("Click any product to view its full eco score")
-
-            alternatives = get_greener_alternatives(
-                product_input,
-                summary_df,
-                max_alternatives=5
-            )
-
-            if alternatives:
-                for alt in alternatives:
-                    col1, col2 = st.columns([4, 1])
-
-                    with col1:
-                        st.markdown(
-                            f"""
-                            <div style="
-                                background: linear-gradient(135deg, #e8f5e9 0%, #f5f1e8 100%);
-                                border-left: 5px solid #2d5016;
-                                border-radius: 14px;
-                                padding: 18px;
-                                margin-bottom: 14px;
-                                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
-                            ">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <div>
-                                        <strong style="color:#1a3d0f; font-size:17px;">
-                                            {alt['name']}
-                                        </strong><br>
-                                        <span style="color:#4d7b2f; font-size:14px;">
-                                            ✨ {alt['improvement']}
-                                        </span>
-                                    </div>
-                                    <div style="text-align:right;">
-                                        <div style="font-size:22px; font-weight:700; color:#2d5016;">
-                                            {alt['eco_score']}
-                                        </div>
-                                        <div style="font-size:12px; color:#5d4e37;">
-                                            +{alt['score_diff']:.1f}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
-
-                    with col2:
-                        if st.button(
-                            "View →",
-                            key=f"view_{alt['name']}",
-                            use_container_width=True
-                        ):
-                            st.session_state["selected_alternative"] = alt["name"]
-                            st.rerun()
-
-            else:
+                        else:
                 st.info(
                     "🎉 Great choice! This is already one of the greenest options in its category."
                 )
 
             # =============================
-            # 🤖 AI DEEP DIVE EXPLANATION
+            # AI DEEP DIVE EXPLANATION
             # =============================
             st.divider()
-            st.subheader("🤖 AI Insight: Understand This Eco Score")
+            st.subheader("🤖 AI Insight: Explore This Product")
 
             st.caption(
-                "Get a deeper explanation of *why* this product scored the way it did, "
-                "and what smarter purchase choices you can make next."
+                "Ask in-depth questions about this product’s ingredients, impacts, and "
+                "how to make better purchase choices."
             )
 
             from openai import OpenAI
             client = OpenAI(api_key=st.secrets["OpenAIKey"])
 
-            if st.button("🧠 Ask AI to explain this Eco Score", use_container_width=True):
+            # -----------------------------
+            # INIT PRODUCT CHAT MEMORY
+            # -----------------------------
+            if "product_ai_messages" not in st.session_state:
+                st.session_state.product_ai_messages = [
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are a product-focused sustainability assistant.\n\n"
+                            "You help users understand a SINGLE product in depth.\n\n"
+                            "You may answer questions about:\n"
+                            "- why this product scores the way it does\n"
+                            "- ingredient and material impacts\n"
+                            "- microplastics, silicones, petroleum, etc.\n"
+                            "- what makes this product better or worse than alternatives\n"
+                            "- what to look for when buying a greener option next time\n\n"
+                            "Rules:\n"
+                            "- Focus only on purchase-related advice\n"
+                            "- No lifestyle tips\n"
+                            "- Be specific to THIS product\n"
+                            "- Do not invent data\n\n"
+                            f"PRODUCT CONTEXT:\n"
+                            f"Name: {product_input}\n"
+                            f"Category: {r['category']}\n"
+                            f"Eco Score: {r['eco_score']} / 100\n"
+                            f"Carbon: {r['total_carbon_kg']} kg CO₂e\n"
+                            f"Water: {r['total_water_L']} L\n"
+                            f"Energy: {r['total_energy_MJ']} MJ\n"
+                            f"Waste Score: {r['total_waste_score']}\n"
+                            f"Microplastics: {bool(int(r['microplastics']))}\n"
+                            f"Silicones: {bool(int(r['silicones']))}\n"
+                            f"Petroleum-derived: {bool(int(r['petroleum']))}"
+                        ),
+                    }
+                ]
 
-                with st.spinner("Analyzing this product’s environmental impact... 🌍"):
+            # -----------------------------
+            # DISPLAY CHAT
+            # -----------------------------
+            for msg in st.session_state.product_ai_messages[1:]:
+                with st.chat_message(msg["role"]):
+                    st.markdown(msg["content"])
 
-                    ai_prompt = f"""
-You are an environmental impact analyst inside a sustainability app.
+            # -----------------------------
+            # USER QUESTION INPUT
+            # -----------------------------
+            product_question = st.chat_input(
+                "Ask about ingredients, impacts, or better alternatives for this product…"
+            )
 
-Explain the Eco Score for the following product in a clear, structured way.
+            if product_question:
+                st.session_state.product_ai_messages.append(
+                    {"role": "user", "content": product_question}
+                )
 
-PRODUCT DETAILS:
-- Name: {product_input}
-- Category: {r['category']}
-- Eco Score: {r['eco_score']} / 100
-- Carbon Footprint: {r['total_carbon_kg']} kg CO₂e
-- Water Usage: {r['total_water_L']} L
-- Energy Use: {r['total_energy_MJ']} MJ
-- Waste Impact Score: {r['total_waste_score']}
+                with st.chat_message("user"):
+                    st.markdown(product_question)
 
-INGREDIENT FLAGS:
-- Microplastics present: {bool(int(r['microplastics']))}
-- Silicones present: {bool(int(r['silicones']))}
-- Petroleum-derived ingredients present: {bool(int(r['petroleum']))}
+                # -----------------------------
+                # AI RESPONSE
+                # -----------------------------
+                with st.chat_message("assistant"):
+                    with st.spinner("Thinking about this product… 🌍"):
+                        response = client.chat.completions.create(
+                            model="gpt-4o-mini",
+                            temperature=0.4,
+                            messages=st.session_state.product_ai_messages,
+                        )
 
-INSTRUCTIONS:
-1. Explain WHY the eco score is at this level.
-2. Identify the biggest negative contributor.
-3. Mention ingredient flags only if present.
-4. Suggest 2–3 BETTER PURCHASE ACTIONS.
-5. Suggest what to look for in greener alternatives.
-6. No lifestyle tips.
-"""
+                        ai_reply = response.choices[0].message.content
+                        st.markdown(ai_reply)
 
-                    response = client.chat.completions.create(
-                        model="gpt-4o-mini",
-                        temperature=0.4,
-                        messages=[
-                            {
-                                "role": "system",
-                                "content": (
-                                    "You explain product environmental impacts clearly "
-                                    "and focus only on purchase-related sustainability decisions."
-                                ),
-                            },
-                            {"role": "user", "content": ai_prompt},
-                        ],
-                    )
+                st.session_state.product_ai_messages.append(
+                    {"role": "assistant", "content": ai_reply}
+                )
 
-                    ai_reply = response.choices[0].message.content
-
-                    st.markdown(
-                        f"""
-                        <div style="
-                            background: linear-gradient(135deg, #f5f1e8 0%, #ffffff 100%);
-                            border-left: 6px solid #2d5016;
-                            border-radius: 16px;
-                            padding: 22px;
-                            margin-top: 18px;
-                            box-shadow: 0 6px 18px rgba(45, 80, 22, 0.15);
-                        ">
-                            <div style="font-size: 1.05em; line-height: 1.65; color: #1a2318;">
-                                {ai_reply}
-                            </div>
-                        </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
 
             
 
