@@ -849,7 +849,7 @@ elif st.session_state.page == "Chatbot":
     # -----------------------------
     # INIT OPENAI CLIENT
     # -----------------------------
-    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    client = OpenAI(api_key=st.secrets["OpenAIKey"])
 
     # -----------------------------
     # PAGE SETUP
