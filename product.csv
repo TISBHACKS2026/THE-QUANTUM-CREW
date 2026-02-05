@@ -1,13 +1,27 @@
-name,brand,category,material_1,weight_1_g,material_2,weight_2_g,microplastics,silicones,petroleum,recyclable_packaging,eco_certified
-Cetaphil Cream 80g,Cetaphil,Cream,PET,17,HDPE,4,0,1,1,0,0
-Aveeno Cream 200ml,Aveeno,Cream,PET,15,HDPE,3,0,1,1,1,0
-Mamaearth Cream 80g,MamaEarth,Cream,LDPE,20,HDPE,3,0,0,0,0,0
-Nivea Body Milk,Nivea,Cream,PET,100,HDPE,10,0,1,1,1,0
-Nivea Cream 75ml,Nivea,Cream,PET,15,HDPE,7,,,,,
-Cetaphil Body Wash 1000ml,Cetaphil,Body Wash,PET,60,HDPE,10,0,0,0,1,0
-Soap & Glory Body Wash 300ml,Soap & Glory,Body Wash,PET,25,HDPE,5,1,0,0,0,0
-Asaya Sunscreen 150ml,Asaya,Sunscreen,Aluminum,12,HDPE,3,0,0,0,1,0
-Dot & Key Sunscreen 50g,Dot & Key,Sunscreen,PET,10,HDPE,2,0,1,0,1,0
-Nivea Sun 200ml,Nivea,Sunscreen,PET,20,HDPE,5,1,0,1,1,0
-BBlunt Shampoo 300ml,BBlunt,Shampoo,PET,25,HDPE,5,0,1,1,1,0
-L'Oreal Shampoo 300ml,L'Oreal,Shampoo,PET,25,HDPE,5,,,,,
+name,brand,category,material_1,weight_1_g,material_2,weight_2_g,microplastics,silicones,petroleum,recyclable_packaging,eco_certified,ultra_processed,high_sugar,palm_oil,animal_based
+Cetaphil Cream 80g,Cetaphil,Cream,PET,17,HDPE,4,0,1,1,0,0,0,0,0,0
+Aveeno Cream 200ml,Aveeno,Cream,PET,15,HDPE,3,0,1,1,1,0,0,0,0,0
+Mamaearth Cream 80g,MamaEarth,Cream,LDPE,20,HDPE,3,0,0,0,0,0,0,0,0,0
+Nivea Body Milk,Nivea,Cream,PET,100,HDPE,10,0,1,1,1,0,0,0,0,0
+Nivea Cream 75ml,Nivea,Cream,PET,15,HDPE,7,0,0,0,0,0,0,0,0,0
+Cetaphil Body Wash 1000ml,Cetaphil,Body Wash,PET,60,HDPE,10,0,0,0,1,0,0,0,0,0
+Soap & Glory Body Wash 300ml,Soap & Glory,Body Wash,PET,25,HDPE,5,1,0,0,0,0,0,0,0,0
+Asaya Sunscreen 150ml,Asaya,Sunscreen,Aluminum,12,HDPE,3,0,0,0,1,0,0,0,0,0
+Dot & Key Sunscreen 50g,Dot & Key,Sunscreen,PET,10,HDPE,2,0,1,0,1,0,0,0,0,0
+Nivea Sun 200ml,Nivea,Sunscreen,PET,20,HDPE,5,1,0,1,1,0,0,0,0,0
+BBlunt Shampoo 300ml,BBlunt,Shampoo,PET,25,HDPE,5,0,1,1,1,0,0,0,0,0
+L'Oreal Shampoo 300ml,L'Oreal,Shampoo,PET,25,HDPE,5,0,0,0,0,0,0,0,0,0
+
+Coca Cola 1L,Coca-Cola,Soft Drink,PET,35,HDPE,3,0,0,0,1,0,1,1,0,0
+Masala Veg Atta Noodles Pack of 4 290g,Maggi,Instant Noodles,Plastic Film,25,Cardboard,20,0,0,0,0,0,1,0,1,0
+Doritos Sweet Chili 71g,Doritos,Chips,Plastic Film,6,,0,0,0,0,0,0,1,0,0,0
+Dairy Milk 46g,Cadbury,Chocolate,Plastic Film,4,Paperboard,5,0,0,0,0,0,1,1,0,1
+Pringles Sour Cream Onion 40g,Pringles,Chips,Composite Can,18,Plastic Lid,4,0,0,0,0,0,1,0,0,0
+Lindt Lindor Milk 200g,Lindt,Chocolate,Plastic Film,15,Paperboard,20,0,0,0,0,0,1,1,0,1
+Nutella Biscuits 166g,Ferrero,Biscuits,Plastic Film,10,Paperboard,15,0,0,0,0,0,1,1,1,1
+Haribo Goldbears Sour 198g,Haribo,Candy,Plastic Film,8,,0,0,0,0,0,0,1,1,0,1
+Chupa Chups Sour Tubes Mini 61.6g,Chupa Chups,Candy,Plastic Film,5,,0,0,0,0,0,0,1,1,0,0
+Ferrero Rocher 200g,Ferrero,Chocolate,Plastic Film,20,Paperboard,30,0,0,0,0,0,1,1,1,1
+Sattviko Roasted Makhana,Sattviko,Snack,Plastic Pouch,12,,0,0,0,0,0,0,0,0,0,0
+Original Skittles Resealable 45g,Skittles,Candy,Plastic Pouch,6,,0,0,0,0,0,0,1,1,0,0
+
