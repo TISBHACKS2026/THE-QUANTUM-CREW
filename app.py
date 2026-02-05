@@ -1161,25 +1161,6 @@ elif st.session_state.page == "Chatbot":
     from openai import OpenAI
 
     # -----------------------------
-    # LOAD PRODUCT DATABASE (CSV ONLY)
-    # -----------------------------
-    product_df = pd.read_csv("product.csv")
-
-    # Reduce to safe AI context
-    product_context = product_df[[
-        "name",
-        "category",
-        "eco_score",
-        "total_carbon_kg",
-        "total_water_L",
-        "total_energy_MJ",
-        "total_waste_score",
-        "microplastics",
-        "silicones",
-        "petroleum"
-    ]].to_dict(orient="records")
-
-    # -----------------------------
     # OPENAI CLIENT
     # -----------------------------
     client = OpenAI(api_key=st.secrets["OpenAIKey"])
@@ -1189,9 +1170,35 @@ elif st.session_state.page == "Chatbot":
     # -----------------------------
     st.title("🤖 Eco Assistant")
     st.caption(
-        "Ask about eco scores, products, greener alternatives, app features, "
-        "or environmental topics 🌱"
+        "Ask questions about products, eco scores, materials, or greener choices 🌱"
     )
+
+    # -----------------------------
+    # BUILD CONTEXT FROM CSV DATA
+    # -----------------------------
+    def get_impact_context():
+        try:
+            product_df = pd.read_csv("product.csv")
+            material_df = pd.read_csv("material.csv")
+        except Exception:
+            return "Product or material database could not be loaded."
+
+        return {
+            "total_products": len(product_df),
+            "product_categories": product_df["category"].value_counts().to_dict()
+            if "category" in product_df.columns else "Not available",
+            "eco_score_range": {
+                "min": float(product_df["eco_score"].min()),
+                "max": float(product_df["eco_score"].max()),
+                "average": round(float(product_df["eco_score"].mean()), 1),
+            } if "eco_score" in product_df.columns else "Not available",
+            "materials_tracked": material_df["material"].unique().tolist()
+            if "material" in material_df.columns else "Not available",
+            "available_columns_products": list(product_df.columns),
+            "available_columns_materials": list(material_df.columns),
+        }
+
+    impact_context = get_impact_context()
 
     # -----------------------------
     # CHAT MEMORY (SYSTEM PROMPT)
@@ -1201,42 +1208,47 @@ elif st.session_state.page == "Chatbot":
             {
                 "role": "system",
                 "content": (
-                    "You are an AI sustainability assistant embedded in an eco-impact app.\n\n"
+                    "You are an eco-focused assistant for a sustainability app.\n\n"
 
-                    "YOU ONLY KNOW THE PRODUCT DATABASE PROVIDED BELOW.\n"
-                    "You do NOT have access to user purchase logs or personal history.\n\n"
+                    "Your knowledge source:\n"
+                    "- product.csv (products, eco scores, categories, impacts)\n"
+                    "- material.csv (materials and their environmental effects)\n\n"
 
-                    "You MAY answer questions about:\n"
-                    "- Products in the database\n"
-                    "- Eco Scores and why they are high or low\n"
-                    "- Carbon, water, energy, and waste impacts\n"
-                    "- Ingredient flags (microplastics, silicones, petroleum)\n"
-                    "- Greener alternatives and future purchase decisions\n"
-                    "- How features of this app work (GreenScore, Impact Dashboard, graphs)\n"
-                    "- General environmental and sustainability concepts\n\n"
+                    "You may answer questions about:\n"
+                    "- products in the database\n"
+                    "- how GreenScore is calculated\n"
+                    "- material-level environmental impact\n"
+                    "- comparing products\n"
+                    "- choosing greener alternatives\n"
+                    "- general environmental sustainability questions\n\n"
 
-                    "RULES:\n"
-                    "- Do NOT invent products or data\n"
-                    "- If a product is not in the database, say so clearly\n"
-                    "- Keep advice focused on PURCHASE DECISIONS, not lifestyle habits\n"
-                    "- Be specific, concrete, and educational\n"
-                    "- If asked something unrelated, politely redirect\n\n"
+                    "Your responsibilities:\n"
+                    "- Explain eco scores clearly and concretely\n"
+                    "- Base answers ONLY on the CSV data + general environmental science\n"
+                    "- Suggest better PURCHASE decisions (not lifestyle habits)\n\n"
 
-                    f"PRODUCT DATABASE:\n{product_context}"
+                    "Rules:\n"
+                    "- Do NOT reference user purchase history\n"
+                    "- Do NOT invent product data\n"
+                    "- If a product is not in the CSV, say so\n"
+                    "- Be beginner-friendly and precise\n"
+                    "- Politely refuse unrelated questions\n\n"
+
+                    f"AVAILABLE DATABASE CONTEXT:\n{impact_context}"
                 ),
             }
         ]
 
     # -----------------------------
-    # OPTIONAL QUICK HELP BUTTON
+    # HELPER ACTION BUTTON
     # -----------------------------
-    if st.button("🌱 How should I use this app better?"):
+    if st.button("🌱 Explain how GreenScore works & how to improve"):
         st.session_state.messages.append(
             {
                 "role": "user",
                 "content": (
-                    "Explain how to use this app to make better purchasing decisions "
-                    "and reduce environmental impact."
+                    "Explain how GreenScore is calculated using product and material data, "
+                    "and how someone can make better purchasing decisions."
                 ),
             }
         )
@@ -1253,14 +1265,14 @@ elif st.session_state.page == "Chatbot":
     # USER INPUT
     # -----------------------------
     user_input = st.chat_input(
-        "Ask about products, eco scores, alternatives, or sustainability…"
+        "Ask about products, materials, eco scores, or greener choices…"
     )
 
     if user_input:
-        # Show user message
         st.session_state.messages.append(
             {"role": "user", "content": user_input}
         )
+
         with st.chat_message("user"):
             st.markdown(user_input)
 
@@ -1272,7 +1284,7 @@ elif st.session_state.page == "Chatbot":
                 response = client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=st.session_state.messages,
-                    temperature=0.4,
+                    temperature=0.5,
                 )
 
                 assistant_reply = response.choices[0].message.content
@@ -1281,6 +1293,7 @@ elif st.session_state.page == "Chatbot":
         st.session_state.messages.append(
             {"role": "assistant", "content": assistant_reply}
         )
+
 
 
 # -------------------------
