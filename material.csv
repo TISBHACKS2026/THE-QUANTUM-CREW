@@ -1,7 +1,7 @@
 material,carbon_kg_per_kg,water_L_per_kg,energy_MJ_per_kg,waste_score
 PET,4.9,60,50,4
 HDPE,5.4,50,40,4
-Aluminum,9.0,20,200,5
-Cardboard,1.0,40,15,1
-LDPE,1.8,45,35,3
+Aluminum,7.3,20,200,5
+Cardboard,0.8,40,15,1
+LDPE,5.5,45,35,3
 
