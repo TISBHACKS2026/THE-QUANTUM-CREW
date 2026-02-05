@@ -233,25 +233,37 @@ PRODUCT_CSV = "product.csv"
 MATERIAL_CSV = "material.csv"
 
 # -----------------------------
+# Step 0: Define file paths
+# -----------------------------
+PRODUCT_CSV = "product.csv"
+MATERIAL_CSV = "material.csv"
+
+# -----------------------------
 # Step 1: Read CSV files
 # -----------------------------
 products_df = pd.read_csv(PRODUCT_CSV)
 materials_df = pd.read_csv(MATERIAL_CSV)
 
-NEW_FLAG_COLS = [
+# -----------------------------
+# FLAGS (BEAUTY + FOOD)
+# -----------------------------
+ALL_FLAGS = [
     "microplastics",
     "petroleum",
     "silicones",
     "recyclable_packaging",
     "eco_certified",
+    "ultra_processed",
+    "high_sugar",
+    "palm_oil",
+    "animal_based"
 ]
 
-for c in NEW_FLAG_COLS:
+for c in ALL_FLAGS:
     if c not in products_df.columns:
         products_df[c] = 0
 
-# Make sure flags are 0/1 ints (handles blanks/NaN)
-products_df[NEW_FLAG_COLS] = products_df[NEW_FLAG_COLS].fillna(0).astype(int)
+products_df[ALL_FLAGS] = products_df[ALL_FLAGS].fillna(0).astype(int)
 
 # =============================
 # MATERIAL IMPACT DICTIONARY
@@ -262,128 +274,127 @@ for _, row in materials_df.iterrows():
         'carbon': row['carbon_kg_per_kg'],
         'water': row['water_L_per_kg'],
         'energy': row['energy_MJ_per_kg'],
-        'waste': row['waste_score']  # 1–5 (higher = worse)
+        'waste': row['waste_score']
     }
 
 # =============================
-# INITIALIZE RESULT COLUMNS
+# INITIALIZE RESULTS
 # =============================
-products_df['total_carbon_kg'] = 0.0
-products_df['total_water_L'] = 0.0
-products_df['total_energy_MJ'] = 0.0
-products_df['total_waste_score'] = 0.0
+products_df["total_carbon_kg"] = 0.0
+products_df["total_water_L"] = 0.0
+products_df["total_energy_MJ"] = 0.0
+products_df["total_waste_score"] = 0.0
 
 # =============================
-# COMPUTE ENVIRONMENTAL IMPACT
+# PACKAGING IMPACT
 # =============================
-for i, product in products_df.iterrows():
-    total_carbon = 0.0
-    total_water = 0.0
-    total_energy = 0.0
-    waste_scores = []
+for i, p in products_df.iterrows():
+    carbon = water = energy = 0
+    waste_vals = []
 
     for j in range(1, 4):
-        material = product.get(f'material_{j}')
-        weight_g = product.get(f'weight_{j}_g')
+        mat = p.get(f"material_{j}")
+        wt = p.get(f"weight_{j}_g")
 
-        if pd.isna(material) or pd.isna(weight_g):
+        if pd.isna(mat) or pd.isna(wt):
             continue
 
-        impact = material_impact_dict.get(material)
-        if not impact:
+        imp = material_impact_dict.get(mat)
+        if not imp:
             continue
 
-        weight_kg = weight_g / 1000
+        kg = wt / 1000
+        carbon += kg * imp["carbon"]
+        water += kg * imp["water"]
+        energy += kg * imp["energy"]
+        waste_vals.append(imp["waste"])
 
-        total_carbon += weight_kg * impact['carbon']
-        total_water += weight_kg * impact['water']
-        total_energy += weight_kg * impact['energy']
-
-        # Waste is a material-type penalty (not mass-scaled)
-        waste_scores.append(impact['waste'])
-
-    products_df.at[i, 'total_carbon_kg'] = total_carbon
-    products_df.at[i, 'total_water_L'] = total_water
-    products_df.at[i, 'total_energy_MJ'] = total_energy
-    products_df.at[i, 'total_waste_score'] = np.mean(waste_scores) if waste_scores else 0
+    products_df.at[i,"total_carbon_kg"] = carbon
+    products_df.at[i,"total_water_L"] = water
+    products_df.at[i,"total_energy_MJ"] = energy
+    products_df.at[i,"total_waste_score"] = np.mean(waste_vals) if waste_vals else 0
 
 # =============================
-# NORMALIZATION CAPS (FIXED)
+# NORMALIZATION CAPS
 # =============================
-CARBON_CAP = 0.5   # kg CO₂e
-WATER_CAP = 10.0   # liters
-ENERGY_CAP = 20.0  # MJ
-WASTE_CAP = 5.0    # max material waste score
-
-products_df['carbon_norm'] = (products_df['total_carbon_kg'] / CARBON_CAP).clip(0, 1)
-products_df['water_norm'] = (products_df['total_water_L'] / WATER_CAP).clip(0, 1)
-products_df['energy_norm'] = (products_df['total_energy_MJ'] / ENERGY_CAP).clip(0, 1)
-products_df['waste_norm'] = (products_df['total_waste_score'] / WASTE_CAP).clip(0, 1)
+products_df["carbon_norm"] = (products_df["total_carbon_kg"] / 0.5).clip(0,1)
+products_df["water_norm"]  = (products_df["total_water_L"] / 10).clip(0,1)
+products_df["energy_norm"] = (products_df["total_energy_MJ"] / 20).clip(0,1)
+products_df["waste_norm"]  = (products_df["total_waste_score"] / 5).clip(0,1)
 
 # =============================
-# PACKAGING ECOSCORE (0–100)
+# PACKAGING SCORE (0-100)
 # =============================
-products_df['packaging_score'] = (
-    (1 - products_df['carbon_norm']) * 0.35 +
-    (1 - products_df['water_norm']) * 0.25 +
-    (1 - products_df['energy_norm']) * 0.25 +
-    (1 - products_df['waste_norm']) * 0.15
-) * 100
+products_df["packaging_score"] = (
+    (1-products_df["carbon_norm"])*0.35 +
+    (1-products_df["water_norm"])*0.25 +
+    (1-products_df["energy_norm"])*0.25 +
+    (1-products_df["waste_norm"])*0.15
+)*100
 
-products_df['packaging_score'] = products_df['packaging_score'].round(1)
+products_df["packaging_score"] = products_df["packaging_score"].round(1)
 
 # =============================
-# INGREDIENT SCORE (0–100) using 0/1 flags
+# INGREDIENT SCORE (CATEGORY AWARE)
 # =============================
-# penalties (tweak anytime; these are hackathon-friendly)
-products_df['ingredient_score'] = 100 - (
-    40 * products_df['microplastics'] +
-    35 * products_df['petroleum'] +
-    25 * products_df['silicones']
+
+def ingredient_score(row):
+    cat = row["category"].lower()
+
+    # Beauty
+    if cat in ["cream","shampoo","body wash","sunscreen"]:
+        score = 100 - (
+            40*row["microplastics"] +
+            35*row["petroleum"] +
+            25*row["silicones"]
+        )
+
+    # Food & Drinks
+    else:
+        score = 100 - (
+            35*row["ultra_processed"] +
+            25*row["high_sugar"] +
+            20*row["palm_oil"] +
+            20*row["animal_based"]
+        )
+
+    return max(0, min(100, score))
+
+products_df["ingredient_score"] = products_df.apply(ingredient_score, axis=1)
+
+# =============================
+# BONUS SCORE
+# =============================
+products_df["bonus_score"] = 60 + (
+    20*products_df["recyclable_packaging"] +
+    20*products_df["eco_certified"]
 )
 
-products_df['ingredient_score'] = products_df['ingredient_score'].clip(0, 100).round(1)
+products_df["bonus_score"] = products_df["bonus_score"].clip(0,100)
 
 # =============================
-# BONUS SCORE (0–100)
-# - small trust/circularity boost
+# FINAL ECOSCORE
 # =============================
-# simple: if recyclable or certified -> better bonus
-products_df['bonus_score'] = 60 + (
-    20 * products_df['recyclable_packaging'] +
-    20 * products_df['eco_certified']
-)
-products_df['bonus_score'] = products_df['bonus_score'].clip(0, 100).round(1)
-
-# =============================
-# FINAL ECOSCORE (0–100)
-# Breakup: 50% packaging, 40% ingredients, 10% bonus
-# =============================
-products_df['eco_score'] = (
-    0.50 * products_df['packaging_score'] +
-    0.40 * products_df['ingredient_score'] +
-    0.10 * products_df['bonus_score']
+products_df["eco_score"] = (
+    0.50*products_df["packaging_score"] +
+    0.40*products_df["ingredient_score"] +
+    0.10*products_df["bonus_score"]
 ).round(1)
 
 # =============================
-# FINAL SUMMARY TABLE (REQUIRED FOR GREEN SCORE PAGE)
+# FINAL SUMMARY
 # =============================
 summary_df = products_df[[
-    'name',
-    'category',
-    'total_carbon_kg',
-    'total_water_L',
-    'total_energy_MJ',
-    'total_waste_score',
-    'packaging_score',
-    'ingredient_score',
-    'bonus_score',
-    'eco_score',
-    'microplastics',
-    'petroleum',
-    'silicones',
-    'recyclable_packaging',
-    'eco_certified',
+    "name","category",
+    "total_carbon_kg",
+    "total_water_L",
+    "total_energy_MJ",
+    "total_waste_score",
+    "packaging_score",
+    "ingredient_score",
+    "bonus_score",
+    "eco_score",
+    *ALL_FLAGS
 ]].copy()
 
 
@@ -1308,14 +1319,25 @@ Rules:
     st.divider()
 
     # =============================
-    # 🔄 PRODUCT COMPARISON
+    # 🔄 PRODUCT COMPARISON (SAME CATEGORY ONLY)
     # =============================
     st.markdown("## 🔄 Compare Products by Impact")
 
+    # Step 1 — Choose category first
+    compare_category = st.selectbox(
+        "Select a category to compare within",
+        sorted(history["Category"].unique())
+    )
+
+    # Step 2 — Show only products from that category
+    category_products = history[
+        history["Category"] == compare_category
+    ]["Product"].unique()
+
     compare_products = st.multiselect(
         "Select products",
-        history["Product"].unique(),
-        default=list(history["Product"].unique()[:2])
+        category_products,
+        default=list(category_products[:2])
     )
 
     if len(compare_products) >= 2:
@@ -1338,6 +1360,7 @@ Rules:
 
         st.plotly_chart(stacked_fig, use_container_width=True)
 
+        # AI explanation
         if st.button("🤖 Let AI explain this product comparison"):
             with st.spinner("Comparing smarter choices 🌱"):
                 comparison_summary = (
@@ -1346,21 +1369,20 @@ Rules:
                     .to_dict()
                 )
 
-                products = compare_df["Product"].tolist()
-
                 ai_text = explain_with_ai(
                     "Product impact comparison",
-                    comparison_summary,
-                    products
+                    comparison_summary
                 )
 
                 explanation, actions = ai_text.split("2.", 1)
                 st.info(explanation.strip())
                 st.success("2." + actions.strip())
+
     else:
-        st.info("Select at least two products 🌱")
+        st.info("Select at least two products from the same category 🌱")
 
     st.divider()
+
 
 
     # =============================
