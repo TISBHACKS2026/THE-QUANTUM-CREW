@@ -79,16 +79,6 @@ def get_greener_alternatives(current_product_name, summary_df, max_alternatives=
             "score_diff": diff
         })
 
-# ---------- FALLBACK TO CURATED ----------
-    if not results and category in CURATED_ALTERNATIVES:
-        for name in CURATED_ALTERNATIVES[category][:max_alternatives]:
-            results.append({
-                "name": name,
-                "eco_score": "—",
-                "improvement": "Curated greener alternative",
-                "score_diff": 0
-            })
-
     return results
 
 
