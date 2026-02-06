@@ -989,7 +989,7 @@ elif st.session_state.page == "GreenScore":
             # ✅ CASE 2: Greener alternatives exist
             else:
                 for alt in alternatives:
-                    col1, col2 = st.columns([4, 1])
+                    col1 = st.container()
             
                     with col1:
                         st.markdown(
@@ -1021,16 +1021,7 @@ elif st.session_state.page == "GreenScore":
                             unsafe_allow_html=True
                         )
             
-                    with col2:
-                        if st.button("View →", key=f"view_{alt['name']}", use_container_width=True):
-                            st.session_state['selected_alternative'] = alt['name']
-                            st.rerun()
 
-
-
-            # =============================
-            # AI DEEP DIVE EXPLANATION
-            # =============================
             # =============================
             # AI PRODUCT CHATBOT
             # =============================
