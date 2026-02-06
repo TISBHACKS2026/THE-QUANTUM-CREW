@@ -670,24 +670,33 @@ elif st.session_state.page == "GreenScore":
     st.subheader("📸 Scan Product (optional)")
     
     image_file = st.camera_input("Take a photo of the product")
+
+    if image_file is None:
+        st.session_state.ocr_processed = False
     
-    if image_file:
+    if image_file and not st.session_state.get("ocr_processed", False):
         image = Image.open(image_file)
     
         with st.spinner("Reading packaging text..."):
             all_text = ocr_image(image)
-        
+    
         with st.spinner("Identifying product..."):
             detected_name = extract_product_name(all_text)
             matched_name, confidence = fuzzy_match_product(detected_name, summary_df)
-        
+    
         st.success(f"Detected: {matched_name}")
         st.session_state.selected_product = matched_name
-        # 🔥 RESET SELECTBOX + FORCE UI UPDATE
+    
+        # ✅ Mark OCR as done
+        st.session_state.ocr_processed = True
+    
+        # 🔥 Reset selectbox so it updates
         if "product_selectbox" in st.session_state:
             del st.session_state["product_selectbox"]
     
+        st.experimental_set_query_params(scanned="true")
         st.rerun()
+
     
     # -----------------------------
     # PRODUCT SEARCH (SINGLE SOURCE OF TRUTH)
