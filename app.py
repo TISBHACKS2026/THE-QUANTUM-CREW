@@ -932,11 +932,14 @@ elif st.session_state.page == "GreenScore":
             # =============================
             # AI DEEP DIVE EXPLANATION
             # =============================
+            # =============================
+            # AI PRODUCT CHATBOT
+            # =============================
             st.divider()
             st.subheader("🤖 AI Insight: Explore This Product")
 
             st.caption(
-                "Ask in-depth questions about this product’s ingredients, impacts, and "
+                "Ask in-depth questions about this product's ingredients, impacts, and "
                 "how to make better purchase choices."
             )
 
@@ -944,9 +947,15 @@ elif st.session_state.page == "GreenScore":
             client = OpenAI(api_key=st.secrets["OpenAIKey"])
 
             # -----------------------------
-            # INIT PRODUCT CHAT MEMORY
+            # INIT / RESET PRODUCT CHAT MEMORY
             # -----------------------------
-            if "product_ai_messages" not in st.session_state:
+            if (
+                "product_ai_messages" not in st.session_state
+                or st.session_state.get("product_chat_product") != product_input
+            ):
+                st.session_state.product_chat_product = product_input
+                
+                # Use the actual selected product data (r) instead of hardcoded first product
                 st.session_state.product_ai_messages = [
                     {
                         "role": "system",
@@ -965,7 +974,7 @@ elif st.session_state.page == "GreenScore":
                             "- Be specific to THIS product\n"
                             "- Do not invent data\n\n"
                             f"PRODUCT CONTEXT:\n"
-                            f"Name: {product_input}\n"
+                            f"Name: {r['name']}\n"
                             f"Category: {r['category']}\n"
                             f"Eco Score: {r['eco_score']} / 100\n"
                             f"Carbon: {r['total_carbon_kg']} kg CO₂e\n"
@@ -1018,26 +1027,6 @@ elif st.session_state.page == "GreenScore":
                 st.session_state.product_ai_messages.append(
                     {"role": "assistant", "content": ai_reply}
                 )
-                with st.chat_message("user"):
-                    st.markdown(product_question)
-
-                # -----------------------------
-                # AI RESPONSE
-                # -----------------------------
-                with st.chat_message("assistant"):
-                    with st.spinner("Thinking about this product… 🌍"):
-                        response = client.chat.completions.create(
-                            model="gpt-4o-mini",
-                            temperature=0.4,
-                            messages=st.session_state.product_ai_messages,
-                        )
-
-                        ai_reply = response.choices[0].message.content
-                        st.markdown(ai_reply)
-
-                st.session_state.product_ai_messages.append(
-                    {"role": "assistant", "content": ai_reply}
-                )
 
 
             
@@ -1048,99 +1037,32 @@ elif st.session_state.page == "GreenScore":
 
 elif st.session_state.page == "Chatbot":
 
-    st.button("← Back to Home", on_click=go, args=("Home",))
-
     import streamlit as st
-    import pandas as pd
     from openai import OpenAI
 
     # -----------------------------
-    # OPENAI CLIENT
+    # INIT OPENAI CLIENT
     # -----------------------------
-    client = OpenAI(api_key=st.secrets["OpenAIKey"])
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
     # -----------------------------
-    # LOAD CSV DATA
-    # -----------------------------
-    product_df = pd.read_csv("product.csv")
-    material_df = pd.read_csv("material.csv")
-
-    # -----------------------------
-    # PAGE HEADER
+    # PAGE SETUP
     # -----------------------------
     st.title("🤖 Eco Assistant")
-    st.caption(
-        "Ask about products, eco scores, materials, or greener buying choices 🌱"
-    )
+    st.caption("Ask me about sustainability, eco scores, or greener choices 🌱")
 
     # -----------------------------
-    # BUILD CSV CONTEXT (FIXED)
-    # -----------------------------
-    def get_csv_context():
-
-        eco_col = "Eco Score" if "Eco Score" in product_df.columns else None
-
-        return {
-            "total_products": len(product_df),
-            "categories": product_df["category"].unique().tolist()
-            if "category" in product_df.columns else [],
-            "eco_score_range": (
-                [
-                    int(product_df[eco_col].min()),
-                    int(product_df[eco_col].max()),
-                ]
-                if eco_col
-                else "Eco score column not found"
-            ),
-            "materials_tracked": material_df["material"].unique().tolist()
-            if "material" in material_df.columns else [],
-            "impact_metrics": [
-                col for col in [
-                    "Carbon (kg)",
-                    "Water (L)",
-                    "Energy (MJ)",
-                    "Waste Score"
-                ]
-                if col in product_df.columns
-            ],
-        }
-
-    csv_context = get_csv_context()
-
-    # -----------------------------
-    # CHAT MEMORY (SYSTEM PROMPT)
+    # CHAT MEMORY
     # -----------------------------
     if "messages" not in st.session_state:
         st.session_state.messages = [
             {
                 "role": "system",
                 "content": (
-                    "You are an eco-focused assistant inside a sustainability app.\n\n"
-
-                    "You may ONLY answer questions related to:\n"
-                    "- products listed in product.csv\n"
-                    "- materials listed in material.csv\n"
-                    "- how the GreenScore is calculated\n"
-                    "- environmental impact of purchases\n"
-                    "- greener product alternatives\n"
-                    "- general environmental sustainability\n"
-                    "- basic greetings\n\n"
-
-                    "GreenScore explanation:\n"
-                    "- Calculated from material impacts\n"
-                    "- Includes carbon, water, energy, and waste\n"
-                    "- Values are normalized and weighted\n"
-                    "- Higher score = lower environmental impact\n\n"
-
-                    "Rules:\n"
-                    "- Do NOT invent products or materials\n"
-                    "- If a product is not in product.csv, say so\n"
-                    "- Focus on purchase decisions, not lifestyle habits\n"
-                    "- Avoid generic advice\n"
-                    "- Politely refuse unrelated questions\n\n"
-
-                    f"AVAILABLE DATA CONTEXT:\n{csv_context}"
-                ),
+                    "You are a helpful sustainability assistant. "
+                    "Give clear, practical, beginner-friendly answers. "
+                    "Be concise and encouraging."
+                )
             }
         ]
 
@@ -1154,27 +1076,25 @@ elif st.session_state.page == "Chatbot":
     # -----------------------------
     # USER INPUT
     # -----------------------------
-    user_input = st.chat_input(
-        "Ask about products, eco scores, materials, or greener alternatives…"
-    )
+    user_input = st.chat_input("Ask something eco-related...")
 
     if user_input:
+        # show user message
         st.session_state.messages.append(
             {"role": "user", "content": user_input}
         )
-
         with st.chat_message("user"):
             st.markdown(user_input)
 
         # -----------------------------
-        # AI RESPONSE
+        # OPENAI RESPONSE
         # -----------------------------
         with st.chat_message("assistant"):
-            with st.spinner("Analyzing 🌍"):
+            with st.spinner("Thinking 🌍"):
                 response = client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=st.session_state.messages,
-                    temperature=0.4,
+                    temperature=0.6
                 )
 
                 assistant_reply = response.choices[0].message.content
@@ -1183,6 +1103,7 @@ elif st.session_state.page == "Chatbot":
         st.session_state.messages.append(
             {"role": "assistant", "content": assistant_reply}
         )
+
 
 
 
