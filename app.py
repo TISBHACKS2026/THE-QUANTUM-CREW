@@ -1094,21 +1094,17 @@ elif st.session_state.page == "GreenScore":
 # -------------------------
 
 elif st.session_state.page == "Chatbot":
-
     import streamlit as st
     from openai import OpenAI
-
     # -----------------------------
     # INIT OPENAI CLIENT
     # -----------------------------
     client = OpenAI(api_key=st.secrets["OpenAIKey"])
-
     # -----------------------------
     # PAGE SETUP
     # -----------------------------
     st.title("🤖 Eco Assistant")
     st.caption("Ask me about sustainability, eco scores, or greener choices 🌱")
-
     # -----------------------------
     # CHAT MEMORY
     # -----------------------------
@@ -1117,25 +1113,34 @@ elif st.session_state.page == "Chatbot":
             {
                 "role": "system",
                 "content": (
-                    "You are a helpful sustainability assistant. "
-                    "Give clear, practical, beginner-friendly answers. "
+                    "You are a helpful sustainability assistant focused ONLY on environmental and sustainability topics. "
+                    "You ONLY answer questions related to:\n"
+                    "- Sustainability and eco-friendly practices\n"
+                    "- Environmental impact and climate change\n"
+                    "- Green products and eco scores\n"
+                    "- Waste reduction and recycling\n"
+                    "- Carbon footprint and water usage\n"
+                    "- Energy conservation and renewable energy\n"
+                    "- Sustainable living and eco-conscious choices\n\n"
+                    "If a user asks about topics unrelated to environment or sustainability "
+                    "(like sports, entertainment, general knowledge, coding, etc.), "
+                    "politely respond: 'I'm specifically designed to help with environmental and sustainability questions. "
+                    "Could you ask me something related to eco-friendly living, green products, or environmental impact instead? 🌱'\n\n"
+                    "For valid sustainability questions, give clear, practical, beginner-friendly answers. "
                     "Be concise and encouraging."
                 )
             }
         ]
-
     # -----------------------------
     # DISPLAY CHAT
     # -----------------------------
     for msg in st.session_state.messages[1:]:
         with st.chat_message(msg["role"]):
             st.markdown(msg["content"])
-
     # -----------------------------
     # USER INPUT
     # -----------------------------
     user_input = st.chat_input("Ask something eco-related...")
-
     if user_input:
         # show user message
         st.session_state.messages.append(
@@ -1143,7 +1148,6 @@ elif st.session_state.page == "Chatbot":
         )
         with st.chat_message("user"):
             st.markdown(user_input)
-
         # -----------------------------
         # OPENAI RESPONSE
         # -----------------------------
@@ -1154,10 +1158,8 @@ elif st.session_state.page == "Chatbot":
                     messages=st.session_state.messages,
                     temperature=0.6
                 )
-
                 assistant_reply = response.choices[0].message.content
                 st.markdown(assistant_reply)
-
         st.session_state.messages.append(
             {"role": "assistant", "content": assistant_reply}
         )
