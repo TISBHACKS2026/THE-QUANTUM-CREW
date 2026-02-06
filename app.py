@@ -1562,7 +1562,7 @@ elif st.session_state.page == "NextSteps":
     habits = [
         "Buy refills",
         "Prefer bars over liquids",
-        "Avoid impulse purchases",
+        "Reduce, Reuse Recycle",
         "Choose multipurpose products",
         "Carry your own bottle",
         "Cold or short washes"
@@ -1584,70 +1584,3 @@ elif st.session_state.page == "NextSteps":
             </div>
             """, unsafe_allow_html=True)
 
-# -------------------------
-# ABOUT PAGE
-# -------------------------
-elif st.session_state.page == "About":
-    st.button("← Back to Home", on_click=go, args=("Home",))
-    st.title("ℹ️ About")
-
-    st.write("Built by **The Quantum Crew** for TISB Hacks.")
-
-    st.subheader("👥 Team")
-    col1, col2, col3, col4 = st.columns(4)
-
-    with col1:
-        st.markdown("""
-            <div style="
-                background: linear-gradient(135deg, #e8f5e9 0%, #f5f1e8 100%);
-                padding: 20px;
-                border-radius: 14px;
-                text-align: center;
-                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
-            ">
-                <h3 style="color:#2d5016; margin:0 0 8px 0;">Pihu Gupta</h3>
-                <p style="color:#5d4e37; margin:0;">Backend & APIs</p>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col2:
-        st.markdown("""
-            <div style="
-                background: linear-gradient(135deg, #f5f1e8 0%, #faf8f3 100%);
-                padding: 20px;
-                border-radius: 14px;
-                text-align: center;
-                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
-            ">
-                <h3 style="color:#2d5016; margin:0 0 8px 0;">Saanvi Khetan</h3>
-                <p style="color:#5d4e37; margin:0;">ML & Scoring</p>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col3:
-        st.markdown("""
-            <div style="
-                background: linear-gradient(135deg, #e8f5e9 0%, #f5f1e8 100%);
-                padding: 20px;
-                border-radius: 14px;
-                text-align: center;
-                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
-            ">
-                <h3 style="color:#2d5016; margin:0 0 8px 0;">Sinita Ray</h3>
-                <p style="color:#5d4e37; margin:0;">UX & Frontend</p>
-            </div>
-        """, unsafe_allow_html=True)
-
-    with col4:
-        st.markdown("""
-            <div style="
-                background: linear-gradient(135deg, #f5f1e8 0%, #faf8f3 100%);
-                padding: 20px;
-                border-radius: 14px;
-                text-align: center;
-                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
-            ">
-                <h3 style="color:#2d5016; margin:0 0 8px 0;">Nivedha Sundar</h3>
-                <p style="color:#5d4e37; margin:0;">Product & Pitch</p>
-            </div>
-        """, unsafe_allow_html=True)
