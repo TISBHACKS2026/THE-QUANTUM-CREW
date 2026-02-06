@@ -953,9 +953,6 @@ elif st.session_state.page == "GreenScore":
     
             st.markdown("<br>", unsafe_allow_html=True)
     
-            # ---------- OPTIONAL DETAILS ----------
-            with st.expander("📊 View detailed data"):
-                st.dataframe(result, use_container_width=True)
         
             st.divider()
             
