@@ -82,9 +82,6 @@ def get_greener_alternatives(current_product_name, summary_df, max_alternatives=
     return results
 
 
-
-
-
 def image_to_base64(image):
     buffer = io.BytesIO()
     image.save(buffer, format="PNG")
@@ -133,57 +130,131 @@ def fuzzy_match_product(name, summary_df):
         scorer=fuzz.token_sort_ratio
     )
     return match, score
+
 st.set_page_config(page_title="EcoLens", page_icon="🌱", layout="wide")
+
 st.markdown("""
 <style>
-.block-container { padding-top: 1rem !important; }
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+/* Root variables - Option 5 Palette */
+:root {
+  --primary-green: #5D8A66;
+  --secondary-cream: #F5F1E8;
+  --accent-coral: #E8956B;
+  --text-dark: #3A4A3A;
+  --success-green: #7BA57E;
+  --warning-amber: #F4B860;
+  --error-red: #D97B6C;
+  --card-white: #FFFFFF;
+  --border-light: #E0DED8;
+  --deep-moss: #4d7554;
+}
+
+/* Global Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'DM Serif Display', serif !important;
+  color: var(--text-dark) !important;
+  letter-spacing: -0.02em !important;
+}
+
+p, div, span, label, li, input, select {
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.block-container { 
+  padding-top: 1rem !important; 
+  background: var(--secondary-cream);
+}
 
 /* Sticky header box */
 .sticky-header {
   position: sticky;
   top: 0;
   z-index: 999;
-  background: linear-gradient(180deg, #1a1f1a 0%, #0e1117 100%);
-  padding: 0.5rem 0 0.75rem 0;
-  border-bottom: 2px solid #2d5016;
-  box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
+  background: linear-gradient(180deg, rgba(58, 74, 58, 0.98) 0%, rgba(45, 60, 45, 0.95) 100%);
+  padding: 0.8rem 0 1rem 0;
+  border-bottom: 3px solid var(--primary-green);
+  box-shadow: 0 8px 24px rgba(93, 138, 102, 0.3);
+  backdrop-filter: blur(12px);
 }
 
-/* Button styling */
+/* Button styling with earthy feel */
 .stButton > button {
-  background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%) !important;
-  color: #f5f1e8 !important;
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--deep-moss) 100%) !important;
+  color: var(--secondary-cream) !important;
   border: none !important;
-  border-radius: 12px !important;
-  font-weight: 500 !important;
-  transition: all 0.3s ease !important;
+  border-radius: 16px !important;
+  font-weight: 600 !important;
+  padding: 14px 32px !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+  box-shadow: 0 4px 16px rgba(93, 138, 102, 0.25) !important;
+  font-size: 15px !important;
+  letter-spacing: 0.3px !important;
 }
 
 .stButton > button:hover {
-  background: linear-gradient(135deg, #3d6b1f 0%, #4d7b2f 100%) !important;
-  box-shadow: 0 4px 12px rgba(45, 80, 22, 0.3) !important;
-  transform: translateY(-2px) !important;
+  background: linear-gradient(135deg, var(--deep-moss) 0%, var(--primary-green) 100%) !important;
+  box-shadow: 0 8px 28px rgba(93, 138, 102, 0.4) !important;
+  transform: translateY(-3px) scale(1.02) !important;
 }
 
 /* Success messages */
 .success {
-  background: linear-gradient(135deg, #e8f5e9 0%, #f5f1e8 100%) !important;
-  border-left: 4px solid #2d5016 !important;
-  color: #1a3d0f !important;
+  background: linear-gradient(135deg, #e8f5e9 0%, var(--secondary-cream) 100%) !important;
+  border-left: 5px solid var(--success-green) !important;
+  color: var(--text-dark) !important;
+  border-radius: 14px !important;
+  padding: 18px 22px !important;
 }
 
 /* Info messages */
 .info {
-  background: linear-gradient(135deg, #f5f1e8 0%, #faf8f3 100%) !important;
-  border-left: 4px solid #7c9070 !important;
-  color: #3d4a35 !important;
+  background: linear-gradient(135deg, var(--secondary-cream) 0%, #faf8f3 100%) !important;
+  border-left: 5px solid var(--primary-green) !important;
+  color: var(--text-dark) !important;
+  border-radius: 14px !important;
+  padding: 18px 22px !important;
 }
 
 /* Warning messages */
 .warning {
-  background: linear-gradient(135deg, #fff4e6 0%, #f5f1e8 100%) !important;
-  border-left: 4px solid #d4a373 !important;
+  background: linear-gradient(135deg, #fff4e6 0%, var(--secondary-cream) 100%) !important;
+  border-left: 5px solid var(--warning-amber) !important;
   color: #6b4423 !important;
+  border-radius: 14px !important;
+  padding: 18px 22px !important;
+}
+
+/* Organic dividers */
+.stDivider {
+  margin: 3rem 0 !important;
+  border-color: var(--border-light) !important;
+  opacity: 0.4;
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--secondary-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-green);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--deep-moss);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -382,10 +453,10 @@ st.markdown('<div class="sticky-header">', unsafe_allow_html=True)
 
 st.markdown(
     """
-    <h1 style="text-align:center; font-size:72px; margin:0; color:#9cb380; text-shadow: 2px 2px 4px rgba(45, 80, 22, 0.3);">
+    <h1 style="text-align:center; font-size:82px; margin:0; color:#9cb380; text-shadow: 3px 3px 6px rgba(93, 138, 102, 0.4); letter-spacing: -0.03em;">
         🌱 EcoLens
     </h1>
-    <p style="text-align:center; font-size:18px; color:#c5d4b8; margin-top:6px; margin-bottom:14px;">
+    <p style="text-align:center; font-size:19px; color:#c5d4b8; margin-top:8px; margin-bottom:18px; font-weight: 400; letter-spacing: 0.5px;">
         Make smarter, sustainable buying decisions
     </p>
     """,
@@ -415,80 +486,89 @@ if st.session_state.page == "Home":
 
     with left:
         st.markdown("""
-            <div style="height:420px; overflow:hidden; border-radius:16px; box-shadow: 0 8px 24px rgba(45, 80, 22, 0.2);">
+            <div style="height:440px; overflow:hidden; border-radius:24px; box-shadow: 0 12px 32px rgba(93, 138, 102, 0.3); position: relative;">
                 <img src="https://images.openai.com/static-rsc-3/L_9-L2VXhvFW5NZZvI6VLjA1QxHDiDeV5vyXsgKqM2ycJVtMFds_HEsJfhXYdziNs9fdDa4f0k4koZsaN3gehTxDddohscLt0wYAfwvMxRE?purpose=fullsize"
-                     style="width:100%; height:100%; object-fit:cover;">
+                     style="width:100%; height:100%; object-fit:cover; filter: brightness(0.95) saturate(1.1);">
+                <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, transparent 0%, rgba(93, 138, 102, 0.1) 100%);"></div>
             </div>
         """, unsafe_allow_html=True)
     
     with right:
         st.markdown(
-            """<div style="height:420px; display:flex; flex-direction:column; justify-content:center;">
-    <h2 style="font-size:35px; margin-bottom:18px; color:#9cb380;">What is EcoLens?</h2>
-    <p style="font-size:20px; line-height:1.7; max-width:600px; color:#c5d4b8;">
+            """<div style="height:440px; display:flex; flex-direction:column; justify-content:center; padding-left: 20px;">
+    <h2 style="font-size:42px; margin-bottom:22px; color:#5D8A66; font-family: 'DM Serif Display', serif; line-height: 1.2;">What is EcoLens?</h2>
+    <p style="font-size:20px; line-height:1.8; max-width:620px; color:#3A4A3A; font-weight: 400;">
     EcoLens helps people understand the real environmental impact of the products they buy, so they can make more informed and sustainable choices.
     </p>
     </div>""",
             unsafe_allow_html=True
         )
 
-    st.header("The Hidden Cost of Everyday Products", anchor=False)
-    st.write("Every year, the world produces over 400 million tonnes of plastic waste, and nearly half of this comes from single-use packaging like bottles, bags, wrappers, and cartons. Only around 9% of all plastic ever produced has been recycled, while the rest ends up in landfills, incinerators, or in the environment.")
-    st.write("Packaging alone can account for 20–40% of a product's total environmental footprint, yet this hidden cost is rarely visible when we shop. Most of the time, consumers only see branding and marketing claims, not the true environmental impact behind a product.")
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    st.header("The Problem", anchor=False)
-    st.write("Sustainability labels are vague and poorly regulated, so consumers often rely on marketing language instead of real data. Many of these claims are misleading, allowing greenwashing to go unnoticed. Because people lack the time and expertise to properly assess environmental impact, they make well-intentioned but poor choices. Additionally, there is no standardized way to verify eco-claims, and most existing apps reduce sustainability to simple green or red labels, hiding the real environmental costs of everyday products.")
+    st.markdown('<h2 style="font-size: 36px; margin-bottom: 16px; color: #5D8A66;">The Hidden Cost of Everyday Products</h2>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size: 17px; line-height: 1.7; color: #3A4A3A;">Every year, the world produces over 400 million tonnes of plastic waste, and nearly half of this comes from single-use packaging like bottles, bags, wrappers, and cartons. Only around 9% of all plastic ever produced has been recycled, while the rest ends up in landfills, incinerators, or in the environment.</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size: 17px; line-height: 1.7; color: #3A4A3A;">Packaging alone can account for 20–40% of a product's total environmental footprint, yet this hidden cost is rarely visible when we shop. Most of the time, consumers only see branding and marketing claims, not the true environmental impact behind a product.</p>', unsafe_allow_html=True)
 
-    st.header("Small Choices, Big Impact", anchor=False)
-    st.write("A single purchase may feel insignificant, but when millions of people repeat small decisions every day, the impact becomes massive. If just 1 million people replaced one single-use plastic bottle per day, over 7,000 tonnes of plastic waste could be prevented each year. EcoLens makes these invisible impacts visible, so your everyday choices can become part of a much bigger change.")
+    st.markdown("<br>", unsafe_allow_html=True)
 
-    st.header("✨ Key Features", anchor=False)
+    st.markdown('<h2 style="font-size: 36px; margin-bottom: 16px; color: #5D8A66;">The Problem</h2>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size: 17px; line-height: 1.7; color: #3A4A3A;">Sustainability labels are vague and poorly regulated, so consumers often rely on marketing language instead of real data. Many of these claims are misleading, allowing greenwashing to go unnoticed. Because people lack the time and expertise to properly assess environmental impact, they make well-intentioned but poor choices. Additionally, there is no standardized way to verify eco-claims, and most existing apps reduce sustainability to simple green or red labels, hiding the real environmental costs of everyday products.</p>', unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    st.markdown('<h2 style="font-size: 36px; margin-bottom: 16px; color: #5D8A66;">Small Choices, Big Impact</h2>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size: 17px; line-height: 1.7; color: #3A4A3A;">A single purchase may feel insignificant, but when millions of people repeat small decisions every day, the impact becomes massive. If just 1 million people replaced one single-use plastic bottle per day, over 7,000 tonnes of plastic waste could be prevented each year. EcoLens makes these invisible impacts visible, so your everyday choices can become part of a much bigger change.</p>', unsafe_allow_html=True)
+
+    st.markdown("<br><br>", unsafe_allow_html=True)
+
+    st.markdown('<h2 style="font-size: 40px; margin-bottom: 28px; color: #5D8A66; text-align: center;">✨ Key Features</h2>', unsafe_allow_html=True)
 
     components.html("""
 <div style="
-    background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
-    border-radius:18px;
-    padding:44px 38px;
-    margin-top:18px;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    box-shadow: 0 8px 24px rgba(45, 80, 22, 0.3);
+    background: linear-gradient(135deg, #5D8A66 0%, #4d7554 100%);
+    border-radius:24px;
+    padding:50px 42px;
+    margin-top:20px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    box-shadow: 0 12px 32px rgba(93, 138, 102, 0.35);
 ">
-  <div style="display:flex; gap:34px; align-items:center;">
+  <div style="display:flex; gap:38px; align-items:center;">
 
     <div style="flex:1.2;">
-      <h2 style="margin:0 0 14px 0; font-size:38px; color:#f5f1e8;">
+      <h2 style="margin:0 0 16px 0; font-size:42px; color:#f5f1e8; font-family: 'DM Serif Display', serif; letter-spacing: -0.02em;">
         🌿 GreenScore Tracker
       </h2>
 
-      <p style="margin:0 0 14px 0; font-size:18px; line-height:1.7; color:#e8f5e9;">
+      <p style="margin:0 0 18px 0; font-size:19px; line-height:1.8; color:#e8f5e9; font-weight: 400;">
         Scan personal-care products and get a transparent sustainability score with clear reasons.
       </p>
 
-      <ul style="margin:0; padding-left:20px; font-size:20px; line-height:1.7; color:#e8f5e9;">
-        <li>Product Scan</li>
-        <li>Score breakdown (ingredients, packaging, claims)</li>
+      <ul style="margin:0; padding-left:24px; font-size:18px; line-height:1.9; color:#e8f5e9; font-weight: 400;">
+        <li style="margin-bottom: 8px;">Product Scan</li>
+        <li style="margin-bottom: 8px;">Score breakdown (ingredients, packaging, claims)</li>
         <li>Better alternatives for your purpose</li>
       </ul>
     </div>
 
     <div style="flex:1; display:flex; justify-content:flex-end;">
       <div style="
-          width:520px;
-          height:320px;
-          border-radius:16px;
+          width:540px;
+          height:340px;
+          border-radius:20px;
           overflow:hidden;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-          background: rgba(245,241,232,0.06);
-          border: 2px solid rgba(156,179,128,0.2);
+          box-shadow: 0 14px 40px rgba(0,0,0,0.4);
+          background: rgba(245,241,232,0.08);
+          border: 3px solid rgba(123,165,126,0.25);
       ">
         <img src="https://www.iberdrola.com/documents/20125/40513/huella-de-carbono-746x419.jpg/f61f98a2-7c51-27f9-31d2-41b1dafe6bf7?t=1738248418273"
-             style="width:100%; height:100%; object-fit:cover;">
+             style="width:100%; height:100%; object-fit:cover; filter: brightness(0.92) saturate(1.05);">
       </div>
     </div>
 
   </div>
 </div>
-""", height=420)
+""", height=460)
 
 
     
@@ -498,51 +578,51 @@ if st.session_state.page == "Home":
 
     components.html("""
     <div style="
-        background: linear-gradient(135deg, #4d7b2f 0%, #5d8b3f 100%);
-        border-radius:18px;
-        padding:44px 38px;
-        margin-top:22px;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-        box-shadow: 0 8px 24px rgba(45, 80, 22, 0.3);
+        background: linear-gradient(135deg, #7BA57E 0%, #6b9570 100%);
+        border-radius:24px;
+        padding:50px 42px;
+        margin-top:28px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        box-shadow: 0 12px 32px rgba(93, 138, 102, 0.35);
     ">
-      <div style="display:flex; gap:34px; align-items:center;">
+      <div style="display:flex; gap:38px; align-items:center;">
     
         <!-- LEFT IMAGE -->
         <div style="flex:1; display:flex; justify-content:flex-start;">
           <div style="
-              width:520px;
-              height:320px;
-              border-radius:16px;
+              width:540px;
+              height:340px;
+              border-radius:20px;
               overflow:hidden;
-              box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-              background: rgba(245,241,232,0.06);
-              border: 2px solid rgba(156,179,128,0.2);
+              box-shadow: 0 14px 40px rgba(0,0,0,0.4);
+              background: rgba(245,241,232,0.08);
+              border: 3px solid rgba(123,165,126,0.25);
           ">
             <img src="https://beetroot.co/wp-content/uploads/sites/2/2024/12/Cover_AI-chatbots-in-GreenTech.png"
-                 style="width:100%; height:100%; object-fit:cover;">
+                 style="width:100%; height:100%; object-fit:cover; filter: brightness(0.92) saturate(1.05);">
           </div>
         </div>
     
         <!-- RIGHT TEXT -->
         <div style="flex:1.2;">
-          <h2 style="margin:0 0 14px 0; font-size:38px; color:#f5f1e8;">
+          <h2 style="margin:0 0 16px 0; font-size:42px; color:#f5f1e8; font-family: 'DM Serif Display', serif; letter-spacing: -0.02em;">
             🤖 AI Chatbot
           </h2>
     
-          <p style="margin:0 0 14px 0; font-size:18px; line-height:1.7; color:#e8f5e9;">
+          <p style="margin:0 0 18px 0; font-size:19px; line-height:1.8; color:#e8f5e9; font-weight: 400;">
             Ask questions in plain English and get smart, personalized sustainability advice instantly.
           </p>
     
-          <ul style="margin:0; padding-left:20px; font-size:18px; line-height:1.7; color:#e8f5e9;">
-            <li>Ask about ingredients and claims</li>
-            <li>Get product recommendations</li>
+          <ul style="margin:0; padding-left:24px; font-size:18px; line-height:1.9; color:#e8f5e9; font-weight: 400;">
+            <li style="margin-bottom: 8px;">Ask about ingredients and claims</li>
+            <li style="margin-bottom: 8px;">Get product recommendations</li>
             <li>Tips for safer / sustainable swaps</li>
           </ul>
         </div>
     
       </div>
     </div>
-    """, height=420)
+    """, height=460)
 
     #---------------------
     # Impact Score
@@ -550,29 +630,29 @@ if st.session_state.page == "Home":
   
     components.html("""
     <div style="
-        background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
-        border-radius:18px;
-        padding:44px 38px;
-        margin-top:22px;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-        box-shadow: 0 8px 24px rgba(45, 80, 22, 0.3);
+        background: linear-gradient(135deg, #5D8A66 0%, #4d7554 100%);
+        border-radius:24px;
+        padding:50px 42px;
+        margin-top:28px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        box-shadow: 0 12px 32px rgba(93, 138, 102, 0.35);
     ">
-      <div style="display:flex; gap:34px; align-items:center;">
+      <div style="display:flex; gap:38px; align-items:center;">
     
         <!-- LEFT TEXT -->
         <div style="flex:1.2;">
-          <h2 style="margin:0 0 14px 0; font-size:38px; color:#f5f1e8;">
+          <h2 style="margin:0 0 16px 0; font-size:42px; color:#f5f1e8; font-family: 'DM Serif Display', serif; letter-spacing: -0.02em;">
             🌲 Impact Score
           </h2>
     
-          <p style="margin:0 0 14px 0; font-size:18px; line-height:1.7; color:#e8f5e9;">
+          <p style="margin:0 0 18px 0; font-size:19px; line-height:1.8; color:#e8f5e9; font-weight: 400;">
             See the real environmental impact of every purchase in clear, easy-to-understand metrics.
           </p>
     
-          <ul style="margin:0; padding-left:20px; font-size:18px; line-height:1.7; color:#e8f5e9;">
-            <li>Trends in Purchases</li>
-            <li>Impact Log</li>
-            <li>Compare products side-by-side</li>
+          <ul style="margin:0; padding-left:24px; font-size:18px; line-height:1.9; color:#e8f5e9; font-weight: 400;">
+            <li style="margin-bottom: 8px;">Trends in Purchases</li>
+            <li style="margin-bottom: 8px;">Impact Log</li>
+            <li style="margin-bottom: 8px;">Compare products side-by-side</li>
             <li>Visualize your eco progress over time</li>
           </ul>
         </div>
@@ -580,22 +660,22 @@ if st.session_state.page == "Home":
         <!-- RIGHT IMAGE -->
         <div style="flex:1; display:flex; justify-content:flex-end;">
           <div style="
-              width:520px;
-              height:320px;
-              border-radius:16px;
+              width:540px;
+              height:340px;
+              border-radius:20px;
               overflow:hidden;
-              box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-              background: rgba(245,241,232,0.06);
-              border: 2px solid rgba(156,179,128,0.2);
+              box-shadow: 0 14px 40px rgba(0,0,0,0.4);
+              background: rgba(245,241,232,0.08);
+              border: 3px solid rgba(123,165,126,0.25);
           ">
             <img src="https://greenscoreapp.com/wp-content/uploads/2024/09/Empowering-Sustainability-Through-Innovation-image2-Green-Score.webp"
-                 style="width:100%; height:100%; object-fit:cover;">
+                 style="width:100%; height:100%; object-fit:cover; filter: brightness(0.92) saturate(1.05);">
           </div>
         </div>
     
       </div>
     </div>
-    """, height=420)
+    """, height=460)
 
     #-------------------------
     # Your Next Steps
@@ -603,58 +683,59 @@ if st.session_state.page == "Home":
 
     components.html("""
     <div style="
-        background: linear-gradient(135deg, #4d7b2f 0%, #5d8b3f 100%);
-        border-radius:18px;
-        padding:44px 38px;
-        margin-top:22px;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-        box-shadow: 0 8px 24px rgba(45, 80, 22, 0.3);
+        background: linear-gradient(135deg, #7BA57E 0%, #6b9570 100%);
+        border-radius:24px;
+        padding:50px 42px;
+        margin-top:28px;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        box-shadow: 0 12px 32px rgba(93, 138, 102, 0.35);
     ">
-      <div style="display:flex; gap:34px; align-items:center;">
+      <div style="display:flex; gap:38px; align-items:center;">
     
         <!-- LEFT IMAGE -->
         <div style="flex:1; display:flex; justify-content:flex-start;">
           <div style="
-              width:520px;
-              height:320px;
-              border-radius:16px;
+              width:540px;
+              height:340px;
+              border-radius:20px;
               overflow:hidden;
-              box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-              background: rgba(245,241,232,0.06);
-              border: 2px solid rgba(156,179,128,0.2);
+              box-shadow: 0 14px 40px rgba(0,0,0,0.4);
+              background: rgba(245,241,232,0.08);
+              border: 3px solid rgba(123,165,126,0.25);
           ">
             <img src="https://www.shutterstock.com/image-photo/desk-displays-esg-metrics-sustainable-260nw-2672441077.jpg"
-                 style="width:100%; height:100%; object-fit:cover;">
+                 style="width:100%; height:100%; object-fit:cover; filter: brightness(0.92) saturate(1.05);">
           </div>
         </div>
     
         <!-- RIGHT TEXT -->
         <div style="flex:1.2;">
-          <h2 style="margin:0 0 14px 0; font-size:38px; color:#f5f1e8;">
+          <h2 style="margin:0 0 16px 0; font-size:42px; color:#f5f1e8; font-family: 'DM Serif Display', serif; letter-spacing: -0.02em;">
             Your Next Steps
           </h2>
     
-          <p style="margin:0 0 14px 0; font-size:18px; line-height:1.7; color:#e8f5e9;">
+          <p style="margin:0 0 18px 0; font-size:19px; line-height:1.8; color:#e8f5e9; font-weight: 400;">
             Clear, practical steps you can take to meaningfully reduce your environmental impact.
           </p>
     
-          <ul style="margin:0; padding-left:20px; font-size:18px; line-height:1.7; color:#e8f5e9;">
-            <li>Better Alternatives</li>
-            <li>Eco-friendly suggestions</li>
+          <ul style="margin:0; padding-left:24px; font-size:18px; line-height:1.9; color:#e8f5e9; font-weight: 400;">
+            <li style="margin-bottom: 8px;">Better Alternatives</li>
+            <li style="margin-bottom: 8px;">Eco-friendly suggestions</li>
             <li>Microhabits</li>
           </ul>
         </div>
     
       </div>
     </div>
-    """, height=420)
+    """, height=460)
 
 # -------------------------
 # GREEN SCORE PAGE
 # -------------------------
 elif st.session_state.page == "GreenScore":
     st.button("← Back to Home", on_click=go, args=("Home",))
-    st.title("🌿 GreenScore")    
+    st.markdown('<h1 style="font-size: 48px; margin-bottom: 8px; color: #5D8A66;">🌿 GreenScore</h1>', unsafe_allow_html=True)
+    
     # Check if user clicked an alternative product
     if "impact_history" not in st.session_state:
         st.session_state.impact_history = pd.DataFrame(columns=[
@@ -667,43 +748,29 @@ elif st.session_state.page == "GreenScore":
     # -----------------------------
     # Step 7: USER INPUT + DISPLAY
     # -----------------------------
-    st.subheader("📸 Scan Product (optional)")
+    st.markdown('<h3 style="font-size: 24px; margin-top: 24px; margin-bottom: 16px; color: #3A4A3A;">📸 Scan Product (optional)</h3>', unsafe_allow_html=True)
     
     image_file = st.camera_input("Take a photo of the product")
-
-    if image_file is None:
-        st.session_state.ocr_processed = False
     
-    if image_file and not st.session_state.get("ocr_processed", False):
+    if image_file:
         image = Image.open(image_file)
     
         with st.spinner("Reading packaging text..."):
             all_text = ocr_image(image)
-    
+        
         with st.spinner("Identifying product..."):
             detected_name = extract_product_name(all_text)
             matched_name, confidence = fuzzy_match_product(detected_name, summary_df)
-    
+        
         st.success(f"Detected: {matched_name}")
         st.session_state.selected_product = matched_name
-    
-        # ✅ Mark OCR as done
-        st.session_state.ocr_processed = True
-    
-        # 🔥 Reset selectbox so it updates
-        if "product_selectbox" in st.session_state:
-            del st.session_state["product_selectbox"]
-    
-        
-        st.rerun()
-
     
     # -----------------------------
     # PRODUCT SEARCH (SINGLE SOURCE OF TRUTH)
     # -----------------------------
     product_options = sorted(summary_df["name"].unique())
     preselected_product = None
-        
+    
     # Priority:
     # 1. Alternative click
     # 2. Previously selected product
@@ -711,7 +778,7 @@ elif st.session_state.page == "GreenScore":
         preselected_product = st.session_state.selected_alternative
     elif "selected_product" in st.session_state:
         preselected_product = st.session_state.selected_product
-        
+    
     # -----------------------------
     # SINGLE SELECTBOX (NO DOUBLE CLICK)
     # -----------------------------
@@ -731,108 +798,136 @@ elif st.session_state.page == "GreenScore":
             key="product_selectbox",
             placeholder="Start typing to search..."
         )
-        
+    
     # -----------------------------
     # CLEAN UP ONE-TIME FLAGS
     # -----------------------------
-    if "selected_alternative" in st.session_state:
-        del st.session_state["selected_alternative"]
-        
+
+    
     # -----------------------------
     # PERSIST SELECTION (IMMEDIATE)
     # -----------------------------
     if product_input:
         st.session_state.selected_product = product_input
-    
-    # -----------------------------
-    # DISPLAY SELECTED PRODUCT
-    # -----------------------------
-    if "selected_product" in st.session_state:
-        product_name = st.session_state.selected_product
-        result = summary_df[summary_df["name"] == product_name]
-    
+        result = summary_df[summary_df["name"] == product_input]
         if result.empty:
             st.error("❌ Product not found in database.")
         else:
             r = result.iloc[0]
             st.divider()
+        if "selected_alternative" in st.session_state:
+            del st.session_state["selected_alternative"]
+        # Clear selected alternative AFTER it has been applied
+
             
-            # ---------- ECO SCORE ----------
+            # ---------- ECO SCORE WITH RADIAL DESIGN ----------
             st.markdown("### 🌿 Eco Score")
             
-            # Create a more visually appealing score display
             score_col1, score_col2 = st.columns([2, 3])
             
             with score_col1:
-                # Large score display
+                # Radial score display
+                score_value = r['eco_score']
+                
+                # Determine color and badge based on score
+                if score_value >= 80:
+                    badge_color = "#5D8A66"
+                    badge_text = "Excellent"
+                    emoji = "🌟"
+                    ring_color = "#7BA57E"
+                elif score_value >= 60:
+                    badge_color = "#7BA57E"
+                    badge_text = "Good"
+                    emoji = "👍"
+                    ring_color = "#9cb380"
+                elif score_value >= 40:
+                    badge_color = "#F4B860"
+                    badge_text = "Moderate"
+                    emoji = "⚠️"
+                    ring_color = "#F4B860"
+                else:
+                    badge_color = "#D97B6C"
+                    badge_text = "Needs Improvement"
+                    emoji = "❗"
+                    ring_color = "#D97B6C"
+                
                 st.markdown(f"""
                     <div style="
-                        background: linear-gradient(135deg, #2d5016 0%, #3d6b1f 100%);
-                        border-radius: 18px;
-                        padding: 30px;
-                        text-align: center;
-                        box-shadow: 0 8px 20px rgba(45, 80, 22, 0.3);
+                        background: linear-gradient(135deg, {badge_color} 0%, {ring_color} 100%);
+                        border-radius: 50%;
+                        width: 240px;
+                        height: 240px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 12px 40px rgba(93, 138, 102, 0.4);
+                        margin: 20px auto;
+                        position: relative;
+                        border: 8px solid rgba(245, 241, 232, 0.3);
                     ">
-                        <h1 style="color: #f5f1e8; margin: 0; font-size: 4em;">{r['eco_score']}</h1>
-                        <p style="color: #c5d4b8; margin: 5px 0 0 0; font-size: 1.1em;">out of 100</p>
+                        <div style="
+                            position: absolute;
+                            top: -12px;
+                            right: -12px;
+                            background: #F5F1E8;
+                            border-radius: 50%;
+                            width: 56px;
+                            height: 56px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                            font-size: 28px;
+                        ">
+                            {emoji}
+                        </div>
+                        <h1 style='color: #F5F1E8; margin: 0; font-size: 72px; font-weight: 700; text-shadow: 2px 2px 8px rgba(0,0,0,0.2);'>{score_value}</h1>
+                        <p style='color: rgba(245, 241, 232, 0.9); margin: 8px 0 0 0; font-size: 18px; font-weight: 500;'>out of 100</p>
                     </div>
                 """, unsafe_allow_html=True)
             
             with score_col2:
-                # Score interpretation
-                if r['eco_score'] >= 80:
-                    badge_color = "#2d5016"
-                    badge_text = "Excellent"
-                    emoji = "🌟"
-                elif r['eco_score'] >= 60:
-                    badge_color = "#4d7b2f"
-                    badge_text = "Good"
-                    emoji = "👍"
-                elif r['eco_score'] >= 40:
-                    badge_color = "#d4a373"
-                    badge_text = "Moderate"
-                    emoji = "⚠️"
-                else:
-                    badge_color = "#a85232"
-                    badge_text = "Needs Improvement"
-                    emoji = "❗"
-                
                 st.markdown(f"""
-                    <div style="padding: 20px 0;">
+                    <div style="padding: 30px 0;">
                         <div style="
-                            background-color: {badge_color};
-                            color: #f5f1e8;
-                            padding: 15px 25px;
-                            border-radius: 14px;
+                            background: linear-gradient(135deg, {badge_color}15 0%, {badge_color}08 100%);
+                            color: {badge_color};
+                            padding: 20px 32px;
+                            border-radius: 18px;
                             display: inline-block;
-                            font-size: 1.3em;
-                            font-weight: bold;
-                            margin-bottom: 15px;
-                            box-shadow: 0 4px 12px rgba(45, 80, 22, 0.2);
+                            font-size: 28px;
+                            font-weight: 700;
+                            margin-bottom: 24px;
+                            box-shadow: 0 6px 20px {badge_color}25;
+                            border: 2px solid {badge_color}40;
+                            font-family: 'DM Serif Display', serif;
                         ">
-                            {emoji} {badge_text}
+                            {badge_text}
                         </div>
-                        <p style="color: #9cb380; margin-top: 10px; line-height: 1.6;">
-                            This score reflects the overall environmental impact across carbon, water, energy, and waste metrics.
+                        <p style="color: #3A4A3A; margin-top: 16px; line-height: 1.8; font-size: 17px; font-weight: 400;">
+                            This score reflects the overall environmental impact across carbon, water, energy, and waste metrics. It considers packaging materials, ingredient sustainability, and eco-certifications.
                         </p>
                     </div>
                 """, unsafe_allow_html=True)
             
-            # Progress bar with custom styling
+            # Enhanced progress bar
             st.markdown(f"""
-                <div style="margin: 20px 0;">
+                <div style="margin: 32px 0;">
                     <div style="
-                        background-color: #3d4a35;
-                        border-radius: 12px;
-                        height: 14px;
+                        background: rgba(93, 138, 102, 0.12);
+                        border-radius: 16px;
+                        height: 18px;
                         overflow: hidden;
+                        box-shadow: inset 0 2px 6px rgba(0,0,0,0.08);
                     ">
                         <div style="
-                            background: linear-gradient(90deg, #2d5016 0%, #4d7b2f 50%, #7c9070 100%);
-                            width: {r['eco_score']}%;
+                            background: linear-gradient(90deg, {ring_color} 0%, {badge_color} 100%);
+                            width: {score_value}%;
                             height: 100%;
-                            border-radius: 12px;
-                            transition: width 0.5s ease;
+                            border-radius: 16px;
+                            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+                            box-shadow: 0 0 12px {badge_color}60;
                         "></div>
                     </div>
                 </div>
@@ -840,80 +935,67 @@ elif st.session_state.page == "GreenScore":
     
             st.divider()
     
-            # ---------- METRICS ----------
+            # ---------- ENHANCED METRICS ----------
             st.markdown("### 📊 Environmental Impact Breakdown")
             
             col1, col2, col3, col4 = st.columns(4)
     
-            with col1:
-                st.markdown(f"""
-                    <div style="
-                        background: linear-gradient(135deg, #f5f1e8 0%, #faf8f3 100%);
-                        border-left: 4px solid #d4a373;
-                        border-radius: 12px;
-                        padding: 20px 15px;
-                        text-align: center;
-                        box-shadow: 0 4px 12px rgba(45, 80, 22, 0.1);
-                    ">
-                        <div style="font-size: 2em; margin-bottom: 10px;">🌫</div>
-                        <div style="color: #5d4e37; font-size: 0.85em; margin-bottom: 5px; font-weight: 600;">Carbon Footprint</div>
-                        <div style="color: #2d1810; font-size: 1.5em; font-weight: bold;">{r['total_carbon_kg']:.3f}</div>
-                        <div style="color: #5d4e37; font-size: 0.75em;">kg CO₂e</div>
-                    </div>
-                """, unsafe_allow_html=True)
-    
-            with col2:
-                st.markdown(f"""
-                    <div style="
-                        background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f3 100%);
-                        border-left: 4px solid #4d7b2f;
-                        border-radius: 12px;
-                        padding: 20px 15px;
-                        text-align: center;
-                        box-shadow: 0 4px 12px rgba(45, 80, 22, 0.1);
-                    ">
-                        <div style="font-size: 2em; margin-bottom: 10px;">💧</div>
-                        <div style="color: #2d5016; font-size: 0.85em; margin-bottom: 5px; font-weight: 600;">Water Usage</div>
-                        <div style="color: #1a3d0f; font-size: 1.5em; font-weight: bold;">{r['total_water_L']:.3f}</div>
-                        <div style="color: #2d5016; font-size: 0.75em;">Liters</div>
-                    </div>
-                """, unsafe_allow_html=True)
-    
-            with col3:
-                st.markdown(f"""
-                    <div style="
-                        background: linear-gradient(135deg, #fff9e6 0%, #fffcf0 100%);
-                        border-left: 4px solid #d4a373;
-                        border-radius: 12px;
-                        padding: 20px 15px;
-                        text-align: center;
-                        box-shadow: 0 4px 12px rgba(45, 80, 22, 0.1);
-                    ">
-                        <div style="font-size: 2em; margin-bottom: 10px;">⚡</div>
-                        <div style="color: #6b4423; font-size: 0.85em; margin-bottom: 5px; font-weight: 600;">Energy Use</div>
-                        <div style="color: #3d2815; font-size: 1.5em; font-weight: bold;">{r['total_energy_MJ']:.3f}</div>
-                        <div style="color: #6b4423; font-size: 0.75em;">MJ</div>
-                    </div>
-                """, unsafe_allow_html=True)
-    
-            with col4:
-                st.markdown(f"""
-                    <div style="
-                        background: linear-gradient(135deg, #f5f1e8 0%, #faf8f3 100%);
-                        border-left: 4px solid #7c9070;
-                        border-radius: 12px;
-                        padding: 20px 15px;
-                        text-align: center;
-                        box-shadow: 0 4px 12px rgba(45, 80, 22, 0.1);
-                    ">
-                        <div style="font-size: 2em; margin-bottom: 10px;">🗑</div>
-                        <div style="color: #3d4a35; font-size: 0.85em; margin-bottom: 5px; font-weight: 600;">Waste Impact</div>
-                        <div style="color: #1a2318; font-size: 1.5em; font-weight: bold;">{r['total_waste_score']}</div>
-                        <div style="color: #3d4a35; font-size: 0.75em;">Score</div>
-                    </div>
-                """, unsafe_allow_html=True)
+            metrics_data = [
+                {
+                    "icon": "🌫",
+                    "title": "Carbon Footprint",
+                    "value": f"{r['total_carbon_kg']:.2f}",
+                    "unit": "kg CO₂e",
+                    "color": "#E8956B",
+                    "bg_gradient": "linear-gradient(135deg, #FFF4E6 0%, #F5F1E8 100%)"
+                },
+                {
+                    "icon": "💧",
+                    "title": "Water Usage",
+                    "value": f"{r['total_water_L']:.1f}",
+                    "unit": "Liters",
+                    "color": "#5D8A66",
+                    "bg_gradient": "linear-gradient(135deg, #E8F5E9 0%, #F5F1E8 100%)"
+                },
+                {
+                    "icon": "⚡",
+                    "title": "Energy Use",
+                    "value": f"{r['total_energy_MJ']:.1f}",
+                    "unit": "MJ",
+                    "color": "#F4B860",
+                    "bg_gradient": "linear-gradient(135deg, #FFF9E6 0%, #F5F1E8 100%)"
+                },
+                {
+                    "icon": "🗑",
+                    "title": "Waste Impact",
+                    "value": f"{r['total_waste_score']:.1f}",
+                    "unit": "Score",
+                    "color": "#7BA57E",
+                    "bg_gradient": "linear-gradient(135deg, #F5F1E8 0%, #FAF8F3 100%)"
+                }
+            ]
+            
+            for col, data in zip([col1, col2, col3, col4], metrics_data):
+                with col:
+                    st.markdown(f"""
+                        <div style="
+                            background: {data['bg_gradient']};
+                            border-left: 5px solid {data['color']};
+                            border-radius: 16px;
+                            padding: 24px 18px;
+                            text-align: center;
+                            box-shadow: 0 6px 18px rgba(93, 138, 102, 0.12);
+                            transition: transform 0.3s ease, box-shadow 0.3s ease;
+                            cursor: pointer;
+                        " onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 12px 28px rgba(93, 138, 102, 0.2)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 18px rgba(93, 138, 102, 0.12)';">
+                            <div style="font-size: 2.4em; margin-bottom: 12px;">{data['icon']}</div>
+                            <div style="color: {data['color']}; font-size: 0.88em; margin-bottom: 8px; font-weight: 600; letter-spacing: 0.3px;">{data['title']}</div>
+                            <div style="color: #3A4A3A; font-size: 2em; font-weight: 700; font-family: 'DM Serif Display', serif;">{data['value']}</div>
+                            <div style="color: {data['color']}; font-size: 0.78em; margin-top: 4px; font-weight: 500;">{data['unit']}</div>
+                        </div>
+                    """, unsafe_allow_html=True)
 
-                        # ---------- INGREDIENT FLAGS (only show present ones) ----------
+            # ---------- INGREDIENT FLAGS (enhanced design) ----------
             st.markdown("### 🧪 Ingredient Flags")
             
             flag_defs = [
@@ -948,25 +1030,43 @@ elif st.session_state.page == "GreenScore":
                     with col:
                         st.markdown(f"""
                             <div style="
-                                background: linear-gradient(135deg, #fff4e6 0%, #f5f1e8 100%);
-                                border-left: 4px solid #d4a373;
-                                border-radius: 12px;
-                                padding: 18px 14px;
-                                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.10);
-                                min-height: 155px;
-                            ">
-                                <div style="font-size: 1.8em; margin-bottom: 6px;">{flag["emoji"]}</div>
-                                <div style="font-weight: 700; font-size: 1.05em; color: #1a2318;">{flag["title"]} — Present</div>
-                                <div style="margin-top: 10px; font-size: 0.9em; line-height: 1.45; color: #3d4a35;">
+                                background: linear-gradient(135deg, #FFF4E6 0%, #F5F1E8 100%);
+                                border-left: 5px solid #E8956B;
+                                border-radius: 16px;
+                                padding: 22px 18px;
+                                box-shadow: 0 6px 18px rgba(232, 149, 107, 0.15);
+                                min-height: 165px;
+                                transition: transform 0.3s ease;
+                            " onmouseover="this.style.transform='translateY(-4px)';" onmouseout="this.style.transform='translateY(0)';">
+                                <div style="font-size: 2.2em; margin-bottom: 10px;">{flag["emoji"]}</div>
+                                <div style="font-weight: 700; font-size: 1.08em; color: #3A4A3A; margin-bottom: 4px;">{flag["title"]}</div>
+                                <div style="color: #E8956B; font-size: 0.85em; font-weight: 600; margin-bottom: 12px;">⚠️ Present</div>
+                                <div style="margin-top: 12px; font-size: 0.9em; line-height: 1.5; color: #3A4A3A;">
                                     {flag["why"]}
                                 </div>
                             </div>
                         """, unsafe_allow_html=True)
             else:
-                st.success("✅ No ingredient red flags detected for this product (based on our database).")
+                st.markdown("""
+                    <div style="
+                        background: linear-gradient(135deg, #E8F5E9 0%, #F5F1E8 100%);
+                        border-left: 5px solid #7BA57E;
+                        border-radius: 16px;
+                        padding: 20px 24px;
+                        box-shadow: 0 6px 18px rgba(123, 165, 126, 0.15);
+                    ">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 2em;">✅</span>
+                            <span style="color: #3A4A3A; font-size: 1.05em; font-weight: 500;">No ingredient red flags detected for this product (based on our database).</span>
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
     
             st.markdown("<br>", unsafe_allow_html=True)
     
+            # ---------- OPTIONAL DETAILS ----------
+            with st.expander("📊 View detailed data"):
+                st.dataframe(result, use_container_width=True)
         
             st.divider()
             
@@ -998,34 +1098,51 @@ elif st.session_state.page == "GreenScore":
             
             # ✅ CASE 1: NO greener alternatives
             if not alternatives:
-                st.success("🎉 Great choice! This is already one of the greenest options in its category.")
+                st.markdown("""
+                    <div style="
+                        background: linear-gradient(135deg, #E8F5E9 0%, #F5F1E8 100%);
+                        border-left: 5px solid #7BA57E;
+                        border-radius: 16px;
+                        padding: 24px 28px;
+                        box-shadow: 0 6px 18px rgba(123, 165, 126, 0.15);
+                    ">
+                        <div style="display: flex; align-items: center; gap: 14px;">
+                            <span style="font-size: 2.4em;">🎉</span>
+                            <div>
+                                <div style="color: #3A4A3A; font-size: 1.15em; font-weight: 600; margin-bottom: 4px;">Great choice!</div>
+                                <div style="color: #5D8A66; font-size: 0.95em;">This is already one of the greenest options in its category.</div>
+                            </div>
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
             
             # ✅ CASE 2: Greener alternatives exist
             else:
                 for alt in alternatives:
-                    col1 = st.container()
+                    col1, col2 = st.columns([4, 1])
             
                     with col1:
                         st.markdown(
                             f"""
                             <div style="
-                                background: linear-gradient(135deg, #e8f5e9 0%, #f5f1e8 100%);
-                                border-left: 5px solid #2d5016;
-                                border-radius: 14px;
-                                padding: 18px;
-                                margin-bottom: 14px;
-                                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
-                            ">
+                                background: linear-gradient(135deg, #E8F5E9 0%, #F5F1E8 100%);
+                                border-left: 6px solid #5D8A66;
+                                border-radius: 18px;
+                                padding: 22px 24px;
+                                margin-bottom: 16px;
+                                box-shadow: 0 6px 20px rgba(93, 138, 102, 0.18);
+                                transition: all 0.3s ease;
+                            " onmouseover="this.style.transform='translateX(6px)'; this.style.boxShadow='0 8px 28px rgba(93, 138, 102, 0.25)';" onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='0 6px 20px rgba(93, 138, 102, 0.18)';">
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <div>
-                                        <strong style="color:#1a3d0f; font-size:17px;">{alt['name']}</strong><br>
-                                        <span style="color:#4d7b2f; font-size:14px;">✨ {alt['improvement']}</span>
+                                        <strong style="color:#3A4A3A; font-size:18px; font-weight: 700;">{alt['name']}</strong><br>
+                                        <span style="color:#5D8A66; font-size:15px; font-weight: 500;">✨ {alt['improvement']}</span>
                                     </div>
                                     <div style="text-align: right;">
-                                        <div style="color:#2d5016; font-size:26px; font-weight:700;">
+                                        <div style="color:#5D8A66; font-size:32px; font-weight:800; font-family: 'DM Serif Display', serif;">
                                             {alt['eco_score']}
                                         </div>
-                                        <div style="color:#5d4e37; font-size:12px;">
+                                        <div style="color:#7BA57E; font-size:13px; font-weight: 600;">
                                             +{alt['score_diff']:.1f} points
                                         </div>
                                     </div>
@@ -1035,12 +1152,18 @@ elif st.session_state.page == "GreenScore":
                             unsafe_allow_html=True
                         )
             
+                    with col2:
+                        if st.button("View →", key=f"view_{alt['name']}", use_container_width=True):
+                            st.session_state['selected_alternative'] = alt['name']
+                            st.rerun()
+
+
 
             # =============================
-            # AI PRODUCT CHATBOT
+            # AI PRODUCT CHATBOT (enhanced)
             # =============================
             st.divider()
-            st.subheader("🤖 AI Insight: Explore This Product")
+            st.markdown('<h3 style="font-size: 28px; margin-top: 20px; margin-bottom: 12px; color: #5D8A66;">🤖 AI Insight: Explore This Product</h3>', unsafe_allow_html=True)
 
             st.caption(
                 "Ask in-depth questions about this product's ingredients, impacts, and "
@@ -1149,7 +1272,7 @@ elif st.session_state.page == "Chatbot":
     # -----------------------------
     # PAGE SETUP
     # -----------------------------
-    st.title("🤖 Eco Assistant")
+    st.markdown('<h1 style="font-size: 48px; margin-bottom: 8px; color: #5D8A66;">🤖 Eco Assistant</h1>', unsafe_allow_html=True)
     st.caption("Ask me about sustainability, eco scores, or greener choices 🌱")
     # -----------------------------
     # CHAT MEMORY
@@ -1229,7 +1352,7 @@ elif st.session_state.page == "Impact Dashboard":
     # NAV
     # -----------------------------
     st.button("← Back to Home", on_click=go, args=("Home",))
-    st.title("🌍 Your Sustainability Impact")
+    st.markdown('<h1 style="font-size: 48px; margin-bottom: 8px; color: #5D8A66;">🌍 Your Sustainability Impact</h1>', unsafe_allow_html=True)
     st.caption("A living story of how your choices shape the planet 🌱")
 
     # -----------------------------
@@ -1264,7 +1387,7 @@ Your tasks:
 
 2. Suggest 3 IMPROVEMENTS RELATED ONLY TO FUTURE PURCHASES.
    - Suggest product alternatives, material swaps, or category changes
-   - Example: “Switch from X-type products to Y-type products”
+   - Example: "Switch from X-type products to Y-type products"
    - You MAY suggest searching for lower-impact alternatives
    - DO NOT suggest lifestyle actions (no showers, lights, transport, etc.)
 
@@ -1294,21 +1417,41 @@ Rules:
     st.divider()
 
     # =============================
-    # 🌱 SUMMARY METRICS
+    # 🌱 SUMMARY METRICS (enhanced)
     # =============================
     avg_score = history["Eco Score"].mean()
     total_score = history["Eco Score"].sum()
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Average Eco Score", f"{avg_score:.1f} / 100")
-    c2.metric("Products Logged", len(history))
-    c3.metric("High-Eco Choices", (history["Eco Score"] >= 80).sum())
-    c4.metric("Total Eco Score", int(total_score))
+    
+    metrics_display = [
+        ("Average Eco Score", f"{avg_score:.1f} / 100", "🌿"),
+        ("Products Logged", str(len(history)), "📦"),
+        ("High-Eco Choices", str((history["Eco Score"] >= 80).sum()), "⭐"),
+        ("Total Eco Score", str(int(total_score)), "🏆")
+    ]
+    
+    for col, (label, value, emoji) in zip([c1, c2, c3, c4], metrics_display):
+        with col:
+            col.markdown(f"""
+                <div style="
+                    background: linear-gradient(135deg, #5D8A6615 0%, #5D8A6608 100%);
+                    border-radius: 16px;
+                    padding: 20px;
+                    text-align: center;
+                    border: 2px solid #5D8A6625;
+                    box-shadow: 0 4px 12px rgba(93, 138, 102, 0.1);
+                ">
+                    <div style="font-size: 2.2em; margin-bottom: 8px;">{emoji}</div>
+                    <div style="color: #5D8A66; font-size: 2em; font-weight: 700; font-family: 'DM Serif Display', serif; margin-bottom: 4px;">{value}</div>
+                    <div style="color: #3A4A3A; font-size: 0.85em; font-weight: 500;">{label}</div>
+                </div>
+            """, unsafe_allow_html=True)
 
     st.divider()
 
     # =============================
-    # 📈 ECOSCORE TREND
+    # 📈 ECOSCORE TREND (with custom colors)
     # =============================
     st.markdown("## 📈 Your EcoScore Journey")
 
@@ -1317,7 +1460,14 @@ Rules:
         x=history.reset_index().index,
         y="Eco Score",
         markers=True,
-        color_discrete_sequence=["#2d5016"]
+        color_discrete_sequence=["#5D8A66"]
+    )
+    
+    trend_fig.update_layout(
+        plot_bgcolor='rgba(245, 241, 232, 0.3)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font_family="Plus Jakarta Sans",
+        font_color="#3A4A3A"
     )
 
     st.plotly_chart(trend_fig, use_container_width=True)
@@ -1341,7 +1491,9 @@ Rules:
                 products
             )
 
-            st.info(ai_text.strip())
+            explanation, actions = ai_text.split("2.", 1)
+            st.info(explanation.strip())
+            st.success("2." + actions.strip())
 
     st.divider()
 
@@ -1361,7 +1513,15 @@ Rules:
         x="Impact Type",
         y="Average Value",
         color="Impact Type",
-        color_discrete_sequence=["#2d5016", "#3d6b1f", "#4d7b2f", "#7c9070"]
+        color_discrete_sequence=["#5D8A66", "#7BA57E", "#9cb380", "#E8956B"]
+    )
+    
+    impact_fig.update_layout(
+        plot_bgcolor='rgba(245, 241, 232, 0.3)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font_family="Plus Jakarta Sans",
+        font_color="#3A4A3A",
+        showlegend=False
     )
 
     st.plotly_chart(impact_fig, use_container_width=True)
@@ -1380,7 +1540,9 @@ Rules:
                 products
             )
 
-            st.info(ai_text.strip())
+            explanation, actions = ai_text.split("2.", 1)
+            st.info(explanation.strip())
+            st.success("2." + actions.strip())
 
     st.divider()
 
@@ -1421,7 +1583,14 @@ Rules:
             x="Product",
             y=impact_cols,
             barmode="stack",
-            color_discrete_sequence=["#2d5016", "#3d6b1f", "#4d7b2f", "#7c9070"]
+            color_discrete_sequence=["#5D8A66", "#7BA57E", "#9cb380", "#E8956B"]
+        )
+        
+        stacked_fig.update_layout(
+            plot_bgcolor='rgba(245, 241, 232, 0.3)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font_family="Plus Jakarta Sans",
+            font_color="#3A4A3A"
         )
 
         st.plotly_chart(stacked_fig, use_container_width=True)
@@ -1437,10 +1606,13 @@ Rules:
 
                 ai_text = explain_with_ai(
                     "Product impact comparison",
-                    comparison_summary
+                    comparison_summary,
+                    compare_products
                 )
 
-                st.info(ai_text.strip())
+                explanation, actions = ai_text.split("2.", 1)
+                st.info(explanation.strip())
+                st.success("2." + actions.strip())
 
     else:
         st.info("Select at least two products from the same category 🌱")
@@ -1471,7 +1643,7 @@ Rules:
 elif st.session_state.page == "NextSteps":
 
     st.button("← Back to Home", on_click=go, args=("Home",))
-    st.title("🧭 Your Next Steps")
+    st.markdown('<h1 style="font-size: 48px; margin-bottom: 8px; color: #5D8A66;">🧭 Your Next Steps</h1>', unsafe_allow_html=True)
     st.caption("Clear, practical actions to reduce your impact")
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -1480,7 +1652,7 @@ elif st.session_state.page == "NextSteps":
     # SECTION 1 — ECO ALTERNATIVES
     # ============================
 
-    st.subheader("🌿 Switch to Better Alternatives")
+    st.markdown('<h2 style="font-size: 32px; margin-bottom: 18px; color: #5D8A66;">🌿 Switch to Better Alternatives</h2>', unsafe_allow_html=True)
 
     category = st.selectbox(
         "Select a product category",
@@ -1584,18 +1756,19 @@ elif st.session_state.page == "NextSteps":
             with [c1, c2, c3][i]:
                 st.markdown(f"""
                 <div style="
-                    background:#102a13;
-                    border-radius:16px;
-                    padding:24px;
+                    background: linear-gradient(135deg, #5D8A66 0%, #4d7554 100%);
+                    border-radius:20px;
+                    padding:28px 22px;
                     text-align:center;
-                    box-shadow:0 6px 16px rgba(0,0,0,0.25);
-                    height:170px;
+                    box-shadow:0 8px 24px rgba(93, 138, 102, 0.3);
+                    height:190px;
                     display:flex;
                     flex-direction:column;
                     justify-content:center;
-                ">
-                    <h4 style="color:white;margin-bottom:10px;">{prod}</h4>
-                    <p style="color:rgba(255,255,255,0.7);font-size:14px;">
+                    transition: transform 0.3s ease;
+                " onmouseover="this.style.transform='translateY(-8px)';" onmouseout="this.style.transform='translateY(0)';">
+                    <h4 style="color:#F5F1E8; margin-bottom:14px; font-size: 1.15em; font-weight: 700; line-height: 1.3;">{prod}</h4>
+                    <p style="color:rgba(245,241,232,0.85); font-size:15px; line-height: 1.5;">
                     Lower packaging & ingredient impact
                     </p>
                 </div>
@@ -1607,69 +1780,58 @@ elif st.session_state.page == "NextSteps":
     # SECTION 2 — IF YOU ALREADY BOUGHT
     # =================================
 
-    st.subheader("♻️ If You Already Bought a Regular Product")
+    st.markdown('<h2 style="font-size: 32px; margin-bottom: 18px; color: #5D8A66;">♻️ If You Already Bought a Regular Product</h2>', unsafe_allow_html=True)
     
     c1, c2, c3 = st.columns(3)
     
-    # BOX 1 — USE INTENTIONALLY
-    with c1:
-        st.markdown("""
-        <div style="
-            background:#1b2f1f;
-            border-radius:16px;
-            padding:26px;
-            height:300px;
-            box-shadow:0 6px 16px rgba(0,0,0,0.25);
-        ">
-            <h4 style="color:white;">Use Intentionally</h4>
-            <ul style="color:rgba(255,255,255,0.85); line-height:1.7;">
-                <li>Use only the recommended amount</li>
-                <li>Avoid unnecessary double cleansing</li>
-                <li>Don’t stockpile backups</li>
-                <li>Finish before opening a new product</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+    boxes_content = [
+        {
+            "title": "Use Intentionally",
+            "items": [
+                "Use only the recommended amount",
+                "Avoid unnecessary double cleansing",
+                "Don't stockpile backups",
+                "Finish before opening a new product"
+            ]
+        },
+        {
+            "title": "Extend Product Life",
+            "items": [
+                "Store away from heat & sunlight",
+                "Use pumps/spatulas to avoid contamination",
+                "Choose refills next time",
+                "Share unopened extras"
+            ]
+        },
+        {
+            "title": "Dispose Responsibly",
+            "items": [
+                "Empty completely",
+                "Rinse packaging",
+                "Check local recycling rules",
+                "Reuse containers for storage"
+            ]
+        }
+    ]
     
-    # BOX 2 — EXTEND PRODUCT LIFE
-    with c2:
-        st.markdown("""
-        <div style="
-            background:#1b2f1f;
-            border-radius:16px;
-            padding:26px;
-            height:300px;
-            box-shadow:0 6px 16px rgba(0,0,0,0.25);
-        ">
-            <h4 style="color:white;">Extend Product Life</h4>
-            <ul style="color:rgba(255,255,255,0.85); line-height:1.7;">
-                <li>Store away from heat & sunlight</li>
-                <li>Use pumps/spatulas to avoid contamination</li>
-                <li>Choose refills next time</li>
-                <li>Share unopened extras</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # BOX 3 — DISPOSE RESPONSIBLY
-    with c3:
-        st.markdown("""
-        <div style="
-            background:#1b2f1f;
-            border-radius:16px;
-            padding:26px;
-            height:300px;
-            box-shadow:0 6px 16px rgba(0,0,0,0.25);
-        ">
-            <h4 style="color:white;">Dispose Responsibly</h4>
-            <ul style="color:rgba(255,255,255,0.85); line-height:1.7;">
-                <li>Empty completely</li>
-                <li>Rinse packaging</li>
-                <li>Check local recycling rules</li>
-                <li>Reuse containers for storage</li>
-            </ul>
-        </div>
-        """, unsafe_allow_html=True)
+    for col, content in zip([c1, c2, c3], boxes_content):
+        with col:
+            items_html = "".join([f"<li style='margin-bottom: 10px;'>{item}</li>" for item in content['items']])
+            col.markdown(f"""
+            <div style="
+                background: linear-gradient(135deg, #5D8A6618 0%, #5D8A6610 100%);
+                border-radius:18px;
+                padding:28px 24px;
+                height:320px;
+                box-shadow:0 6px 20px rgba(93, 138, 102, 0.15);
+                border: 2px solid #5D8A6630;
+            ">
+                <h4 style="color:#3A4A3A; font-size: 1.3em; margin-bottom: 16px; font-weight: 700;">{content['title']}</h4>
+                <ul style="color:#3A4A3A; line-height:1.7; font-size: 0.95em; padding-left: 20px;">
+                    {items_html}
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
     
 
     st.markdown("<br><br>", unsafe_allow_html=True)
@@ -1678,7 +1840,7 @@ elif st.session_state.page == "NextSteps":
     # SECTION 3 — DAILY MICRO HABITS
     # ============================
 
-    st.subheader("🌱 Everyday Micro-Habits")
+    st.markdown('<h2 style="font-size: 32px; margin-bottom: 18px; color: #5D8A66;">🌱 Everyday Micro-Habits</h2>', unsafe_allow_html=True)
     
     c1, c2, c3 = st.columns(3)
     
@@ -1695,16 +1857,17 @@ elif st.session_state.page == "NextSteps":
         with [c1, c2, c3][i % 3]:
             st.markdown(f"""
             <div style="
-                background:#0f766e;
-                color:white;
-                border-radius:14px;
-                padding:18px;
+                background: linear-gradient(135deg, #7BA57E 0%, #6b9570 100%);
+                color:#F5F1E8;
+                border-radius:16px;
+                padding:20px 18px;
                 text-align:center;
-                margin-bottom:14px;
-                box-shadow:0 4px 10px rgba(0,0,0,0.25);
-                font-weight:500;
-            ">
+                margin-bottom:16px;
+                box-shadow:0 6px 16px rgba(123, 165, 126, 0.25);
+                font-weight:600;
+                font-size: 1.05em;
+                transition: all 0.3s ease;
+            " onmouseover="this.style.transform='scale(1.05)'; this.style.boxShadow='0 8px 24px rgba(123, 165, 126, 0.35)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 6px 16px rgba(123, 165, 126, 0.25)';">
                 {h}
             </div>
             """, unsafe_allow_html=True)
-
