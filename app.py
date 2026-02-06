@@ -1608,65 +1608,69 @@ elif st.session_state.page == "NextSteps":
     # =================================
 
     st.subheader("♻️ If You Already Bought a Regular Product")
-
+    
     c1, c2, c3 = st.columns(3)
-
-    # BOX 1 — USE LESS
+    
+    # BOX 1 — USE INTENTIONALLY
     with c1:
         st.markdown("""
         <div style="
             background:#1b2f1f;
             border-radius:16px;
             padding:26px;
-            height:260px;
+            height:300px;
             box-shadow:0 6px 16px rgba(0,0,0,0.25);
         ">
-            <h4 style="color:white;">Use Less</h4>
+            <h4 style="color:white;">Use Intentionally</h4>
             <ul style="color:rgba(255,255,255,0.85); line-height:1.7;">
-                <li>Use smaller amounts</li>
-                <li>Avoid double cleansing</li>
-                <li>Don’t overapply</li>
+                <li>Use only the recommended amount</li>
+                <li>Avoid unnecessary double cleansing</li>
+                <li>Don’t stockpile backups</li>
+                <li>Finish before opening a new product</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
-
-    # BOX 2 — EXTEND LIFE
+    
+    # BOX 2 — EXTEND PRODUCT LIFE
     with c2:
         st.markdown("""
         <div style="
             background:#1b2f1f;
             border-radius:16px;
             padding:26px;
-            height:260px;
+            height:300px;
             box-shadow:0 6px 16px rgba(0,0,0,0.25);
         ">
             <h4 style="color:white;">Extend Product Life</h4>
             <ul style="color:rgba(255,255,255,0.85); line-height:1.7;">
-                <li>Finish the product fully</li>
-                <li>Use refills when possible</li>
-                <li>Store properly</li>
+                <li>Store away from heat & sunlight</li>
+                <li>Use pumps/spatulas to avoid contamination</li>
+                <li>Choose refills next time</li>
+                <li>Share unopened extras</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
-
-    # BOX 3 — DISPOSE SMARTLY
+    
+    # BOX 3 — DISPOSE RESPONSIBLY
     with c3:
         st.markdown("""
         <div style="
             background:#1b2f1f;
             border-radius:16px;
             padding:26px;
-            height:260px;
+            height:300px;
             box-shadow:0 6px 16px rgba(0,0,0,0.25);
         ">
-            <h4 style="color:white;">Dispose Smartly</h4>
+            <h4 style="color:white;">Dispose Responsibly</h4>
             <ul style="color:rgba(255,255,255,0.85); line-height:1.7;">
-                <li>Rinse container</li>
-                <li>Recycle correctly</li>
-                <li>Reuse for storage</li>
+                <li>Empty completely</li>
+                <li>Rinse packaging</li>
+                <li>Check local recycling rules</li>
+                <li>Reuse containers for storage</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
+    
 
     st.markdown("<br><br>", unsafe_allow_html=True)
 
@@ -1675,18 +1679,18 @@ elif st.session_state.page == "NextSteps":
     # ============================
 
     st.subheader("🌱 Everyday Micro-Habits")
-
+    
     c1, c2, c3 = st.columns(3)
-
+    
     habits = [
-        "Buy refills",
+        "Choose refill packs",
         "Prefer bars over liquids",
-        "Reduce, Reuse Recycle",
-        "Choose multipurpose products",
+        "Buy only what you need",
+        "Pick paper or aluminum packaging",
         "Carry your own bottle",
-        "Support Green Businesses"
+        "Support eco-certified brands"
     ]
-
+    
     for i, h in enumerate(habits):
         with [c1, c2, c3][i % 3]:
             st.markdown(f"""
@@ -1698,6 +1702,7 @@ elif st.session_state.page == "NextSteps":
                 text-align:center;
                 margin-bottom:14px;
                 box-shadow:0 4px 10px rgba(0,0,0,0.25);
+                font-weight:500;
             ">
                 {h}
             </div>
