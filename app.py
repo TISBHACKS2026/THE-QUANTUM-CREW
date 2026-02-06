@@ -131,7 +131,7 @@ def fuzzy_match_product(name, summary_df):
     )
     return match, score
 
-st.set_page_config(page_title="EcoLens", page_icon="🌱", layout="wide")
+st.set_page_config(page_title=" EcoLens", page_icon="🌱", layout="wide")
 
 st.markdown("""
 <style>
