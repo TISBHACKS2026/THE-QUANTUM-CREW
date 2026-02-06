@@ -648,50 +648,66 @@ elif st.session_state.page == "GreenScore":
 # -----------------------------
 # PRODUCT SEARCH (ALWAYS VISIBLE)
 # -----------------------------
-    product_options = sorted(summary_df['name'].unique())
-    
-    # Priority:
-    # 1. Clicked alternative
-    # 2. Scanned product
-    # 3. Previous selection
-    
-    preselected_product = None
-    
-    if "selected_alternative" in st.session_state:
-        preselected_product = st.session_state.selected_alternative
-    elif "selected_product" in st.session_state:
-        preselected_product = st.session_state.selected_product
-    
-    if preselected_product in product_options:
-        product_input = st.selectbox(
-            "🔍 Search for a product",
-            options=product_options,
-            index=product_options.index(preselected_product),
-            placeholder="Start typing to search..."
-        )
-    else:
-        product_input = st.selectbox(
-            "🔍 Search for a product",
-            options=product_options,
-            index=None,
-            placeholder="Start typing to search..."
-        )
+            # -----------------------------
+        # PRODUCT SEARCH (SINGLE SOURCE OF TRUTH)
+        # -----------------------------
 
-    
-    # Clear after applying
-    if "selected_alternative" in st.session_state:
-        del st.session_state["selected_alternative"]
+        product_options = sorted(summary_df["name"].unique())
 
-    if product_input:
-        result = summary_df[summary_df['name'] == product_input]
-        st.session_state.selected_product = product_input
-    
-        if result.empty:
-            st.error("❌ Product not found in database.")
+        preselected_product = None
+
+        # Priority:
+        # 1. Alternative click
+        # 2. Previously selected product
+        if "selected_alternative" in st.session_state:
+            preselected_product = st.session_state.selected_alternative
+        elif "selected_product" in st.session_state:
+            preselected_product = st.session_state.selected_product
+
+
+        # -----------------------------
+        # SINGLE SELECTBOX (NO DOUBLE CLICK)
+        # -----------------------------
+        if preselected_product in product_options:
+            product_input = st.selectbox(
+                "🔍 Search for a product",
+                options=product_options,
+                index=product_options.index(preselected_product),
+                key="product_selectbox",
+                placeholder="Start typing to search..."
+            )
         else:
-            r = result.iloc[0]
-    
-            st.divider()
+            product_input = st.selectbox(
+                "🔍 Search for a product",
+                options=product_options,
+                index=None,
+                key="product_selectbox",
+                placeholder="Start typing to search..."
+            )
+
+
+        # -----------------------------
+        # CLEAN UP ONE-TIME FLAGS
+        # -----------------------------
+        if "selected_alternative" in st.session_state:
+            del st.session_state["selected_alternative"]
+
+
+        # -----------------------------
+        # PERSIST SELECTION (IMMEDIATE)
+        # -----------------------------
+        if product_input:
+            st.session_state.selected_product = product_input
+
+            result = summary_df[summary_df["name"] == product_input]
+
+            if result.empty:
+                st.error("❌ Product not found in database.")
+            else:
+                r = result.iloc[0]
+                st.divider()
+
+
             
             # ---------- ECO SCORE ----------
             st.markdown("### 🌿 Eco Score")
