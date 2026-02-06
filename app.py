@@ -597,6 +597,58 @@ if st.session_state.page == "Home":
     </div>
     """, height=420)
 
+    #-------------------------
+    # Your Next Steps
+    #-------------------------
+
+    components.html("""
+    <div style="
+        background: linear-gradient(135deg, #4d7b2f 0%, #5d8b3f 100%);
+        border-radius:18px;
+        padding:44px 38px;
+        margin-top:22px;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+        box-shadow: 0 8px 24px rgba(45, 80, 22, 0.3);
+    ">
+      <div style="display:flex; gap:34px; align-items:center;">
+    
+        <!-- LEFT IMAGE -->
+        <div style="flex:1; display:flex; justify-content:flex-start;">
+          <div style="
+              width:520px;
+              height:320px;
+              border-radius:16px;
+              overflow:hidden;
+              box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+              background: rgba(245,241,232,0.06);
+              border: 2px solid rgba(156,179,128,0.2);
+          ">
+            <img src="https://www.shutterstock.com/image-photo/desk-displays-esg-metrics-sustainable-260nw-2672441077.jpg"
+                 style="width:100%; height:100%; object-fit:cover;">
+          </div>
+        </div>
+    
+        <!-- RIGHT TEXT -->
+        <div style="flex:1.2;">
+          <h2 style="margin:0 0 14px 0; font-size:38px; color:#f5f1e8;">
+            Your Next Steps
+          </h2>
+    
+          <p style="margin:0 0 14px 0; font-size:18px; line-height:1.7; color:#e8f5e9;">
+            Clear, practical steps you can take to meaningfully reduce your environmental impact.
+          </p>
+    
+          <ul style="margin:0; padding-left:20px; font-size:18px; line-height:1.7; color:#e8f5e9;">
+            <li>Better Alternatives</li>
+            <li>Eco-friendly suggestions</li>
+            <li>Microhabits</li>
+          </ul>
+        </div>
+    
+      </div>
+    </div>
+    """, height=420)
+
 # -------------------------
 # GREEN SCORE PAGE
 # -------------------------
