@@ -424,7 +424,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-c1, c2, c3, c4, c5 = st.columns([1,1,1,1,1])
+c1, c2, c3, c4 = st.columns([1,1,1,1])
 with c1:
     st.button("🌿 GreenScore", use_container_width=True, on_click=go, args=("GreenScore",))
 with c2:
@@ -432,8 +432,6 @@ with c2:
 with c3:
     st.button("🌏Impact Dashboard", use_container_width=True, on_click=go, args=("Impact Dashboard",))
 with c4:
-    st.button("ℹ️ About", use_container_width=True, on_click=go, args=("About",))
-with c5:
     st.button("🧭 Your Next Steps", use_container_width=True, on_click=go, args=("NextSteps",))
 
 
