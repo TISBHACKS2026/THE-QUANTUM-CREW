@@ -816,22 +816,28 @@ elif st.session_state.page == "GreenScore":
     # -----------------------------
     # CLEAN UP ONE-TIME FLAGS
     # -----------------------------
-
+    if "selected_alternative" in st.session_state:
+        del st.session_state["selected_alternative"]
     
     # -----------------------------
     # PERSIST SELECTION (IMMEDIATE)
     # -----------------------------
     if product_input:
         st.session_state.selected_product = product_input
-        result = summary_df[summary_df["name"] == product_input]
+    
+    # -----------------------------
+    # DISPLAY SELECTED PRODUCT
+    # -----------------------------
+    if "selected_product" in st.session_state:
+        product_name = st.session_state.selected_product
+        result = summary_df[summary_df["name"] == product_name]
+    
         if result.empty:
             st.error("❌ Product not found in database.")
         else:
             r = result.iloc[0]
             st.divider()
-        if "selected_alternative" in st.session_state:
-            del st.session_state["selected_alternative"]
-        # Clear selected alternative AFTER it has been applied
+
 
             
             # ---------- ECO SCORE WITH RADIAL DESIGN ----------
