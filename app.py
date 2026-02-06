@@ -9,38 +9,6 @@ import io
 from rapidfuzz import process, fuzz
 from openai import OpenAI
 
-CURATED_ALTERNATIVES = {
-    "Shampoo": [
-        "Ethique Shampoo Bar",
-        "Earth Rhythm Shampoo Bar",
-        "Bare Anatomy Concentrated Shampoo"
-    ],
-    "Cream": [
-        "Minimalist Marula Oil Moisturizer",
-        "Earth Rhythm Phyto Clear Moisturizer",
-        "Plum Green Tea Moisturizer"
-    ],
-    "Sunscreen": [
-        "Raw Beauty Wellness Sunscreen Stick",
-        "Minimalist SPF 50 (50g)",
-        "Dot & Key Sunscreen Stick"
-    ],
-    "Body Wash": [
-        "Ethique Solid Body Wash Bar",
-        "Earth Rhythm Body Wash Bar",
-        "Plum BodyLovin Body Wash Bar"
-    ],
-    "Food": [
-        "Dark chocolate (higher cocoa %, less packaging)",
-        "Baked snacks instead of fried",
-        "Local brand snacks with paper packaging"
-    ],
-    "Drink": [
-        "Returnable glass bottle drinks",
-        "Powder concentrates",
-        "Water in aluminum cans"
-    ]
-}
 
 # -----------------------------
 # OPENAI SETUP (GLOBAL)
@@ -78,17 +46,7 @@ def get_greener_alternatives(current_product_name, summary_df, max_alternatives=
             "score_diff": diff
         })
 
-    # ---------- FALLBACK TO CURATED ----------
-    if not results and category in CURATED_ALTERNATIVES:
-        for name in CURATED_ALTERNATIVES[category][:max_alternatives]:
-            results.append({
-                "name": name,
-                "eco_score": "—",
-                "improvement": "Curated greener alternative",
-                "score_diff": 0
-            })
 
-    return results
 
 
 
