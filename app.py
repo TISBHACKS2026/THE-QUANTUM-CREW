@@ -735,16 +735,6 @@ elif st.session_state.page == "GreenScore":
         else:
             r = result.iloc[0]
             st.divider()
-    
-    # -----------------------------
-    # CLEAN UP ONE-TIME FLAGS
-    # -----------------------------
-
-    
-    # -----------------------------
-    # PERSIST SELECTION (IMMEDIATE)
-    # -----------------------------
-    
             
             # ---------- ECO SCORE ----------
             st.markdown("### 🌿 Eco Score")
@@ -846,7 +836,7 @@ elif st.session_state.page == "GreenScore":
                     ">
                         <div style="font-size: 2em; margin-bottom: 10px;">🌫</div>
                         <div style="color: #5d4e37; font-size: 0.85em; margin-bottom: 5px; font-weight: 600;">Carbon Footprint</div>
-                        <div style="color: #2d1810; font-size: 1.5em; font-weight: bold;">{r['total_carbon_kg']:.3f}</div>
+                        <div style="color: #2d1810; font-size: 1.5em; font-weight: bold;">{r['total_carbon_kg']}</div>
                         <div style="color: #5d4e37; font-size: 0.75em;">kg CO₂e</div>
                     </div>
                 """, unsafe_allow_html=True)
@@ -863,7 +853,7 @@ elif st.session_state.page == "GreenScore":
                     ">
                         <div style="font-size: 2em; margin-bottom: 10px;">💧</div>
                         <div style="color: #2d5016; font-size: 0.85em; margin-bottom: 5px; font-weight: 600;">Water Usage</div>
-                        <div style="color: #1a3d0f; font-size: 1.5em; font-weight: bold;">{r['total_water_L']:.3f}</div>
+                        <div style="color: #1a3d0f; font-size: 1.5em; font-weight: bold;">{r['total_water_L']}</div>
                         <div style="color: #2d5016; font-size: 0.75em;">Liters</div>
                     </div>
                 """, unsafe_allow_html=True)
@@ -880,7 +870,7 @@ elif st.session_state.page == "GreenScore":
                     ">
                         <div style="font-size: 2em; margin-bottom: 10px;">⚡</div>
                         <div style="color: #6b4423; font-size: 0.85em; margin-bottom: 5px; font-weight: 600;">Energy Use</div>
-                        <div style="color: #3d2815; font-size: 1.5em; font-weight: bold;">{r['total_energy_MJ']:.3f}</div>
+                        <div style="color: #3d2815; font-size: 1.5em; font-weight: bold;">{r['total_energy_MJ']}</div>
                         <div style="color: #6b4423; font-size: 0.75em;">MJ</div>
                     </div>
                 """, unsafe_allow_html=True)
