@@ -694,7 +694,7 @@ elif st.session_state.page == "GreenScore":
         if "product_selectbox" in st.session_state:
             del st.session_state["product_selectbox"]
     
-        st.experimental_set_query_params(scanned="true")
+        
         st.rerun()
 
     
