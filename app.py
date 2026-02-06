@@ -464,10 +464,9 @@ if st.session_state.page == "Home":
         Scan personal-care products and get a transparent sustainability score with clear reasons.
       </p>
 
-      <ul style="margin:0; padding-left:20px; font-size:18px; line-height:1.7; color:#e8f5e9;">
-        <li>Barcode scan / product lookup</li>
+      <ul style="margin:0; padding-left:20px; font-size:20px; line-height:1.7; color:#e8f5e9;">
+        <li>Product Scan</li>
         <li>Score breakdown (ingredients, packaging, claims)</li>
-        <li>Greenwashing flags + simple explanations</li>
         <li>Better alternatives for your purpose</li>
       </ul>
     </div>
@@ -536,7 +535,6 @@ if st.session_state.page == "Home":
     
           <ul style="margin:0; padding-left:20px; font-size:18px; line-height:1.7; color:#e8f5e9;">
             <li>Ask about ingredients and claims</li>
-            <li>Detect greenwashing language</li>
             <li>Get product recommendations</li>
             <li>Tips for safer / sustainable swaps</li>
           </ul>
@@ -572,8 +570,8 @@ if st.session_state.page == "Home":
           </p>
     
           <ul style="margin:0; padding-left:20px; font-size:18px; line-height:1.7; color:#e8f5e9;">
-            <li>Track carbon footprint savings</li>
-            <li>Water & plastic reduction estimates</li>
+            <li>Trends in Purchases</li>
+            <li>Impact Log</li>
             <li>Compare products side-by-side</li>
             <li>Visualize your eco progress over time</li>
           </ul>
