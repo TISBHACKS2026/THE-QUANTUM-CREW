@@ -1484,31 +1484,98 @@ elif st.session_state.page == "NextSteps":
 
     category = st.selectbox(
         "Select a product category",
-        ["", "Shampoo", "Cream", "Sunscreen", "Body Wash"]
+        [
+            "",
+            "Shampoo",
+            "Cream",
+            "Sunscreen",
+            "Body Wash",
+            "Soft Drink",
+            "Instant Noodles",
+            "Chips",
+            "Chocolate",
+            "Biscuits",
+            "Candy",
+            "Snack"
+        ]
     )
 
+
     BEST_SUBS = {
+    
+        # ----------------
+        # PERSONAL CARE
+        # ----------------
         "Shampoo": [
             "Ethique Shampoo Bar",
             "Earth Rhythm Shampoo Bar",
             "Bare Anatomy Concentrated Shampoo"
         ],
+    
         "Cream": [
             "Minimalist Marula Oil Moisturizer",
             "Earth Rhythm Phyto Clear Moisturizer",
             "Plum Green Tea Moisturizer"
         ],
+    
         "Sunscreen": [
             "Raw Beauty Wellness Sunscreen Stick",
             "Minimalist SPF 50 (50g)",
             "Dot & Key Sunscreen Stick"
         ],
+    
         "Body Wash": [
             "Ethique Solid Body Wash Bar",
             "Earth Rhythm Body Wash Bar",
             "Plum BodyLovin Body Wash Bar"
+        ],
+    
+        # ----------------
+        # FOOD & DRINK
+        # ----------------
+        "Soft Drink": [
+            "Returnable glass bottle cola",
+            "Powdered drink concentrates",
+            "Sparkling water in aluminum can"
+        ],
+    
+        "Instant Noodles": [
+            "Whole wheat noodles in paper packaging",
+            "Rice noodles in cardboard box",
+            "Fresh noodles from local brand"
+        ],
+    
+        "Chips": [
+            "Baked chips",
+            "Roasted makhana",
+            "Popcorn in paper packaging"
+        ],
+    
+        "Chocolate": [
+            "Dark chocolate (70%+ cocoa)",
+            "Chocolate in paper wrapper",
+            "Fair-trade chocolate bar"
+        ],
+    
+        "Biscuits": [
+            "Oat biscuits in paper packaging",
+            "Digestive biscuits cardboard box",
+            "Local bakery cookies"
+        ],
+    
+        "Candy": [
+            "Loose candies from bulk store",
+            "Jaggery-based sweets",
+            "Fruit leathers"
+        ],
+    
+        "Snack": [
+            "Roasted chana",
+            "Trail mix in paper pouch",
+            "Roasted peanuts"
         ]
     }
+
 
     if category != "":
         c1, c2, c3 = st.columns(3)
