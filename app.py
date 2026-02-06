@@ -508,7 +508,7 @@ if st.session_state.page == "Home":
 
     st.markdown('<h2 style="font-size: 36px; margin-bottom: 16px; color: #5D8A66;">The Hidden Cost of Everyday Products</h2>', unsafe_allow_html=True)
     st.markdown('<p style="font-size: 17px; line-height: 1.7; color: #3A4A3A;">Every year, the world produces over 400 million tonnes of plastic waste, and nearly half of this comes from single-use packaging like bottles, bags, wrappers, and cartons. Only around 9% of all plastic ever produced has been recycled, while the rest ends up in landfills, incinerators, or in the environment.</p>', unsafe_allow_html=True)
-    st.markdown('<p style="font-size: 17px; line-height: 1.7; color: #3A4A3A;">Packaging alone can account for 20–40% of a product's total environmental footprint, yet this hidden cost is rarely visible when we shop. Most of the time, consumers only see branding and marketing claims, not the true environmental impact behind a product.</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size: 17px; line-height: 1.7; color: #3A4A3A;">Packaging alone can account for 20-40% of a product\'s total environmental footprint, yet this hidden cost is rarely visible when we shop. Most of the time, consumers only see branding and marketing claims, not the true environmental impact behind a product.</p>', unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
