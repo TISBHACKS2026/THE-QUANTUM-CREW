@@ -721,7 +721,8 @@ elif st.session_state.page == "GreenScore":
     # -----------------------------
     # CLEAN UP ONE-TIME FLAGS
     # -----------------------------
-
+    if "selected_alternative" in st.session_state:
+        del st.session_state["selected_alternative"]
     
     # -----------------------------
     # PERSIST SELECTION (IMMEDIATE)
@@ -734,10 +735,16 @@ elif st.session_state.page == "GreenScore":
         else:
             r = result.iloc[0]
             st.divider()
-        if "selected_alternative" in st.session_state:
-            del st.session_state["selected_alternative"]
-        # Clear selected alternative AFTER it has been applied
+    
+    # -----------------------------
+    # CLEAN UP ONE-TIME FLAGS
+    # -----------------------------
 
+    
+    # -----------------------------
+    # PERSIST SELECTION (IMMEDIATE)
+    # -----------------------------
+    
             
             # ---------- ECO SCORE ----------
             st.markdown("### 🌿 Eco Score")
