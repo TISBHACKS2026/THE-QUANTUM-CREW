@@ -1565,7 +1565,7 @@ elif st.session_state.page == "NextSteps":
         "Reduce, Reuse Recycle",
         "Choose multipurpose products",
         "Carry your own bottle",
-        "Cold or short washes"
+        "Support Green Businesses"
     ]
 
     for i, h in enumerate(habits):
