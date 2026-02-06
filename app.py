@@ -697,19 +697,6 @@ elif st.session_state.page == "GreenScore":
             st.error("❌ Product not found in database.")
         else:
             r = result.iloc[0]
-            log_key = f"{product_input}_{r['eco_score']}"
-
-            if log_key not in st.session_state.logged_keys:
-                st.session_state.impact_history.loc[len(st.session_state.impact_history)] = {
-                    "Product": product_input,
-                    "Category": r["category"],
-                    "Eco Score": r["eco_score"],
-                    "Carbon (kg)": r["total_carbon_kg"],
-                    "Water (L)": r["total_water_L"],
-                    "Energy (MJ)": r["total_energy_MJ"],
-                    "Waste Score": r["total_waste_score"]
-                }
-                st.session_state.logged_keys.add(log_key)
     
             st.divider()
             
@@ -926,7 +913,28 @@ elif st.session_state.page == "GreenScore":
             # ---------- OPTIONAL DETAILS ----------
             with st.expander("📊 View detailed data"):
                 st.dataframe(result, use_container_width=True)
-
+        
+            st.divider()
+            
+            st.subheader("🛒 Purchase Logging")
+            
+            if st.button("✅ Log this product as purchased", use_container_width=True):
+                log_key = f"{product_input}_{r['eco_score']}"
+            
+                if log_key not in st.session_state.logged_keys:
+                    st.session_state.impact_history.loc[len(st.session_state.impact_history)] = {
+                        "Product": product_input,
+                        "Category": r["category"],
+                        "Eco Score": r["eco_score"],
+                        "Carbon (kg)": r["total_carbon_kg"],
+                        "Water (L)": r["total_water_L"],
+                        "Energy (MJ)": r["total_energy_MJ"],
+                        "Waste Score": r["total_waste_score"]
+                    }
+                    st.session_state.logged_keys.add(log_key)
+                    st.success("🎉 Product logged! Your Impact Dashboard has been updated.")
+                else:
+                    st.info("This product is already logged as purchased.")
             # =============================
             # GREENER ALTERNATIVES
             # =============================
