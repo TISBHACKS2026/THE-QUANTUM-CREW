@@ -683,6 +683,11 @@ elif st.session_state.page == "GreenScore":
         
         st.success(f"Detected: {matched_name}")
         st.session_state.selected_product = matched_name
+        # 🔥 RESET SELECTBOX + FORCE UI UPDATE
+        if "product_selectbox" in st.session_state:
+            del st.session_state["product_selectbox"]
+    
+        st.rerun()
     
     # -----------------------------
     # PRODUCT SEARCH (SINGLE SOURCE OF TRUTH)
