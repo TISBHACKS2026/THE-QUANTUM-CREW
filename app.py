@@ -454,7 +454,7 @@ st.markdown('<div class="sticky-header">', unsafe_allow_html=True)
 st.markdown(
     """
     <h1 style="text-align:center; font-size:82px; margin:0; color:#9cb380; text-shadow: 3px 3px 6px rgba(93, 138, 102, 0.4); letter-spacing: -0.03em;">
-        🌱 EcoLens
+        EcoLens
     </h1>
     <p style="text-align:center; font-size:19px; color:#c5d4b8; margin-top:8px; margin-bottom:18px; font-weight: 400; letter-spacing: 0.5px;">
         Make smarter, sustainable buying decisions
@@ -465,13 +465,13 @@ st.markdown(
 
 c1, c2, c3, c4 = st.columns([1,1,1,1])
 with c1:
-    st.button("🌿 GreenScore", use_container_width=True, on_click=go, args=("GreenScore",))
+    st.button("GreenScore", use_container_width=True, on_click=go, args=("GreenScore",))
 with c2:
-    st.button("🤖 AI Chatbot", use_container_width=True, on_click=go, args=("Chatbot",))
+    st.button("AI Chatbot", use_container_width=True, on_click=go, args=("Chatbot",))
 with c3:
-    st.button("🌏Impact Dashboard", use_container_width=True, on_click=go, args=("Impact Dashboard",))
+    st.button("Impact Dashboard", use_container_width=True, on_click=go, args=("Impact Dashboard",))
 with c4:
-    st.button("🧭 Your Next Steps", use_container_width=True, on_click=go, args=("NextSteps",))
+    st.button("Your Next Steps", use_container_width=True, on_click=go, args=("NextSteps",))
 
 
 st.markdown("</div>", unsafe_allow_html=True)
@@ -522,7 +522,7 @@ if st.session_state.page == "Home":
 
     st.markdown("<br><br>", unsafe_allow_html=True)
 
-    st.markdown('<h2 style="font-size: 40px; margin-bottom: 28px; color: #5D8A66; text-align: center;">✨ Key Features</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 style="font-size: 40px; margin-bottom: 28px; color: #5D8A66; text-align: center;">Key Features</h2>', unsafe_allow_html=True)
 
     components.html("""
 <div style="
@@ -537,7 +537,7 @@ if st.session_state.page == "Home":
 
     <div style="flex:1.2;">
       <h2 style="margin:0 0 16px 0; font-size:42px; color:#f5f1e8; font-family: 'DM Serif Display', serif; letter-spacing: -0.02em;">
-        🌿 GreenScore Tracker
+        GreenScore Tracker
       </h2>
 
       <p style="margin:0 0 18px 0; font-size:19px; line-height:1.8; color:#e8f5e9; font-weight: 400;">
@@ -606,7 +606,7 @@ if st.session_state.page == "Home":
         <!-- RIGHT TEXT -->
         <div style="flex:1.2;">
           <h2 style="margin:0 0 16px 0; font-size:42px; color:#f5f1e8; font-family: 'DM Serif Display', serif; letter-spacing: -0.02em;">
-            🤖 AI Chatbot
+            AI Chatbot
           </h2>
     
           <p style="margin:0 0 18px 0; font-size:19px; line-height:1.8; color:#e8f5e9; font-weight: 400;">
@@ -642,7 +642,7 @@ if st.session_state.page == "Home":
         <!-- LEFT TEXT -->
         <div style="flex:1.2;">
           <h2 style="margin:0 0 16px 0; font-size:42px; color:#f5f1e8; font-family: 'DM Serif Display', serif; letter-spacing: -0.02em;">
-            🌲 Impact Score
+            Impact Score
           </h2>
     
           <p style="margin:0 0 18px 0; font-size:19px; line-height:1.8; color:#e8f5e9; font-weight: 400;">
@@ -734,7 +734,7 @@ if st.session_state.page == "Home":
 # -------------------------
 elif st.session_state.page == "GreenScore":
     st.button("← Back to Home", on_click=go, args=("Home",))
-    st.markdown('<h1 style="font-size: 48px; margin-bottom: 8px; color: #5D8A66;">🌿 GreenScore</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 style="font-size: 48px; margin-bottom: 8px; color: #5D8A66;">GreenScore</h1>', unsafe_allow_html=True)
     
     # Check if user clicked an alternative product
     if "impact_history" not in st.session_state:
@@ -748,7 +748,7 @@ elif st.session_state.page == "GreenScore":
     # -----------------------------
     # Step 7: USER INPUT + DISPLAY
     # -----------------------------
-    st.markdown('<h3 style="font-size: 24px; margin-top: 24px; margin-bottom: 16px; color: #3A4A3A;">📸 Scan Product (optional)</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 style="font-size: 24px; margin-top: 24px; margin-bottom: 16px; color: #3A4A3A;">Scan Product</h3>', unsafe_allow_html=True)
     
     image_file = st.camera_input("Take a photo of the product")
     
@@ -768,10 +768,10 @@ elif st.session_state.page == "GreenScore":
         st.success(f"Detected: {matched_name}")
         st.session_state.selected_product = matched_name
     
-        # ✅ Mark OCR as done
+        #Mark OCR as done
         st.session_state.ocr_processed = True
     
-        # 🔥 Reset selectbox so it updates
+        #Reset selectbox so it updates
         if "product_selectbox" in st.session_state:
             del st.session_state["product_selectbox"]
     
@@ -833,7 +833,7 @@ elif st.session_state.page == "GreenScore":
         result = summary_df[summary_df["name"] == product_name]
     
         if result.empty:
-            st.error("❌ Product not found in database.")
+            st.error("Product not found in database.")
         else:
             r = result.iloc[0]
             st.divider()
@@ -841,7 +841,7 @@ elif st.session_state.page == "GreenScore":
 
             
             # ---------- ECO SCORE WITH RADIAL DESIGN ----------
-            st.markdown("### 🌿 Eco Score")
+            st.markdown("### Eco Score")
             
             score_col1, score_col2 = st.columns([2, 3])
             
@@ -956,7 +956,7 @@ elif st.session_state.page == "GreenScore":
             st.divider()
     
             # ---------- ENHANCED METRICS ----------
-            st.markdown("### 📊 Environmental Impact Breakdown")
+            st.markdown("### Environmental Impact Breakdown")
             
             col1, col2, col3, col4 = st.columns(4)
     
@@ -1016,7 +1016,7 @@ elif st.session_state.page == "GreenScore":
                     """, unsafe_allow_html=True)
 
             # ---------- INGREDIENT FLAGS (enhanced design) ----------
-            st.markdown("### 🧪 Ingredient Flags")
+            st.markdown("### Ingredient Flags")
             
             flag_defs = [
                 {
@@ -1088,7 +1088,7 @@ elif st.session_state.page == "GreenScore":
             # Greener Alternatives
             #-------------------------------------
             
-            st.subheader("🌿 Greener Alternatives")
+            st.subheader("Greener Alternatives")
             st.caption("Click any product to view its full eco score")
             
             alternatives = get_greener_alternatives(product_input, summary_df, max_alternatives=5)
@@ -1131,7 +1131,7 @@ elif st.session_state.page == "GreenScore":
                                 <div style="display: flex; justify-content: space-between; align-items: center;">
                                     <div>
                                         <strong style="color:#3A4A3A; font-size:18px; font-weight: 700;">{alt['name']}</strong><br>
-                                        <span style="color:#5D8A66; font-size:15px; font-weight: 500;">✨ {alt['improvement']}</span>
+                                        <span style="color:#5D8A66; font-size:15px; font-weight: 500;"> {alt['improvement']}</span>
                                     </div>
                                     <div style="text-align: right;">
                                         <div style="color:#5D8A66; font-size:32px; font-weight:800; font-family: 'DM Serif Display', serif;">
@@ -1152,7 +1152,7 @@ elif st.session_state.page == "GreenScore":
             # AI PRODUCT CHATBOT (enhanced)
             # =============================
             st.divider()
-            st.markdown('<h3 style="font-size: 28px; margin-top: 20px; margin-bottom: 12px; color: #5D8A66;">🤖 AI Insight: Explore This Product</h3>', unsafe_allow_html=True)
+            st.markdown('<h3 style="font-size: 28px; margin-top: 20px; margin-bottom: 12px; color: #5D8A66;">AI Insight: Explore This Product</h3>', unsafe_allow_html=True)
 
             st.caption(
                 "Ask in-depth questions about this product's ingredients, impacts, and "
@@ -1261,8 +1261,8 @@ elif st.session_state.page == "Chatbot":
     # -----------------------------
     # PAGE SETUP
     # -----------------------------
-    st.markdown('<h1 style="font-size: 48px; margin-bottom: 8px; color: #5D8A66;">🤖 Eco Assistant</h1>', unsafe_allow_html=True)
-    st.caption("Ask me about sustainability, eco scores, or greener choices 🌱")
+    st.markdown('<h1 style="font-size: 48px; margin-bottom: 8px; color: #5D8A66;">Eco Assistant</h1>', unsafe_allow_html=True)
+    st.caption("Ask me about sustainability, eco scores, or greener choices")
     # -----------------------------
     # CHAT MEMORY
     # -----------------------------
@@ -1310,7 +1310,7 @@ elif st.session_state.page == "Chatbot":
         # OPENAI RESPONSE
         # -----------------------------
         with st.chat_message("assistant"):
-            with st.spinner("Thinking 🌍"):
+            with st.spinner("Thinking... 🌍"):
                 response = client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=st.session_state.messages,
@@ -1342,7 +1342,7 @@ elif st.session_state.page == "Impact Dashboard":
     # -----------------------------
     st.button("← Back to Home", on_click=go, args=("Home",))
     st.markdown('<h1 style="font-size: 48px; margin-bottom: 8px; color: #5D8A66;">🌍 Your Sustainability Impact</h1>', unsafe_allow_html=True)
-    st.caption("A living story of how your choices shape the planet 🌱")
+    st.caption("A living story of how your choices shape the planet")
 
     # -----------------------------
     # OPENAI CLIENT
@@ -1399,7 +1399,7 @@ Rules:
     # REQUIRE HISTORY
     # -----------------------------
     if "impact_history" not in st.session_state or st.session_state.impact_history.empty:
-        st.info("Analyse products to start building your impact story 🌱")
+        st.info("Analyse products to start building your impact story")
         st.stop()
 
     history = st.session_state.impact_history.copy()
@@ -1442,7 +1442,7 @@ Rules:
     # =============================
     # 📈 ECOSCORE TREND (with custom colors)
     # =============================
-    st.markdown("## 📈 Your EcoScore Journey")
+    st.markdown("## Your EcoScore Journey")
 
     trend_fig = px.line(
         history.reset_index(),
@@ -1462,7 +1462,7 @@ Rules:
     st.plotly_chart(trend_fig, use_container_width=True)
 
     if st.button("🤖 Let AI explain this EcoScore trend"):
-        with st.spinner("AI analysing your progress 🌱"):
+        with st.spinner("AI analysing your progress"):
             delta = history["Eco Score"].iloc[-1] - history["Eco Score"].iloc[0]
 
             summary = {
@@ -1489,7 +1489,7 @@ Rules:
     # =============================
     # 📊 IMPACT BREAKDOWN
     # =============================
-    st.markdown("## 📊 What Impacts You the Most")
+    st.markdown("## What Impacts You the Most")
 
     impact_avg = history[
         ["Carbon (kg)", "Water (L)", "Energy (MJ)", "Waste Score"]
@@ -1515,8 +1515,8 @@ Rules:
 
     st.plotly_chart(impact_fig, use_container_width=True)
 
-    if st.button("🤖 Let AI explain this impact breakdown"):
-        with st.spinner("Understanding your impact 🌍"):
+    if st.button("Let AI explain this impact breakdown"):
+        with st.spinner("Understanding your impact"):
             impact_dict = dict(
                 zip(impact_avg["Impact Type"], impact_avg["Average Value"])
             )
@@ -1538,7 +1538,7 @@ Rules:
     # =============================
     # 🔄 PRODUCT COMPARISON (SAME CATEGORY ONLY)
     # =============================
-    st.markdown("## 🔄 Compare Products by Impact")
+    st.markdown("## Compare Products by Impact")
 
     # Step 1 — Choose category first
     compare_category = st.selectbox(
@@ -1585,8 +1585,8 @@ Rules:
         st.plotly_chart(stacked_fig, use_container_width=True)
 
         # AI explanation
-        if st.button("🤖 Let AI explain this product comparison"):
-            with st.spinner("Comparing smarter choices 🌱"):
+        if st.button("Let AI explain this product comparison"):
+            with st.spinner("Comparing smarter choices"):
                 comparison_summary = (
                     compare_df.groupby("Product")[impact_cols]
                     .mean()
@@ -1613,10 +1613,10 @@ Rules:
     # =============================
     # 📜 HISTORY TABLE
     # =============================
-    st.markdown("## 📜 Your Impact Log")
+    st.markdown("## Your Impact Log")
     st.dataframe(history[::-1], use_container_width=True)
 
-    if st.button("🗑️ Clear Impact History"):
+    if st.button("Clear Impact History"):
         st.session_state.impact_history = st.session_state.impact_history.iloc[0:0]
 
         if "logged_keys" in st.session_state:
@@ -1632,7 +1632,7 @@ Rules:
 elif st.session_state.page == "NextSteps":
 
     st.button("← Back to Home", on_click=go, args=("Home",))
-    st.markdown('<h1 style="font-size: 48px; margin-bottom: 8px; color: #5D8A66;">🧭 Your Next Steps</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 style="font-size: 48px; margin-bottom: 8px; color: #5D8A66;">Your Next Steps</h1>', unsafe_allow_html=True)
     st.caption("Clear, practical actions to reduce your impact")
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -1641,7 +1641,7 @@ elif st.session_state.page == "NextSteps":
     # SECTION 1 — ECO ALTERNATIVES
     # ============================
 
-    st.markdown('<h2 style="font-size: 32px; margin-bottom: 18px; color: #5D8A66;">🌿 Switch to Better Alternatives</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 style="font-size: 32px; margin-bottom: 18px; color: #5D8A66;">Switch to Better Alternatives</h2>', unsafe_allow_html=True)
 
     category = st.selectbox(
         "Select a product category",
@@ -1769,7 +1769,7 @@ elif st.session_state.page == "NextSteps":
     # SECTION 2 — IF YOU ALREADY BOUGHT
     # =================================
 
-    st.markdown('<h2 style="font-size: 32px; margin-bottom: 18px; color: #5D8A66;">♻️ If You Already Bought a Regular Product</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 style="font-size: 32px; margin-bottom: 18px; color: #5D8A66;">If You Already Bought a Regular Product</h2>', unsafe_allow_html=True)
     
     c1, c2, c3 = st.columns(3)
     
@@ -1829,7 +1829,7 @@ elif st.session_state.page == "NextSteps":
     # SECTION 3 — DAILY MICRO HABITS
     # ============================
 
-    st.markdown('<h2 style="font-size: 32px; margin-bottom: 18px; color: #5D8A66;">🌱 Everyday Micro-Habits</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 style="font-size: 32px; margin-bottom: 18px; color: #5D8A66;">Everyday Micro-Habits</h2>', unsafe_allow_html=True)
     
     c1, c2, c3 = st.columns(3)
     
