@@ -1327,9 +1327,7 @@ Rules:
                 products
             )
 
-            explanation, actions = ai_text.split("2.", 1)
-            st.info(explanation.strip())
-            st.success("2." + actions.strip())
+            st.info(ai_text.strip())
 
     st.divider()
 
@@ -1368,9 +1366,7 @@ Rules:
                 products
             )
 
-            explanation, actions = ai_text.split("2.", 1)
-            st.info(explanation.strip())
-            st.success("2." + actions.strip())
+            st.info(ai_text.strip())
 
     st.divider()
 
@@ -1430,9 +1426,7 @@ Rules:
                     comparison_summary
                 )
 
-                explanation, actions = ai_text.split("2.", 1)
-                st.info(explanation.strip())
-                st.success("2." + actions.strip())
+                st.info(ai_text.strip())
 
     else:
         st.info("Select at least two products from the same category 🌱")
