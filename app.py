@@ -13,60 +13,66 @@ from openai import OpenAI
 # -----------------------------
 OpenAIKey = st.secrets["OpenAIKey"]
 client = OpenAI(api_key=OpenAIKey)
+
 def get_greener_alternatives(current_product_name, summary_df, max_alternatives=5):
-    """
-    Find greener alternatives from the actual product database.
-    Returns products in the same category with better eco scores.
-    """
-    # Get current product details
-    current = summary_df[summary_df['name'] == current_product_name]
+
+    current = summary_df[summary_df["name"] == current_product_name]
+
     if current.empty:
         return []
-    
+
     current_row = current.iloc[0]
-    current_category = current_row['category']
-    current_score = current_row['eco_score']
-    
-    # Find alternatives: same category, better score, exclude current product
-    alternatives = summary_df[
-        (summary_df['category'] == current_category) &
-        (summary_df['eco_score'] > current_score) &
-        (summary_df['name'] != current_product_name)
-    ].copy()
-    
-    # Sort by eco score (best first)
-    alternatives = alternatives.sort_values('eco_score', ascending=False)
-    
-    # Take top N
-    alternatives = alternatives.head(max_alternatives)
-    
-    # Calculate improvement metrics for each alternative
+    category = current_row["category"]
+    brand = current_row.get("brand", "")
+    current_score = current_row["eco_score"]
+
+    # --- Same brand + better ---
+    same_brand = summary_df[
+        (summary_df["category"] == category) &
+        (summary_df["brand"] == brand) &
+        (summary_df["eco_score"] > current_score) &
+        (summary_df["name"] != current_product_name)
+    ]
+
+    # --- Same category + better ---
+    same_category_better = summary_df[
+        (summary_df["category"] == category) &
+        (summary_df["eco_score"] > current_score) &
+        (summary_df["name"] != current_product_name)
+    ]
+
+    # --- Fallback: top in category ---
+    fallback = summary_df[
+        (summary_df["category"] == category) &
+        (summary_df["name"] != current_product_name)
+    ].sort_values("eco_score", ascending=False)
+
+    combined = pd.concat(
+        [same_brand, same_category_better, fallback]
+    ).drop_duplicates(subset="name")
+
+    combined = combined.sort_values("eco_score", ascending=False)
+    combined = combined.head(max_alternatives)
+
     results = []
-    for _, alt in alternatives.iterrows():
-        carbon_reduction = ((current_row['total_carbon_kg'] - alt['total_carbon_kg']) / current_row['total_carbon_kg'] * 100) if current_row['total_carbon_kg'] > 0 else 0
-        water_reduction = ((current_row['total_water_L'] - alt['total_water_L']) / current_row['total_water_L'] * 100) if current_row['total_water_L'] > 0 else 0
-        energy_reduction = ((current_row['total_energy_MJ'] - alt['total_energy_MJ']) / current_row['total_energy_MJ'] * 100) if current_row['total_energy_MJ'] > 0 else 0
-        
-        # Find the biggest improvement
-        improvements = []
-        if carbon_reduction > 5:
-            improvements.append(f"{carbon_reduction:.0f}% less carbon")
-        if water_reduction > 5:
-            improvements.append(f"{water_reduction:.0f}% less water")
-        if energy_reduction > 5:
-            improvements.append(f"{energy_reduction:.0f}% less energy")
-        
-        if not improvements:
-            improvements.append("Better overall eco score")
-        
+
+    for _, alt in combined.iterrows():
+        diff = alt["eco_score"] - current_score
+
+        label = "Greener option"
+        if diff > 5:
+            label = f"{diff:.0f} points better eco score"
+
         results.append({
-            'name': alt['name'],
-            'eco_score': alt['eco_score'],
-            'improvement': improvements[0],  # Show the best improvement
-            'score_diff': alt['eco_score'] - current_score
+            "name": alt["name"],
+            "eco_score": alt["eco_score"],
+            "improvement": label,
+            "score_diff": diff
         })
-    
+
     return results
+
+
 def image_to_base64(image):
     buffer = io.BytesIO()
     image.save(buffer, format="PNG")
@@ -170,60 +176,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-GREENER_ALTERNATIVES = {
-    "Cream": [
-        {
-            "name": "Minimalist Marula Oil Moisturizer",
-            "reason": "Uses an aluminum tube instead of a plastic jar, reducing total plastic waste."
-        },
-        {
-            "name": "Earth Rhythm Phyto Clear Moisturizer",
-            "reason": "Packaged in a reusable glass jar with lower waste impact than PET."
-        },
-        {
-            "name": "Plum Green Tea Moisturizer",
-            "reason": "Smaller packaging size means less total material used."
-        }
-    ],
-    "Body Wash": [
-        {
-            "name": "Ethique Solid Body Wash Bar",
-            "reason": "Eliminates plastic bottles entirely by using a solid bar format."
-        },
-        {
-            "name": "Earth Rhythm Body Wash Bar",
-            "reason": "Zero plastic packaging results in near-zero packaging emissions."
-        }
-    ],
-    "Sunscreen": [
-        {
-            "name": "Raw Beauty Wellness Sunscreen Stick",
-            "reason": "Paper-based packaging avoids high-energy aluminum and plastic bottles."
-        },
-        {
-            "name": "Dot & Key Sunscreen Stick",
-            "reason": "Compact solid format reduces packaging weight significantly."
-        },
-        {
-            "name": "Minimalist SPF 50 (50g)",
-            "reason": "Smaller tube uses far less material than large sunscreen bottles."
-        }
-    ],
-    "Shampoo": [
-        {
-            "name": "Ethique Shampoo Bar",
-            "reason": "Solid shampoo bar completely removes the need for plastic bottles."
-        },
-        {
-            "name": "Earth Rhythm Shampoo Bar",
-            "reason": "Lower water and carbon footprint due to zero liquid packaging."
-        },
-        {
-            "name": "Bare Anatomy Concentrated Shampoo",
-            "reason": "Concentrated formula requires a smaller bottle."
-        }
-    ]
-}
+
 
 
 # -----------------------------
@@ -385,7 +338,9 @@ products_df["eco_score"] = (
 # FINAL SUMMARY
 # =============================
 summary_df = products_df[[
-    "name","category",
+    "name",
+    "brand",
+    "category",
     "total_carbon_kg",
     "total_water_L",
     "total_energy_MJ",
@@ -396,6 +351,7 @@ summary_df = products_df[[
     "eco_score",
     *ALL_FLAGS
 ]].copy()
+
 
 
 # -------------------------
@@ -695,16 +651,20 @@ elif st.session_state.page == "GreenScore":
         preselected_product = st.session_state.selected_product
     
     if preselected_product in product_options:
-        default_index = product_options.index(preselected_product)
+        product_input = st.selectbox(
+            "🔍 Search for a product",
+            options=product_options,
+            index=product_options.index(preselected_product),
+            placeholder="Start typing to search..."
+        )
     else:
-        default_index = 0
-    
-    product_input = st.selectbox(
-        "🔍 Search for a product",
-        options=product_options,
-        index=default_index,
-        placeholder="Start typing to search..."
-    )
+        product_input = st.selectbox(
+            "🔍 Search for a product",
+            options=product_options,
+            index=None,
+            placeholder="Start typing to search..."
+        )
+
     
     # Clear after applying
     if "selected_alternative" in st.session_state:
@@ -958,44 +918,16 @@ elif st.session_state.page == "GreenScore":
             
             if alternatives:
                 for alt in alternatives:
-                    col1, col2 = st.columns([4, 1])
-                    
+                    col1, col2 = st.columns([4,1])
+            
                     with col1:
-                        st.markdown(
-                            f"""
-                            <div style="
-                                background: linear-gradient(135deg, #e8f5e9 0%, #f5f1e8 100%);
-                                border-left: 5px solid #2d5016;
-                                border-radius: 14px;
-                                padding: 18px;
-                                margin-bottom: 14px;
-                                cursor: pointer;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
-                            ">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <strong style="color:#1a3d0f; font-size:17px;">{alt['name']}</strong><br>
-                                        <span style="color:#4d7b2f; font-size:14px;">✨ {alt['improvement']}</span>
-                                    </div>
-                                    <div style="text-align: right;">
-                                        <div style="color:#2d5016; font-size:26px; font-weight:700;">{alt['eco_score']}</div>
-                                        <div style="color:#5d4e37; font-size:12px;">+{alt['score_diff']:.1f} points</div>
-                                    </div>
-                                </div>
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
-                    
+                        st.markdown(...)
                     with col2:
                         if st.button("View →", key=f"view_{alt['name']}", use_container_width=True):
-                            st.session_state['selected_alternative'] = alt['name']
+                            st.session_state["selected_alternative"] = alt["name"]
                             st.rerun()
-                        else:
-                            st.info(
-                            "🎉 Great choice! This is already one of the greenest options in its category."
-                            )
+            else:
+                st.info("🎉 This is already one of the best options in its category.")
 
             # =============================
             # AI DEEP DIVE EXPLANATION
