@@ -937,54 +937,54 @@ elif st.session_state.page == "GreenScore":
                     st.info("This product is already logged as purchased.")
             
             
-            # =============================
-            # GREENER ALTERNATIVES
-            # =============================
-            st.subheader("🌿 Greener Alternatives")
-            st.caption("Click any product to view its full eco score")
-            
-            alternatives = get_greener_alternatives(product_input, summary_df, max_alternatives=5)
-            
-            if alternatives:
-                for alt in alternatives:
-                    col1, col2 = st.columns([4, 1])
-                    
-                    with col1:
-                        st.markdown(
-                            f"""
-                            <div style="
-                                background: linear-gradient(135deg, #e8f5e9 0%, #f5f1e8 100%);
-                                border-left: 5px solid #2d5016;
-                                border-radius: 14px;
-                                padding: 18px;
-                                margin-bottom: 14px;
-                                cursor: pointer;
-                                transition: all 0.3s ease;
-                                box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
-                            ">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <strong style="color:#1a3d0f; font-size:17px;">{alt['name']}</strong><br>
-                                        <span style="color:#4d7b2f; font-size:14px;">✨ {alt['improvement']}</span>
-                                    </div>
-                                    <div style="text-align: right;">
-                                        <div style="color:#2d5016; font-size:26px; font-weight:700;">{alt['eco_score']}</div>
-                                        <div style="color:#5d4e37; font-size:12px;">+{alt['score_diff']:.1f} points</div>
+                st.subheader("🌿 Greener Alternatives")
+                st.caption("Click any product to view its full eco score")
+                
+                alternatives = get_greener_alternatives(product_input, summary_df, max_alternatives=5)
+                
+                # ✅ CASE 1: NO greener alternatives
+                if not alternatives:
+                    st.success("🎉 Great choice! This is already one of the greenest options in its category.")
+                
+                # ✅ CASE 2: Greener alternatives exist
+                else:
+                    for alt in alternatives:
+                        col1, col2 = st.columns([4, 1])
+                
+                        with col1:
+                            st.markdown(
+                                f"""
+                                <div style="
+                                    background: linear-gradient(135deg, #e8f5e9 0%, #f5f1e8 100%);
+                                    border-left: 5px solid #2d5016;
+                                    border-radius: 14px;
+                                    padding: 18px;
+                                    margin-bottom: 14px;
+                                    box-shadow: 0 4px 12px rgba(45, 80, 22, 0.15);
+                                ">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div>
+                                            <strong style="color:#1a3d0f; font-size:17px;">{alt['name']}</strong><br>
+                                            <span style="color:#4d7b2f; font-size:14px;">✨ {alt['improvement']}</span>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="color:#2d5016; font-size:26px; font-weight:700;">
+                                                {alt['eco_score']}
+                                            </div>
+                                            <div style="color:#5d4e37; font-size:12px;">
+                                                +{alt['score_diff']:.1f} points
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            """,
-                            unsafe_allow_html=True
-                        )
-                    
-                    with col2:
-                        if st.button("View →", key=f"view_{alt['name']}", use_container_width=True):
-                            st.session_state['selected_alternative'] = alt['name']
-                            st.rerun()
-                        else:
-                            st.info(
-                            "🎉 Great choice! This is already one of the greenest options in its category."
+                                """,
+                                unsafe_allow_html=True
                             )
+                
+                        with col2:
+                            if st.button("View →", key=f"view_{alt['name']}", use_container_width=True):
+                                st.session_state['selected_alternative'] = alt['name']
+                                st.rerun()
 
 
             # =============================
