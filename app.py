@@ -8,6 +8,40 @@ import base64
 import io
 from rapidfuzz import process, fuzz
 from openai import OpenAI
+
+CURATED_ALTERNATIVES = {
+    "Shampoo": [
+        "Ethique Shampoo Bar",
+        "Earth Rhythm Shampoo Bar",
+        "Bare Anatomy Concentrated Shampoo"
+    ],
+    "Cream": [
+        "Minimalist Marula Oil Moisturizer",
+        "Earth Rhythm Phyto Clear Moisturizer",
+        "Plum Green Tea Moisturizer"
+    ],
+    "Sunscreen": [
+        "Raw Beauty Wellness Sunscreen Stick",
+        "Minimalist SPF 50 (50g)",
+        "Dot & Key Sunscreen Stick"
+    ],
+    "Body Wash": [
+        "Ethique Solid Body Wash Bar",
+        "Earth Rhythm Body Wash Bar",
+        "Plum BodyLovin Body Wash Bar"
+    ],
+    "Food": [
+        "Dark chocolate (higher cocoa %, less packaging)",
+        "Baked snacks instead of fried",
+        "Local brand snacks with paper packaging"
+    ],
+    "Drink": [
+        "Returnable glass bottle drinks",
+        "Powder concentrates",
+        "Water in aluminum cans"
+    ]
+}
+
 # -----------------------------
 # OPENAI SETUP (GLOBAL)
 # -----------------------------
@@ -21,56 +55,41 @@ def get_greener_alternatives(current_product_name, summary_df, max_alternatives=
     if current.empty:
         return []
 
-    current_row = current.iloc[0]
-    category = current_row["category"]
-    brand = current_row.get("brand", "")
-    current_score = current_row["eco_score"]
+    row = current.iloc[0]
+    category = row["category"]
+    brand = row["brand"]
+    current_score = row["eco_score"]
 
-    # --- Same brand + better ---
-    same_brand = summary_df[
-        (summary_df["category"] == category) &
-        (summary_df["brand"] == brand) &
-        (summary_df["eco_score"] > current_score) &
-        (summary_df["name"] != current_product_name)
-    ]
-
-    # --- Same category + better ---
-    same_category_better = summary_df[
+    # ---------- DATA-DRIVEN ----------
+    better = summary_df[
         (summary_df["category"] == category) &
         (summary_df["eco_score"] > current_score) &
-        (summary_df["name"] != current_product_name)
-    ]
-
-    # --- Fallback: top in category ---
-    fallback = summary_df[
-        (summary_df["category"] == category) &
         (summary_df["name"] != current_product_name)
     ].sort_values("eco_score", ascending=False)
 
-    combined = pd.concat(
-        [same_brand, same_category_better, fallback]
-    ).drop_duplicates(subset="name")
-
-    combined = combined.sort_values("eco_score", ascending=False)
-    combined = combined.head(max_alternatives)
-
     results = []
 
-    for _, alt in combined.iterrows():
+    for _, alt in better.head(max_alternatives).iterrows():
         diff = alt["eco_score"] - current_score
-
-        label = "Greener option"
-        if diff > 5:
-            label = f"{diff:.0f} points better eco score"
-
         results.append({
             "name": alt["name"],
             "eco_score": alt["eco_score"],
-            "improvement": label,
+            "improvement": f"{diff:.0f} points better eco score",
             "score_diff": diff
         })
 
+    # ---------- FALLBACK TO CURATED ----------
+    if not results and category in CURATED_ALTERNATIVES:
+        for name in CURATED_ALTERNATIVES[category][:max_alternatives]:
+            results.append({
+                "name": name,
+                "eco_score": "—",
+                "improvement": "Curated greener alternative",
+                "score_diff": 0
+            })
+
     return results
+
 
 
 def image_to_base64(image):
