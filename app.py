@@ -774,13 +774,18 @@ elif st.session_state.page == "GreenScore":
     # PRODUCT SEARCH (SINGLE SOURCE OF TRUTH)
     # -----------------------------
     product_options = sorted(summary_df["name"].unique())
+    if "product_selectbox" not in st.session_state:
+        st.session_state.product_selectbox = None
+
     
     product_input = st.selectbox(
-        "🔍 Search for a product",
-        options=product_options,
-        key="product_selectbox",
-        placeholder="Start typing to search..."
+    "🔍 Search for a product",
+    options=product_options,
+    index=None,
+    key="product_selectbox",
+    placeholder="Start typing to search..."
     )
+
 
     
     # -----------------------------
