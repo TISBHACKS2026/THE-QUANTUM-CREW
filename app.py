@@ -763,6 +763,10 @@ elif st.session_state.page == "GreenScore":
         #Mark OCR as done
         st.session_state.ocr_processed = True
     
+        #Reset selectbox so it updates
+        if "product_selectbox" in st.session_state:
+            del st.session_state["product_selectbox"]
+    
         
         st.rerun()
 
@@ -781,17 +785,25 @@ elif st.session_state.page == "GreenScore":
     elif "selected_product" in st.session_state:
         preselected_product = st.session_state.selected_product
     
-        # set default value BEFORE widget renders
-    if "selected_product" in st.session_state:
-        st.session_state.product_selectbox = st.session_state.selected_product
-    
-    product_input = st.selectbox(
-        "🔍 Search for a product",
-        options=product_options,
-        key="product_selectbox",
-        placeholder="Start typing to search..."
-    )
-
+    # -----------------------------
+    # SINGLE SELECTBOX (NO DOUBLE CLICK)
+    # -----------------------------
+    if preselected_product in product_options:
+        product_input = st.selectbox(
+            "🔍 Search for a product",
+            options=product_options,
+            index=product_options.index(preselected_product),
+            key="product_selectbox",
+            placeholder="Start typing to search..."
+        )
+    else:
+        product_input = st.selectbox(
+            "🔍 Search for a product",
+            options=product_options,
+            index=None,
+            key="product_selectbox",
+            placeholder="Start typing to search..."
+        )
     
     # -----------------------------
     # CLEAN UP ONE-TIME FLAGS
@@ -1084,6 +1096,7 @@ elif st.session_state.page == "GreenScore":
                     st.success("🎉 Product logged! Your Impact Dashboard has been updated.")
                 else:
                     st.info("This product is already logged as purchased.")
+
 
             
             #-------------------------------------
