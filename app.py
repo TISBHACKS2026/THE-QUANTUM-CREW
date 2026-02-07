@@ -43,9 +43,8 @@ CURATED_ALTERNATIVES = {
 }
 
 
-# -----------------------------
 # OPENAI SETUP (GLOBAL)
-# -----------------------------
+
 OpenAIKey = st.secrets["OpenAIKey"]
 client = OpenAI(api_key=OpenAIKey)
 
@@ -260,13 +259,6 @@ p, div, span, label, li, input, select {
 """, unsafe_allow_html=True)
 
 
-
-
-# -----------------------------
-# Step 0: Define file paths
-# -----------------------------
-PRODUCT_CSV = "product.csv"
-MATERIAL_CSV = "material.csv"
 
 # -----------------------------
 # Step 0: Define file paths
