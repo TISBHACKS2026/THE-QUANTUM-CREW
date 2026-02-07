@@ -791,7 +791,7 @@ elif st.session_state.page == "GreenScore":
         key="product_selectbox",
         placeholder="Start typing to search..."
     )
-            )
+    )
     
     # -----------------------------
     # CLEAN UP ONE-TIME FLAGS
