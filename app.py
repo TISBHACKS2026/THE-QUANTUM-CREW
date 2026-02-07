@@ -759,51 +759,29 @@ elif st.session_state.page == "GreenScore":
     
         st.success(f"Detected: {matched_name}")
         st.session_state.selected_product = matched_name
-    
-        #Mark OCR as done
+        
+        # FORCE dropdown to update
+        st.session_state.product_selectbox = matched_name
+        
+        # Mark OCR as done
         st.session_state.ocr_processed = True
-    
-        #Reset selectbox so it updates
-        if "product_selectbox" in st.session_state:
-            del st.session_state["product_selectbox"]
-    
         
         st.rerun()
+
 
     
     # -----------------------------
     # PRODUCT SEARCH (SINGLE SOURCE OF TRUTH)
     # -----------------------------
     product_options = sorted(summary_df["name"].unique())
-    preselected_product = None
     
-    # Priority:
-    # 1. Alternative click
-    # 2. Previously selected product
-    if "selected_alternative" in st.session_state:
-        preselected_product = st.session_state.selected_alternative
-    elif "selected_product" in st.session_state:
-        preselected_product = st.session_state.selected_product
-    
-    # -----------------------------
-    # SINGLE SELECTBOX (NO DOUBLE CLICK)
-    # -----------------------------
-    if preselected_product in product_options:
-        product_input = st.selectbox(
-            "🔍 Search for a product",
-            options=product_options,
-            index=product_options.index(preselected_product),
-            key="product_selectbox",
-            placeholder="Start typing to search..."
-        )
-    else:
-        product_input = st.selectbox(
-            "🔍 Search for a product",
-            options=product_options,
-            index=None,
-            key="product_selectbox",
-            placeholder="Start typing to search..."
-        )
+    product_input = st.selectbox(
+        "🔍 Search for a product",
+        options=product_options,
+        key="product_selectbox",
+        placeholder="Start typing to search..."
+    )
+
     
     # -----------------------------
     # CLEAN UP ONE-TIME FLAGS
