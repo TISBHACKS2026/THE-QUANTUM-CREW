@@ -1557,26 +1557,37 @@ Rules:
     # 🔄 PRODUCT COMPARISON (SAME CATEGORY ONLY)
     # =============================
     st.markdown("## Compare Products by Impact")
+    st.caption("Compare any products from our database, not just your purchases")
 
-    # Step 1 — Choose category first
+    # Step 1 — Choose category first (from full database)
     compare_category = st.selectbox(
         "Select a category to compare within",
-        sorted(history["Category"].unique())
+        sorted(summary_df["category"].unique())
     )
 
-    # Step 2 — Show only products from that category
-    category_products = history[
-        history["Category"] == compare_category
-    ]["Product"].unique()
+    # Step 2 — Show all products from that category in the full database
+    category_products = summary_df[
+        summary_df["category"] == compare_category
+    ]["name"].unique()
 
     compare_products = st.multiselect(
-        "Select products",
-        category_products,
-        default=list(category_products[:2])
+        "Select products to compare",
+        sorted(category_products),
+        default=None
     )
 
     if len(compare_products) >= 2:
-        compare_df = history[history["Product"].isin(compare_products)]
+        # Get data from the full summary_df instead of history
+        compare_df = summary_df[summary_df["name"].isin(compare_products)].copy()
+        
+        # Rename columns to match the impact display format
+        compare_df = compare_df.rename(columns={
+            "name": "Product",
+            "total_carbon_kg": "Carbon (kg)",
+            "total_water_L": "Water (L)",
+            "total_energy_MJ": "Energy (MJ)",
+            "total_waste_score": "Waste Score"
+        })
 
         impact_cols = ["Carbon (kg)", "Water (L)", "Energy (MJ)", "Waste Score"]
         normalized = compare_df.copy()
@@ -1620,7 +1631,7 @@ Rules:
                 st.info(ai_text.strip())
 
     else:
-        st.info("Select at least two products from the same category 🌱")
+        st.info("Select at least two products from the same category to compare 🌱")
 
     st.divider()
 
